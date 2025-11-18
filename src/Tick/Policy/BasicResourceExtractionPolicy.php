@@ -23,7 +23,7 @@ readonly class BasicResourceExtractionPolicy
 
         $allowedBuildingTypes = $this->resourceBuildingMap->getBuildingsForResource($deposit->getResourceType());
         foreach ($buildings as $building) {
-            if (in_array($building->getType(), $allowedBuildingTypes, true) && $building->getLevel() > 0) {
+            if (in_array($building->getType()->value, $allowedBuildingTypes, true) && $building->getLevel() > 0) {
                 return true;
             }
         }

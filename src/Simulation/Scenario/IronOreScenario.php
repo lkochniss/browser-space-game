@@ -37,7 +37,7 @@ class IronOreScenario
         );
 
         $resource = new Resource(ResourceId::generate(), ResourceType::IRON_ORE, 0);
-        $resourceDeposit = new ResourceDeposit(ResourceDepositId::generate(), ResourceType::IRON_ORE, 0);
+        $resourceDeposit = new ResourceDeposit(ResourceDepositId::generate(), ResourceType::IRON_ORE, 10000);
 
         $planet = new Planet(PlanetId::generate(), $player, [$building], [$resource], [$resourceDeposit]);
         $player->setPlanets([$planet]);

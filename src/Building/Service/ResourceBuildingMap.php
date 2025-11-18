@@ -21,9 +21,10 @@ class ResourceBuildingMap
         ];
     }
 
-    public function getBuildingsForResource(ResourceType $resourceType): array
+    public function getBuildingsForResource(ResourceType $resource): array
     {
-        return $this->map[$resourceType->value] ?? [];
+        $byResource = $this->map[$resource->value] ?? [];
+        return array_keys($byResource);
     }
 
     public function canProduce(BuildingType $buildingType, ResourceType $resourceType): bool

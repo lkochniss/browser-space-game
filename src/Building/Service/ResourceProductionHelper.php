@@ -18,7 +18,7 @@ class ResourceProductionHelper
 
         return array_filter(
             $planet->getBuildings(),
-            fn(Building $building) => in_array($building->getType(), $allowedBuildings, true)
+            fn(Building $building) => in_array($building->getType()->value, $allowedBuildings, true)
         );
     }
 }
