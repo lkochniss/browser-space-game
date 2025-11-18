@@ -1,0 +1,3 @@
+- Kann Planeten scannen
+- Bleibt im System und liefert Telemetrie
+- Besser für langfristige Auswertungen

@@ -1,0 +1,1 @@
+Eine Raumstation kann pro [[Sonnensystem]] gebaut werden. Diese erlaubt es [[Rohstoff]]e und [[Erzeugnis]]se zwischen den [[Planet]]en des Systems besser zu verteilen, gilt als strategischer Sammelpunkt für [[Flotte]]n oder dem [[Handel]] mit anderen Völkern.

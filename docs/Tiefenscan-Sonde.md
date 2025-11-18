@@ -1,0 +1,3 @@
+- Erkennt versteckte POIs
+- Erkennt seltene Ressourcen
+- Nötig für Endgame-Kram (Dunkelmaterie etc.)

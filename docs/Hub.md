@@ -1,0 +1,1 @@
+Der Hub ist ein [[Gebäude]], dass die maximale [[Bevölkerung]] eines [[Planet]]en erhöht.

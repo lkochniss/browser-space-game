@@ -1,0 +1,1 @@
+Trümmer werden von [[Bergungsschiff]]en aus [[Trümmerfeld]]ern gewonnen und in einer [[Recycling-Anlage]] zu [[Erzeugnis]]sen verarbeitet. Trümmer haben mehrere Qualitätsstufen. Abhängig dieser Stufen können andere Erzeugnisse aus ihnen gewonnen werden. Welches Erzeugnis genau entsteht ist zufällig, aber jede Qualitätsstufe hat andere Wahrscheinlichkeiten.

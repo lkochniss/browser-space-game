@@ -1,0 +1,1 @@
+[[Rohstoff]]e und [[Bevölkerung]] wachsen pro Tick. Ein Tick ist 15 Minuten lang

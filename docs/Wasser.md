@@ -1,0 +1,1 @@
+Wird von [[Bevölkerung]] benötigt, um zu überleben.

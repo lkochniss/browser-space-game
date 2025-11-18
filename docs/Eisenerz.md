@@ -1,0 +1,1 @@
+Eisenerz wird in einer [[Eisenhütte]] zu [[Eisenbarren]] verarbeitet. Dafür wird [[Kohle]] benötigt.

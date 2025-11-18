@@ -1,0 +1,1 @@
+Asteroidenfelder enthalten eine endliche Zahl an Rohstoffen, die durch ein [[Bergungsschiff]] abgebaut und zu einem [[Planet]]en oder einer [[Raumstation]] transportiert werden können.

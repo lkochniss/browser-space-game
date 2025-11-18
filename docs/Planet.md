@@ -1,0 +1,5 @@
+- 5 Größen (sehr klein, klein, mittel, groß, gigantisch)
+- verschiedene Typen mit unterschiedlichen [[Rohstoff]]n und Boni-System
+- Jeder neue Spieler startet auf einem [[erdähnlichen Planet]]en
+- Mit der Zeit kann ein Spieler zuerst sein [[Sonnensystem]] erkunden und später auch in andere System aufbrechen
+- Wenn man neue Planeten besiedeln möchte, müssen diese zuerst mit einer [[Sonde]] erforsch werden und dann mit einem [[Kolonisationsschiff]] bevölkert werden.

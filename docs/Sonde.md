@@ -1,0 +1,9 @@
+- Sonden sind für die [[Erkundung]] von [[Planet]]en wichtig
+- Abhängig von der [[Forschung]] [[Planetologie]] können die [[Rohstoff]], der Typ und die Größe eines Planeten ermittelt werden
+- Sonden können von [[Raumschiff]]en transportiert werden, um somit schneller ans Ziel zu kommen
+- Die Geschwindigkeit von Sonden kann über die Forschung [[Wasserstoff Antrieb]] verbessert werden
+- Sonden werden auch zum Entdecken von [[Sonnensystem]]en gebraucht oder zum Entdecken von [[Raumschiff]] [[Flotte]] oder anderen möglichen [[POI]]s in einem Sonnensystem
+- Sonden werden in drei Typen unterschieden
+- [[Systemsonde]]
+- [[Orbitalsonde]]
+- [[Tiefenscan-Sonde]]

@@ -1,0 +1,5 @@
+Raumschiffe werden in einer [[Raumwerft]] gebaut. Sie brauchen verschiedene [[Erzeugnis]]se sowie freie [[Bevölkerung]] für den Bau. Sobald ein Schiff fertiggestellt ist, legt es an dem [[Planet]]en vor Hochanker an.
+
+Raumschiffe verbrauchen durchgehend [[Wasser]], [[Nahrung]] und [[Sauerstoff]]. Solange sie an einem Planeten oder einer [[Raumstation]] andocken, werden sie automatisch versorgt. Sollten sie stattdessen als [[Flotte]] unterwegs sein, müssen sie diese Vorräte sowie Treibstoff mitnehmen. 
+
+Jedes Schiff hat für die Versorgung dedizierten Lagerraum. Sollte dieser für eine Überfahrt jedoch nicht reichen, müssen [[Transportschiff]]e zur Versorgung mitgenommen werden. Wenn trotz allem der Treibstoff ausgeht, können sich die Schiffe nicht mehr bewegen, bis neuer Treibstoff da ist. Geht ihnen dagegen Nahrung, Wasser oder Sauerstoff aus stirbt das Raumschiff und ein Trümmerfeld entsteht.

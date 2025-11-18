@@ -1,0 +1,1 @@
+Das Koloschiff ist ein [[Raumschiff]] und ermöglicht es einen [[Planet]]en zu besiedeln.

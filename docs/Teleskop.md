@@ -1,0 +1,1 @@
+Ein Teleskop dient der [[Erkundung]] und hat eine festgelegte Reichweite. Es kann in dieser Sterne entdecken, die ein [[Sonnensystem]] anzeigen bzw. im eigenen System Planeten und andere [[POI]]s aufdecken. Um das System weiter zu erkunden wird dann eine [[Sonde]] oder ein [[Raumschiff]] benötigt.

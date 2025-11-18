@@ -1,0 +1,1 @@
+Ein Trümmerfeld bleibt nach einer Raumschlacht zurück und kann von [[Bergungsschiff]]en abgebaut werden. Die somit erlangten [[Trümmer]] können in einer [[Recycling-Anlage]] zu [[Erzeugnis]]sen verarbeitet werden. Trümmerfelder unterscheiden sich in Größe und Qualität, was Auswirkung auf die Menge der Trümmer und deren Qualität hat.

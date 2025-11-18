@@ -1,0 +1,1 @@
+Sauerstoff ist ein erneuerbarer [[Rohstoff]], der auf verschiedenen [[Planet]]en gewonnen werden kann. Auf Planeten ohne Atmosphäre wird Sauerstoff für den Betrieb von [[Gebäude]]n und für die [[Bevölkerung]] benötigt. Zudem brauchen [[Raumschiff]]e und [[Raumstation]]en Sauerstoff für ihren Erhalt.

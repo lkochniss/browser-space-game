@@ -1,0 +1,1 @@
+Das Bergungsschiff ist ein ziviles [[Raumschiff]], welches [[Trümmerfeld]]er nach einer [[Raumschlacht]] oder [[Asteroidenfeld]]er bergen kann.

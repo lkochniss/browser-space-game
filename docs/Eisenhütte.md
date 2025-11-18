@@ -1,0 +1,1 @@
+Die Eisenhütte ist ein [[Gebäude]] in dem aus [[Eisenerz]] und [[Kohle]] [[Eisenbarren]] erzeugt werden.

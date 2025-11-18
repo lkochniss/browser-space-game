@@ -1,0 +1,1 @@
+Erzeugnisse werden aus [[Rohstoff]]en erzeugt und werden für den Bau von [[Gebäude]]n oder [[Raumschiff]]en gebraucht

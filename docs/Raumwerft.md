@@ -1,0 +1,1 @@
+Die Raumwerft ist ein [[Gebäude]] und ermöglicht es einem [[Planet]]en [[Raumschiff]]e zu bauen.

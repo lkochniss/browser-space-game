@@ -1,0 +1,1 @@
+Die Recycling-Anlage erlaubt es aus [[Trümmer]]n [[Erzeugnis]]se zu gewinnen. Dabei ist die Qualität der Trümmer ausschlaggebend für die Chance, was zurückgewonnen werden kann.

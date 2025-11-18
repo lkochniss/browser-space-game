@@ -1,0 +1,4 @@
+- Billig
+- Liefert Systemdaten
+- Verbraucht Treibstoff
+- Einmalmission, geht verloren oder bleibt passiv im Orbit
