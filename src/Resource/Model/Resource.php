@@ -30,4 +30,9 @@ class Resource
     {
         $this->amount = $amount;
     }
+
+    public static function generateEmptyResource(ResourceType $type): self
+    {
+        return new self(ResourceId::generate(), $type, 0);
+    }
 }

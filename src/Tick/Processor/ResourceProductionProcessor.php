@@ -32,7 +32,6 @@ readonly class ResourceProductionProcessor implements TickProcessorInterface
 
             $buildings = $this->resourceProductionHelper->getBuildingsForResourceOnPlanet($planet, $deposit->getResourceType());
 
-            var_dump($buildings);
             foreach ($buildings as $building) {
                 $baseValue = $this->resourceProductionConfig->getBaseProduction($deposit->getResourceType());
                 $multiplier = $this->resourceBuildingMap->getMultiplier($deposit->getResourceType(), $building->getType());

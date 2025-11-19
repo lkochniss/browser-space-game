@@ -3,24 +3,53 @@
 namespace App\Planet\Model;
 
 use App\Building\Model\Building;
+use App\Building\Model\BuildingCollection;
 use App\Player\Model\Player;
 use App\Resource\Model\Resource;
+use App\Resource\Model\ResourceCollection;
 use App\Resource\Model\ResourceDeposit;
+use App\Resource\Model\ResourceDepositCollection;
 use App\Resource\ValueObject\ResourceType;
 use ValueObject\PlanetId;
 
 class Planet
 {
-    /**
-     * @param PlanetId $id
-     * @param Player|null $player
-     * @param iterable<Building> $buildings
-     * @param iterable<Resource> $resources
-     * @param iterable<ResourceDeposit> $resourceDeposits
-     */
-   public function __construct(private PlanetId $id, private ?Player $player, private iterable $buildings, private iterable $resources, private iterable $resourceDeposits)
-   {
-   }
+    public function __construct(
+        private PlanetId                  $id,
+        private ?Player                   $player,
+        private BuildingCollection        $buildings,
+        private ResourceCollection        $resources,
+        private ResourceDepositCollection $resourceDeposits
+    )
+    {
+    }
+
+    public static function generatePlanet(): self
+    {
+        return new self(
+            PlanetId::generate(),
+            null,
+            new BuildingCollection(),
+            new ResourceCollection(),
+            new ResourceDepositCollection(),
+        );
+    }
+
+    public static function claimPlanet(
+        PlanetId $planetId,
+        Player $player,
+        BuildingCollection $buildings,
+        ResourceCollection $resources,
+        ResourceDepositCollection $resourceDeposits
+    ): self{
+        return new self(
+            $planetId,
+            $player,
+            $buildings,
+            $resources,
+            $resourceDeposits
+        );
+    }
 
     public function getId(): PlanetId
     {
@@ -45,15 +74,12 @@ class Planet
         return $this->buildings;
     }
 
-    public function setBuildings(iterable $buildings): void
+    public function setBuildings(BuildingCollection $buildings): void
     {
         $this->buildings = $buildings;
     }
 
-    /**
-     * @return iterable<Resource>
-     */
-    public function getResources(): iterable
+    public function getResources(): ResourceCollection
     {
         return $this->resources;
     }
@@ -61,20 +87,17 @@ class Planet
     public function getResource(ResourceType $resourceType): Resource
     {
         return current(array_filter(
-            $this->resources,
-            fn (Resource $resource) => $resource->getType() === $resourceType
+            $this->resources->toArray(),
+            fn(Resource $resource) => $resource->getType() === $resourceType
         ));
     }
 
-    public function setResources(iterable $resources): void
+    public function setResources(ResourceCollection $resources): void
     {
         $this->resources = $resources;
     }
 
-    /**
-     * @return iterable<ResourceDeposit>
-     */
-    public function getResourceDeposits(): iterable
+    public function getResourceDeposits(): ResourceDepositCollection
     {
         return $this->resourceDeposits;
     }
@@ -82,12 +105,12 @@ class Planet
     public function getResourceDeposit(ResourceType $resourceType): ResourceDeposit
     {
         return current(array_filter(
-            $this->resourceDeposits,
-            fn (ResourceDeposit $deposit) => $deposit->getResourceType() === $resourceType
+            $this->resourceDeposits->toArray(),
+            fn(ResourceDeposit $deposit) => $deposit->getResourceType() === $resourceType
         ));
     }
 
-    public function setResourceDeposits(iterable $resourceDeposits): void
+    public function setResourceDeposits(ResourceDepositCollection $resourceDeposits): void
     {
         $this->resourceDeposits = $resourceDeposits;
     }

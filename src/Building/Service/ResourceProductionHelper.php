@@ -17,7 +17,7 @@ class ResourceProductionHelper
         $allowedBuildings = $this->map->getBuildingsForResource($resourceType);
 
         return array_filter(
-            $planet->getBuildings(),
+            $planet->getBuildings()->toArray(),
             fn(Building $building) => in_array($building->getType()->value, $allowedBuildings, true)
         );
     }

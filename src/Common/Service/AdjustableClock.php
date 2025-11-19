@@ -3,6 +3,7 @@
 namespace App\Common\Service;
 
 use App\Common\Interface\ClockInterface;
+use DateInterval;
 use DateTimeImmutable;
 
 class AdjustableClock implements ClockInterface
@@ -19,8 +20,19 @@ class AdjustableClock implements ClockInterface
         return $this->currentTime;
     }
 
-    public function advance(int $seconds): void
+    public function advance(DateInterval $interval): void
     {
-        $this->currentTime = $this->currentTime->modify("+{$seconds} seconds");
+        $this->currentTime = $this->currentTime->add($interval);
+    }
+
+
+    public function reset(DateTimeImmutable $start): void
+    {
+        $this->currentTime = $start;
+    }
+
+    public function diffInSeconds(ClockInterface $other): int
+    {
+        return (int) ($this->currentTime->getTimestamp() - $other->now()->getTimestamp());
     }
 }

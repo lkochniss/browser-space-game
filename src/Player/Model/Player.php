@@ -3,14 +3,12 @@
 namespace App\Player\Model;
 
 use App\Planet\Model\Planet;
+use App\Planet\Model\PlanetCollection;
 use ValueObject\PlayerId;
 
 class Player
 {
-    /**
-     * @param iterable<Planet> $planets
-     */
-   public function __construct(private PlayerId $id, private iterable $planets)
+   public function __construct(private PlayerId $id, private PlanetCollection $planets)
    {
    }
 
@@ -19,20 +17,18 @@ class Player
         return $this->id;
     }
 
-    /**
-     * @return iterable<Planet>
-     */
-    public function getPlanets(): iterable
+    public function getPlanets(): PlanetCollection
     {
         return $this->planets;
     }
 
-    /**
-     * @param iterable<Planet> $planets
-     * @return void
-     */
-    public function setPlanets(iterable $planets): void
+    public function setPlanets(PlanetCollection $planets): void
     {
         $this->planets = $planets;
+    }
+
+    public function claimPlanet(Planet $planet): void
+    {
+        $this->planets->add($planet);
     }
 }

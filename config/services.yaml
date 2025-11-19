@@ -16,5 +16,23 @@ services:
     App\:
         resource: '../src/'
 
+    _instanceof:
+        App\Common\Interface\CommandHandlerInterface:
+            public: true
+
+    App\Common\Service\CommandBus:
+        arguments:
+            $container: '@service_container'
+
+    App\Simulation\Scenario\:
+        resource: '../src/Simulation/Scenario/*'
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    App\Simulation\Command\SimulateScenarioCommand:
+        arguments:
+            $container: '@service_container'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

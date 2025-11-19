@@ -11,11 +11,11 @@ class TickEngine
     /**
      * @param iterable<TickProcessorInterface> $processors
      */
-    public function __construct(private iterable $processors)
+    public function __construct(private iterable $processors, private int $intervalSeconds = 900)
     {
     }
 
-    public function runTick(GameState $gameState): void
+    public function run(GameState $gameState): void
     {
         $planets = $gameState->getPlayer()->getPlanets();
 
@@ -24,5 +24,10 @@ class TickEngine
                 $processor->process($planet);
             }
         }
+    }
+
+    public function getIntervalSeconds(): int
+    {
+        return $this->intervalSeconds;
     }
 }

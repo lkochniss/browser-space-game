@@ -14,6 +14,15 @@ class Building
     ){
     }
 
+    public static function createNewBuilding(BuildingType $type): self
+    {
+        return new self(
+            BuildingId::generate(),
+            $type,
+            1
+        );
+    }
+
     public function getId(): BuildingId
     {
         return $this->id;

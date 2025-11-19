@@ -2,8 +2,6 @@
 
 namespace App\Resource\Model;
 
-use App\Resource\ValueObject\BuildingId;
-use App\Resource\ValueObject\BuildingType;
 use App\Resource\ValueObject\ResourceDepositId;
 use App\Resource\ValueObject\ResourceType;
 
@@ -31,5 +29,10 @@ class ResourceDeposit
     public function setAmount(int $amount): void
     {
         $this->amount = $amount;
+    }
+
+    public static function generateDepositWithAmount(ResourceType $type, int $amount): self
+    {
+        return new self(ResourceDepositId::generate(), $type, $amount);
     }
 }
