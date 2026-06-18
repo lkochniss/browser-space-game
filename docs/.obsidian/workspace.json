@@ -16,8 +16,33 @@
               "icon": "lucide-git-fork",
               "title": "Graph view"
             }
+          },
+          {
+            "id": "b6b1e3c4cbbdec56",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.5"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.11.5"
+            }
+          },
+          {
+            "id": "48ea91ec478ca6fe",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.11.7"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.11.7"
+            }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -162,7 +187,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "3afa9274127d9284",
+  "active": "48ea91ec478ca6fe",
   "lastOpenFiles": [
     "Raumwerft.md",
     "Hub.md",
