@@ -1,7 +1,7 @@
 # T-170: Tech-Tree Building↔Research Gating
 
 **Type:** Feature
-**Status:** In Progress
+**Status:** Done
 **Effort:** M-L (~3h)
 **Depends on:** T-009 (Building-Bau), T-025 (Forschungs-Framework)
 **Blocks:** T-026, T-027, T-064, T-127ff (Tech-Branches gaten ihre Buildings über dieses Foundation-System)
@@ -51,26 +51,17 @@ für Tests + spätere Branches (T-026 erweitert ftl_tier_1 zu echtem Antrieb-Tre
 
 ## Acceptance Criteria
 
-- [ ] `ResearchPrerequisite`-Interface + 2 Implementations:
-  - `ResearchLevelPrerequisite(slug, level)`
-  - `BuildingLevelPrerequisite(BuildingType, level)`
-- [ ] `ResearchNode.prerequisites` umstellen auf `list<ResearchPrerequisite>`
-- [ ] `StartResearchCommandService` Validation für beide Prereq-Typen
-- [ ] `BuildingUnlockConfig` Service: `requiredResearch(BuildingType): ?array{slug,level}`
-- [ ] `BuildingLockedException` (extends DomainException)
-- [ ] `BuildBuildingCommandService` validiert Unlock vor Bau
-- [ ] `BuildBuildingCommandService::isUnlockedFor(player, BuildingType): bool` Helper
-  (Demo-CLI nutzt das für Lock-Anzeige)
-- [ ] Demo-CLI Build-Building-Menu zeigt locked-Buildings mit 🔒 + Reason
-- [ ] ResearchTree erweitert um 6 neue Nodes
-- [ ] Tests:
-  - ResearchPrerequisite-VOs
-  - StartResearchCommandService building-prereq-Pfade
-  - BuildBuildingCommandService unlock-Validation
-  - BuildingUnlockConfig-Mapping
-  - 1 IT-Test E2E: build IRON_MINE → research basic_mining → build COAL_MINE
-- [ ] Doc: research.md (Prereq-Typen + Tier-Mapping), buildings.md (Unlock-Tabelle), demo.md
-- [ ] Suite grün
+- [x] `ResearchPrerequisite`-Interface + 2 Implementations + `PlayerResearchLookup`-Interface
+- [x] `ResearchNode.prerequisites` polymorph (`list<ResearchPrerequisite>`)
+- [x] `StartResearchCommandService` implementiert `PlayerResearchLookup`, ruft `prereq->isMetBy`
+- [x] `BuildingUnlockConfig` mappt 13 non-Tier-0-Buildings auf 6 Research-Slugs
+- [x] `BuildingLockedException` mit Reason-Message
+- [x] `BuildBuildingCommandService::checkUnlock` vor Cost-Validation, public `isUnlockedFor` Helper
+- [x] `ResearchTree` um 6 Tier-1-Nodes erweitert
+- [x] Demo-CLI Build-Menu zeigt locked Buildings mit 🔒 + Reason
+- [x] 18 neue Tests (Prerequisites + UnlockConfig + E2E build → research → build)
+- [x] Doc-Updates: research.md, buildings.md, demo.md
+- [x] Suite grün (497/497)
 
 ## Open Questions
 
