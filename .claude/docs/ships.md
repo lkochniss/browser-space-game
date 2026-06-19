@@ -29,12 +29,18 @@ Bauzeit +Cargo via `ShipCostConfig`.
 - Bei Mangel beider → `killShip()`: Pop-Slots verloren + Schiff entfernt
 - T-021: killShip spawnt **kleines DebrisField** (2 DEBRIS_LOW) im Heim-System
 
-## Cargo (T-015)
+## Cargo (T-015 + T-015b)
 
 `CargoManifest` als Embeddable auf Ship: `ResourceType → amount` Map + Pop-Slots.
-- `LoadCargoCommand` zieht aus Planet-Storage in Ship-Cargo
+- `LoadCargoCommand` zieht aus **Planet-Storage** ODER **Station-Storage** in Ship-Cargo
 - `UnloadCargoCommand` umgekehrt
 - Capacity via `ShipType::getCargoCapacity`; Validation in `CargoCapacityExceededException`
+
+**T-015b Station-Cargo (Foundation):**
+- Ship hat `station: ?SpaceStation`-Field (XOR mit `planet`); via `setStation()` umgeschaltet
+- `LoadCargo` / `UnloadCargo` branchen je nach Dock-Target
+- Pop-Transfer Station ↔ Ship: SKIP (Foundation; Station-Pop = T-023b-Domain)
+- Owner-Restriction: nicht enforced auf Foundation; T-093 Allianz-Stationen ergänzt das
 
 ## Salvage (T-016)
 

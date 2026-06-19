@@ -52,7 +52,8 @@ readonly class UnloadCargoCommandService
         }
 
         $planet = $ship->getPlanet();
-        if ($planet === null) {
+        $station = $ship->getStation();
+        if ($planet === null && $station === null) {
             throw new ShipNotDockedException($shipId);
         }
 
@@ -72,6 +73,34 @@ readonly class UnloadCargoCommandService
             throw new InsufficientCargoException($shipId, 'pop', $popCount, $cargo->getPopCount());
         }
 
+        if ($station !== null) {
+            // T-015b: Target = Station-Storage. Pop-Transfer skip (Station-Pop = T-023b).
+            if ($popCount > 0) {
+                throw new InsufficientCargoException($shipId, 'pop', $popCount, 0);
+            }
+            $stationStorage = $station->getStorage();
+            $needed = array_sum($resources);
+            if ($needed > $station->getStorageFreeUnits()) {
+                throw new \App\Ship\Exception\CargoCapacityExceededException(
+                    $shipId,
+                    $needed,
+                    $station->getStorageFreeUnits(),
+                );
+            }
+            foreach ($resources as $resourceTypeValue => $amount) {
+                if ($amount <= 0) {
+                    continue;
+                }
+                $type = ResourceType::from($resourceTypeValue);
+                $stationStorage->loadResource($type, $amount);
+                $ship->unloadResourceCargo($type, $amount);
+            }
+            $this->em->flush();
+
+            return $ship;
+        }
+
+        // Target = Planet (T-015 default-Pfad)
         // Mutationen
         foreach ($resources as $resourceTypeValue => $amount) {
             if ($amount <= 0) {

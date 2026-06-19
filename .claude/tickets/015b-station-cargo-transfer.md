@@ -1,8 +1,8 @@
 # T-015b: Station-Cargo-Transfer (Erweiterung zu T-015)
 
 **Type:** Feature
-**Status:** Draft
-**Effort:** S (TBD)
+**Status:** Done (Foundation: Resources only; Pop-Transfer + Owner-Restriction defer)
+**Effort:** S
 **Depends on:** T-015 (Cargo-Foundation), T-023 (SpaceStation)
 **Blocks:** T-023b (braucht Cargo-Transfer für Maintenance-Refill)
 

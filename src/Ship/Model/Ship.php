@@ -6,6 +6,7 @@ namespace App\Ship\Model;
 
 use App\Common\Doctrine\Type\ShipIdType;
 use App\Fleet\Model\Fleet;
+use App\POI\Model\SpaceStation;
 use App\Planet\Model\Planet;
 use App\Resource\ValueObject\ResourceType;
 use App\Ship\Repository\ShipRepository;
@@ -26,6 +27,14 @@ class Ship
     #[ORM\ManyToOne(targetEntity: Planet::class)]
     #[ORM\JoinColumn(name: 'planet_id', referencedColumnName: 'id', nullable: true)]
     private ?Planet $planet = null;
+
+    /**
+     * T-015b: Schiff kann an Planet ODER an SpaceStation docken (XOR — beide
+     * gleichzeitig nicht zulässig). NULL = nicht an Station; siehe `dockAtStation`.
+     */
+    #[ORM\ManyToOne(targetEntity: SpaceStation::class)]
+    #[ORM\JoinColumn(name: 'station_id', referencedColumnName: 'id', nullable: true)]
+    private ?SpaceStation $station = null;
 
     /**
      * Wallclock-Build wie bei Buildings (T-062). NULL = sofort fertig (Test-Fixture).
@@ -125,7 +134,24 @@ class Ship
 
     public function isDocked(): bool
     {
-        return $this->planet !== null;
+        return $this->planet !== null || $this->station !== null;
+    }
+
+    public function getStation(): ?SpaceStation
+    {
+        return $this->station;
+    }
+
+    /**
+     * T-015b: Wechselt Dock von Planet → Station. Setzt planet=null + station=$station.
+     * `null` = undock (Schiff in Transit).
+     */
+    public function setStation(?SpaceStation $station): void
+    {
+        $this->station = $station;
+        if ($station !== null) {
+            $this->planet = null;
+        }
     }
 
     public function getPopulationAssigned(): int

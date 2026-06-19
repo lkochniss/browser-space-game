@@ -55,7 +55,8 @@ readonly class LoadCargoCommandService
         }
 
         $planet = $ship->getPlanet();
-        if ($planet === null) {
+        $station = $ship->getStation();
+        if ($planet === null && $station === null) {
             throw new ShipNotDockedException($shipId);
         }
 
@@ -64,6 +65,37 @@ readonly class LoadCargoCommandService
             throw new CargoCapacityExceededException($shipId, $totalUnits, $ship->getCargoFreeUnits());
         }
 
+        if ($station !== null) {
+            // T-015b: Source = Station-Storage. Pop-Transfer nicht unterstützt
+            // (Foundation; Station-Pop ist eigenes Konzept → T-023b).
+            if ($popCount > 0) {
+                throw new InsufficientPopulationException($popCount, 0);
+            }
+            $stationStorage = $station->getStorage();
+            foreach ($resources as $resourceTypeValue => $amount) {
+                if ($amount <= 0) {
+                    continue;
+                }
+                $type = ResourceType::from($resourceTypeValue);
+                $available = $stationStorage->getResource($type);
+                if ($available < $amount) {
+                    throw new InsufficientResourcesException($type, $amount, $available);
+                }
+            }
+            foreach ($resources as $resourceTypeValue => $amount) {
+                if ($amount <= 0) {
+                    continue;
+                }
+                $type = ResourceType::from($resourceTypeValue);
+                $stationStorage->unloadResource($type, $amount);
+                $ship->loadResourceCargo($type, $amount);
+            }
+            $this->em->flush();
+
+            return $ship;
+        }
+
+        // Source = Planet (T-015 default-Pfad)
         // Resource-Verfügbarkeit auf Planet validieren
         foreach ($resources as $resourceTypeValue => $amount) {
             if ($amount <= 0) {
