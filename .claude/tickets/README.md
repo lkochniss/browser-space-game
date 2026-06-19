@@ -89,7 +89,7 @@
 | 090-medicine-bio-resources.md | Feature | Draft | BIOMASS/PHARMA/VACCINE/CYBERNETIC-IMPLANT |
 | 091-tier3-combat-components.md | Feature | Draft | TARGETING_COMPUTER/REACTIVE_ARMOR/PLASMA_COIL/ECM/WARP_DRIVE_CORE |
 | 092-rare-exotic-resources.md | Feature | Draft | XENOS_ARTIFACT/WARP_CRYSTAL/DARK_MATTER/VOID_ESSENCE/ANCIENT_DATA_CORE |
-| 085-wormhole-poi.md | Feature | Draft | Wurmloch-POI für FTL-Long-Distance-Sprünge |
+| 085-wormhole-poi.md | Feature | Done | Wormhole POI-Subtype mit Pair-Verlinkung + Galaxy-Pair-Spawn (Foundation) |
 | 086-black-hole-poi.md | Feature | Draft | Schwarzes-Loch + Antimaterie-Harvest (Tech-gated) |
 | 087-fog-of-war.md | Feature | Draft | Player-spezifische Discovery-Levels (UNKNOWN/METADATA/SCANNED) |
 | 093-alliance-raumstation.md | Feature | Draft | Allianz-Raumstation pro System (Repair/Trade/Defense-Hub) |

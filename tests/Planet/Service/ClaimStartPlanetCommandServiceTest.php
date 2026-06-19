@@ -128,6 +128,38 @@ final class ClaimStartPlanetCommandServiceTest extends IntegrationTestCase
         }
     }
 
+    public function test_t085_wormhole_pair_spawns_in_galaxy(): void
+    {
+        $this->claimFreshPlayer();
+
+        $repo = self::getContainer()->get(\App\POI\Repository\PoiRepository::class);
+        $wormholes = array_values(array_filter(
+            $repo->findAll(),
+            fn ($poi) => $poi instanceof \App\POI\Model\Wormhole,
+        ));
+
+        self::assertCount(2, $wormholes, '1 wormhole-pair = 2 POI-rows');
+        self::assertNotNull($wormholes[0]->getTwin());
+        self::assertNotNull($wormholes[1]->getTwin());
+
+        $ids = [$wormholes[0]->getId()->__toString(), $wormholes[1]->getId()->__toString()];
+        $twinIds = [
+            $wormholes[0]->getTwin()->getId()->__toString(),
+            $wormholes[1]->getTwin()->getId()->__toString(),
+        ];
+        sort($ids);
+        sort($twinIds);
+        self::assertSame($ids, $twinIds, 'twins reference each other bidirectionally');
+
+        self::assertNotSame(
+            $wormholes[0]->getSolarSystem()->getId()->__toString(),
+            $wormholes[1]->getSolarSystem()->getId()->__toString(),
+            'wormhole-pair connects 2 different systems',
+        );
+
+        self::assertSame('ftl_tier_2', $wormholes[0]->getRequiredTechSlug());
+    }
+
     public function test_t020_asteroid_fields_spawn_with_finite_resources(): void
     {
         // Multiple Runs damit RNG-Variabilität nicht zu false-negative führt

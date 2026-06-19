@@ -9,6 +9,7 @@ use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\ClockInterface;
 use App\POI\Model\AsteroidField;
 use App\POI\Model\Nebula;
+use App\POI\Model\Wormhole;
 use App\POI\ValueObject\PoiId;
 use App\Planet\Model\Planet;
 use App\Planet\ValueObject\PlanetId;
@@ -41,6 +42,10 @@ class ClaimStartPlanetCommandService
     private const NEBULA_SPAWN_CHANCE_PERCENT = 30;
     private const NEBULA_CONCEALMENT_MIN = 3;
     private const NEBULA_CONCEALMENT_MAX = 9;
+
+    // T-085: 1 Wurmloch-Pair pro Galaxy (verbindet 2 zufällige unterschiedliche Systems)
+    private const WORMHOLE_PAIRS_PER_GALAXY = 1;
+    private const WORMHOLE_REQUIRED_TECH_SLUG = 'ftl_tier_2';
 
     /** @var ResourceType[] */
     private const RENEWABLES = [
@@ -101,7 +106,48 @@ class ClaimStartPlanetCommandService
             $systems[] = $system;
         }
 
+        $this->generateWormholePairs($systems);
+
         return $systems;
+    }
+
+    /**
+     * T-085: erzeugt N Wurmloch-Pairs zwischen zufälligen unterschiedlichen
+     * Systems der Galaxy. Pro Pair: 2 Wurmloch-POIs, bidirektional via twin
+     * verlinkt. Tech-Lock-Slug ist als Stub gesetzt — T-026 FTL-Tier-2 prüft
+     * das später.
+     *
+     * @param SolarSystem[] $systems
+     */
+    private function generateWormholePairs(array $systems): void
+    {
+        if (count($systems) < 2) {
+            return;
+        }
+
+        for ($p = 0; $p < self::WORMHOLE_PAIRS_PER_GALAXY; $p++) {
+            $shuffled = $systems;
+            shuffle($shuffled);
+            $systemA = $shuffled[0];
+            $systemB = $shuffled[1];
+
+            $wormholeA = new Wormhole(
+                id: PoiId::generate(),
+                solarSystem: $systemA,
+                name: sprintf('Wurmloch %s ↔ %s', $systemA->getName(), $systemB->getName()),
+                requiredTechSlug: self::WORMHOLE_REQUIRED_TECH_SLUG,
+            );
+            $wormholeB = new Wormhole(
+                id: PoiId::generate(),
+                solarSystem: $systemB,
+                name: sprintf('Wurmloch %s ↔ %s', $systemB->getName(), $systemA->getName()),
+                requiredTechSlug: self::WORMHOLE_REQUIRED_TECH_SLUG,
+            );
+            $wormholeA->pairWith($wormholeB);
+
+            $systemA->addPoi($wormholeA);
+            $systemB->addPoi($wormholeB);
+        }
     }
 
     /**

@@ -32,7 +32,7 @@ use Doctrine\ORM\Mapping as ORM;
     'station' => Poi::class,
     'unknown_fleet' => Poi::class,
     'asteroid_field' => AsteroidField::class,
-    'wormhole' => Poi::class,
+    'wormhole' => Wormhole::class,
     'black_hole' => Poi::class,
 ])]
 class Poi
