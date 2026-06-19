@@ -6,6 +6,7 @@ namespace App\Tick\Processor;
 
 use App\Building\Service\ResourceBuildingMap;
 use App\Building\Service\ResourceProductionHelper;
+use App\Common\Service\SoftCapConfig;
 use App\Planet\Model\Planet;
 use App\Resource\Service\ResourceProductionConfig;
 use App\Tick\Interface\TickProcessorInterface;
@@ -19,6 +20,7 @@ readonly class ResourceProductionProcessor implements TickProcessorInterface
         private ResourceBuildingMap $resourceBuildingMap,
         private ResourceProductionConfig $resourceProductionConfig,
         private ResourceProductionHelper $resourceProductionHelper,
+        private SoftCapConfig $softCap = new SoftCapConfig(),
     ) {
     }
 
@@ -34,6 +36,9 @@ readonly class ResourceProductionProcessor implements TickProcessorInterface
             $desired = 0.0;
             $buildings = $this->resourceProductionHelper->getBuildingsForResourceOnPlanet($planet, $resourceType);
             $typeMulti = $planet->getEffectiveMiningMultiplier($resourceType); // T-063
+            $resource = $planet->getResource($resourceType);
+            // T-151: Stockpile-Soft-Cap drosselt Mining bei großen Lagerbeständen
+            $stockpileMulti = $this->softCap->miningMultiplier($resource->getAmount());
 
             foreach ($buildings as $building) {
                 // T-062: Building wirkt nur wenn ready
@@ -42,18 +47,18 @@ readonly class ResourceProductionProcessor implements TickProcessorInterface
                 }
                 $baseValue = $this->resourceProductionConfig->getBaseProduction($resourceType);
                 $multiplier = $this->resourceBuildingMap->getMultiplier($resourceType, $building->getType());
-                $desired += $baseValue * $building->getLevel() * $multiplier * $typeMulti;
+                $desired += $baseValue * $building->getLevel() * $multiplier * $typeMulti * $stockpileMulti;
             }
 
             if ($desired <= 0) {
                 continue;
             }
 
-            $resource = $planet->getResource($resourceType);
-
             // Storage-cap stop (T-061): production pauses when storage full.
             $cap = $planet->getStorageCapacity($resourceType);
             $capRoom = max(0, $cap - $resource->getAmount());
+
+            // (Resource was already fetched above for stockpile-multiplier; reuse it)
 
             // Clamp by deposit availability AND by storage room.
             $extracted = (int) min($desired, $deposit->getAmount(), $capRoom);

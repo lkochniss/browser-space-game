@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tick\Processor;
 
+use App\Common\Service\SoftCapConfig;
 use App\Planet\Model\Planet;
 use App\Resource\Model\Resource;
 use App\Resource\Service\PopulationConsumptionConfig;
@@ -15,6 +16,7 @@ readonly class PopulationConsumptionProcessor implements TickProcessorInterface
 {
     public function __construct(
         private PopulationConsumptionConfig $config,
+        private SoftCapConfig $softCap = new SoftCapConfig(),
     ) {
     }
 
@@ -81,7 +83,10 @@ readonly class PopulationConsumptionProcessor implements TickProcessorInterface
         }
 
         // T-063: Effective Rate = base × PlanetType-Bonus (× sizeFactor)
-        $rate = $this->config->getLogisticGrowthRate() * $typeGrowthMultiplier;
+        // T-151: Soft-Cap-Multiplier ab 1M Pop drosselt zusätzlich.
+        $rate = $this->config->getLogisticGrowthRate()
+            * $typeGrowthMultiplier
+            * $this->softCap->popGrowthMultiplier($total);
         $delta = $rate * $total * (1.0 - $total / $cap);
 
         return (int) round($delta);

@@ -6,6 +6,7 @@ namespace App\Building\Service;
 
 use App\Building\ValueObject\BuildingCost;
 use App\Building\ValueObject\BuildingType;
+use App\Common\Service\SoftCapConfig;
 use App\Resource\ValueObject\ResourceType;
 use LogicException;
 
@@ -14,8 +15,9 @@ class BuildingCostConfig
     /** @var array<string, BuildingCost> */
     private array $costs;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly SoftCapConfig $softCap = new SoftCapConfig(),
+    ) {
         $this->costs = [
             BuildingType::IRON_MINE->value => new BuildingCost(
                 resources: [ResourceType::IRON_ORE->value => 50],
@@ -117,6 +119,8 @@ class BuildingCostConfig
      *
      * - $currentLevel = 0 → initial build cost (base, multiplier 2^0 = 1).
      * - $currentLevel = N → cost to upgrade from level N to N+1 (base × 2^N).
+     * - T-151: Ab Level 20+ kommt zusätzlich Soft-Cap-Multiplier 1.05^(lvl-20)
+     *   on top des base-Doublers.
      */
     public function getCost(BuildingType $type, int $currentLevel = 0): BuildingCost
     {
@@ -128,7 +132,7 @@ class BuildingCostConfig
         }
 
         $base = $this->costs[$type->value];
-        $multiplier = 2 ** $currentLevel;
+        $multiplier = (2 ** $currentLevel) * $this->softCap->buildingCostMultiplier($currentLevel);
 
         $scaledResources = [];
         foreach ($base->resources as $resourceTypeValue => $amount) {
