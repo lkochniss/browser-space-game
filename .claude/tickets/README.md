@@ -94,6 +94,7 @@
 | 082c-demo-goals.md | Feature | Done | 5 fixe Demo-Goals (Hub L2, Mines, Recycling, Debris, 2. Planet) als On-Demand-Check |
 | 082d-demo-action-log.md | Feature | Done | DemoActionLogger + StateSnapshotter + Export-Menu (JSONL, vollständige Snapshots, Backup-on-Reset) |
 | 082e-demo-start-resource-buff.md | Feature | Done | Start-Buff: 3000 IRON_ORE + 800 COAL + 400 CU + 300 SI + 200 IRON_BAR + 1500 W/F/O |
+| 082f-demo-action-log-details.md | Bug | Open | Log zeigt nur params=[] für Build/Research; per Action sinnvolle Params setzen |
 | 097a-renewable-production-buildings.md | Feature | Done | 3 Tier-0 Producer (WATER_RECLAIMER, AGRI_DOME, ATMOSPHERIC_PROCESSOR) + Processor; Pop-Survival selbsttragend |
 | 084-galactic-council.md | Feature | Draft | Endgame-Influence-Voting auf Crusade-Targets / Galaxy-Boni |
 | 088-combat-munition.md | Feature | Draft | BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE Verbrauch im Battle |
@@ -171,4 +172,5 @@
 | 167-cleanup-loose-ends.md | TechDebt | Open | Status-Sync (T-003/T-063), Stale-Stubs entfernen, 5+ Folge-Tickets explizit anlegen |
 | 168-demo-cli-env-preflight.md | Bug | Done | `app:demo:run` Auto-Re-Exec in demo-Env via Symfony\Process — kein --env=demo mehr nötig |
 | 169-demo-reset-action-bug.md | Bug | Done | Reset-Action zentralisiert via bootstrapFreshPlayer + pendingPlayerSwap; Buff+Galaxy konsistent, Loop schwenkt um |
+| 171-building-uniqueness-slot-concept.md | Feature | Draft | Strikt-unique vs Multi-Instance + Planet-Slot-Cap; Decisions vor Implementation klären |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |
