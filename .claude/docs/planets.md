@@ -108,6 +108,17 @@ Heute alle Types 0 (Tuning-Punkt für späteres Balancing).
 - `getEffectivePopGrowthMultiplier()`
 - `getEffectiveConstructionSpeedMultiplier(BuildingType)`
 
+## Strategic-Building-Helper
+
+Pro Strategic-Building bietet Planet einen Level-Helper, der nur fertige
+Buildings zählt (`isReady($now)`):
+
+| Method | Building | Konsument |
+|--------|----------|-----------|
+| `getShipyardLevel($now)` / `hasShipyard($now)` | SHIPYARD (T-011) | Schiffsbau (ships.md) |
+| `getProbeLabLevel($now)` / `hasProbeLab($now)` | PROBE_LAB (T-013) | Sondenbau (probes.md) |
+| `getTelescopeLevel($now)` | TELESCOPE (T-018) | TelescopeDiscoveryService (discovery.md) |
+
 ## Files
 
 - `src/Planet/Model/Planet.php` (Entity)

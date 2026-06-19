@@ -19,6 +19,10 @@
 | `WATER_TANK` | +2000 WATER-Cap / Level | — | 100 Iron | 5 | 15min |
 | `FOOD_SILO` | +2000 FOOD-Cap / Level | — | 100 Iron | 5 | 15min |
 | `OXYGEN_STORAGE` | +2000 OXYGEN-Cap / Level | — | 150 Iron | 5 | 15min |
+| `SHIPYARD` | Voraussetzung Schiffsbau (T-011) | — | 500 Iron + 100 Coal + 200 Al + 50 Ti | 30 | 60min |
+| `PROBE_LAB` | Voraussetzung Sondenbau (T-013) | — | 200 Iron + 100 Si + 50 Cu | 15 | 30min |
+| `RECYCLING_PLANT` | Konsumiert DEBRIS_* → random FINITE/REFINED (T-021) | — (recycling) | 250 Iron + 100 Cu + 80 Si | 10 | 30min |
+| `TELESCOPE` | Reveals N=Level random unseen Systems / Tick (T-018) | — (discovery) | 150 Iron + 200 Si + 100 Cu | 10 | 45min |
 
 Bauzeit-Skalierung: `effectiveDuration = base × 2^currentLevel`. L1→L2 = 2× base, L5→L6 = 32× base. Analog Cost (T-010).
 
@@ -64,6 +68,15 @@ Alle extenden `\DomainException`. Failing Validation → kein State-Change (Pre-
 
 `IRON_SMELTER` ist kein Mining-Building, sondern Refinement-Building. Mapping nicht in `ResourceBuildingMap` sondern in `RefinementConfig`. Eigener Tick-Processor (`RefinementProductionProcessor`).
 
+## Strategic Buildings (Voraussetzungs-Gates)
+
+| Building | Gate | Helper | Cross-Domain |
+|----------|------|--------|--------------|
+| `SHIPYARD` | Schiffsbau | `Planet::hasShipyard($now)` / `getShipyardLevel($now)` | T-011, ships.md |
+| `PROBE_LAB` | Sondenbau | `Planet::hasProbeLab($now)` / `getProbeLabLevel($now)` | T-013, probes.md |
+| `TELESCOPE` | Galaxy-Discovery | `Planet::getTelescopeLevel($now)` | T-018, discovery.md |
+| `RECYCLING_PLANT` | DEBRIS-Konversion | (über `RecyclingProcessor` ausgewertet) | T-021, resources.md |
+
 ## Storage (T-061)
 
 Jedes Building bringt via `BuildingType::getStorageContribution(ResourceType)` eine Cap-Beitrag pro Level:
@@ -81,17 +94,22 @@ Production/Refinement clampen Output am Cap. Volles Lager → Produktion pausier
 ## Tick-Reihenfolge
 
 1. `ConstructionCompletionProcessor` (T-062) — recalc Pop-Cap mit aktueller Clock
-2. `ResourceProductionProcessor` (Mining)
+2. `ResourceProductionProcessor` (Mining + T-151 Stockpile-SoftCap)
 3. `RefinementProductionProcessor` (Refinement)
-4. `PopulationConsumptionProcessor` (Pop verbraucht W/F)
+4. `PopulationConsumptionProcessor` (Pop verbraucht W/F + T-151 Pop-Soft-Cap)
+5. `ShipSupplyProcessor` (T-012, Ship-Life-Support)
+6. `RecyclingProcessor` (T-021, DEBRIS → random Output)
 
-Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->now()` über TickEngine.
+Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->now()` über TickEngine. Siehe auch tick.md für globale Tick-Services (FleetArrival, Salvage, TelescopeDiscovery).
 
 ## Geplant
 
-- **T-064** Bauzeit-Speed-Boost (Forschung + Spezial-Buildings reduzieren Duration)
-- **High-Tier Cost-Migration:** Buildings mit IRON_BAR statt IRON_ORE als Cost (z.B. Raumwerft T-011)
+- **T-064** Bauzeit-Speed-Boost (Forschung + Spezial-Buildings reduzieren Duration); Decisions vorab dokumentiert (multiplikativ, no-retroactive, upgrades=initial)
+- **High-Tier Cost-Migration:** Buildings mit IRON_BAR statt IRON_ORE als Cost
 - **T-025/T-026** Forschungs-Gating für höhere Building-Levels
+- **T-065** Power-Net (Energy-System) — Reaktoren + Consumer
+- **T-068** Defense-Buildings (Shield/Turret/Sensor/AA)
+- **T-069** Research-Lab Tier mit RP-Output
 - **Demolish/Refund-Flow** (eigenes Ticket bei Bedarf)
 - **Construction-Queue:** mehrere Bauten parallel + Worker-Limit
 

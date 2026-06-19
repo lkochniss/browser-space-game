@@ -2,11 +2,12 @@
 
 ## ResourceCategory
 
-| Category | Bedeutung |
-|----------|-----------|
-| `FINITE` | Aus Vorkommen abgebaut. Deposit sinkt → ausgebeutet bei 0 |
-| `RENEWABLE` | Ohne Vorkommen. Pop/Hub-abhängig (T-005/T-006). Verbrauch im Tick |
-| `REFINED` | Veredelt aus Rohstoffen via Verarbeitungs-Building (T-003) |
+| Category | Bedeutung | Base-Cap |
+|----------|-----------|----------|
+| `FINITE` | Aus Vorkommen abgebaut. Deposit sinkt → ausgebeutet bei 0 | 100 |
+| `RENEWABLE` | Ohne Vorkommen. Pop/Hub-abhängig (T-005/T-006). Verbrauch im Tick | 500 |
+| `REFINED` | Veredelt aus Rohstoffen via Verarbeitungs-Building (T-003) | 100 |
+| `DEBRIS` | Trümmer aus DebrisFields (T-021), via Recycling-Plant zu Random-Output | 50 |
 
 `ResourceType::getCategory(): ResourceCategory` liefert die Kategorie pro Case.
 
@@ -25,6 +26,9 @@
 | `FOOD` | food | RENEWABLE | — | 3.0 | 100 | nein |
 | `OXYGEN` | oxygen | RENEWABLE | — | 0.0 | 100 | nein |
 | `IRON_BAR` | iron_bar | REFINED | `IRON_SMELTER` (2 Iron + 1 Coal → 1 Bar) | linear × Level | — | nein, lazy auto-create |
+| `DEBRIS_LOW` | debris_low | DEBRIS | Salvage von DebrisField (T-021) | — | — | — |
+| `DEBRIS_MEDIUM` | debris_medium | DEBRIS | Salvage von DebrisField (T-021) | — | — | — |
+| `DEBRIS_HIGH` | debris_high | DEBRIS | Salvage von DebrisField (T-021) | — | — | — |
 
 ## Mining-Mechanik (T-002)
 
@@ -47,11 +51,29 @@
 |--------|----------|------------------------------|
 | `IRON_BAR` | `IRON_SMELTER` | 2 IRON_ORE + 1 COAL |
 
-## Tick-Reihenfolge
+## Recycling-Mechanik (T-021)
 
-1. `ResourceProductionProcessor` (Mining)
-2. `RefinementProductionProcessor` (Refinement, nutzt Mining-Output)
-3. `PopulationConsumptionProcessor` (Pop verbraucht Wasser/Nahrung)
+`RecyclingProcessor` (TickProcessor) konsumiert pro Recycling-Plant-Level
+2 DEBRIS-Items pro Tick (Reihenfolge LOW → MEDIUM → HIGH). Pro Item würfelt
+`RecyclingTable × Randomizer` einen Output:
+
+| Tier | Tabelle (gewichtet) |
+|------|---------------------|
+| `DEBRIS_LOW` | 70% IRON_ORE (5-15) / 20% COAL (3-10) / 10% nichts |
+| `DEBRIS_MEDIUM` | 50% IRON_BAR (3-8) / 30% SILICON (5-15) / 15% TITANIUM_ORE (2-5) / 5% nichts |
+| `DEBRIS_HIGH` | 40% TITANIUM_ORE (5-12) / 30% URANIUM_ORE (3-8) / 20% IRON_BAR (8-20) / 10% ALUMINUM_ORE (10-25) |
+
+Tunable. Salvage von DebrisField (T-021) füttert die Cargo-Pipeline analog
+AsteroidField, dank gemeinsamem `SalvageableField`-Interface.
+
+## Tick-Reihenfolge (relevant für Resources)
+
+1. `ConstructionCompletionProcessor` (T-062, recalc Pop-Cap)
+2. `ResourceProductionProcessor` (Mining + T-151 Stockpile-SoftCap)
+3. `RefinementProductionProcessor` (Refinement, nutzt Mining-Output)
+4. `PopulationConsumptionProcessor` (Pop verbraucht W/F + T-151 Pop-Soft-Cap)
+5. `ShipSupplyProcessor` (T-012, Ship-Life-Support)
+6. `RecyclingProcessor` (T-021, DEBRIS → random Output)
 
 ## Storage (T-061)
 
@@ -66,6 +88,7 @@ cap = ResourceCategory.baseCap + Σ(building.type.getStorageContribution(resourc
 | `RENEWABLE` | 500 | HUB +200/level, WATER_TANK +2000/level |
 | `FINITE` | 100 | Mining-Mine +100/level eigene Resource, IRON_STORAGE +1000/level |
 | `REFINED` | 100 | IRON_SMELTER +100/level, IRON_BAR_STORAGE +1000/level |
+| `DEBRIS` | 50 | (kein dediziertes Storage-Building, T-021 ohne Lager-Erweiterung) |
 
 **Cap-Stop** (T-061): Mining + Refinement Production pausieren bei vollem Lager. Refinement debitiert Inputs nur anteilig zur tatsächlichen Output-Menge. Kein Verfall.
 
@@ -85,5 +108,8 @@ Heute relevante Storage-Buildings: IRON_STORAGE, COAL_STORAGE, IRON_BAR_STORAGE,
 - `src/Tick/Processor/ResourceProductionProcessor.php`
 - `src/Tick/Processor/RefinementProductionProcessor.php`
 - `src/Tick/Processor/PopulationConsumptionProcessor.php`
+- `src/Tick/Processor/RecyclingProcessor.php` (T-021)
+- `src/Building/Service/RecyclingTable.php` (T-021 Wahrscheinlichkeits-Tabelle)
+- `src/Common/Service/Randomizer.php` (T-021, testbar via Stub)
 - `src/Planet/Service/ClaimStartPlanetCommandService.php` (Init beim Claim)
 - `src/Planet/Model/Planet.php` (`ensureResource`-Helper)
