@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace App\Research\Model;
 
+use App\Research\Model\Prerequisite\ResearchPrerequisite;
+
 /**
- * T-025 Research-Node: rein deklarative VO für einen Tech-Eintrag.
+ * T-025 Research-Node (rein deklarative VO).
+ * T-170: prerequisites umgestellt auf polymorphes ResearchPrerequisite-Interface
+ *        (Research-Levels + Building-Levels).
  *
- * `prerequisites` ist Liste von [slug, minLevel] Pairs (z.B. `[['mining_efficiency_1', 2]]`).
- * `resourceCostBase` ist Map<ResourceType-value, int> für Level 1; höhere Levels skalieren
- * via `ResearchDurationConfig::cost(targetLevel)` analog Building-Cost-Pattern.
+ * `resourceCostBase` ist Map<ResourceType-value, int> für Level 1; höhere Levels
+ * skalieren via `ResearchDurationConfig::resourceCost(targetLevel)` analog
+ * Building-Cost-Pattern.
  */
 readonly class ResearchNode
 {
     /**
-     * @param list<array{slug: string, level: int}> $prerequisites
+     * @param list<ResearchPrerequisite> $prerequisites
      * @param array<string, int> $resourceCostBase
      */
     public function __construct(

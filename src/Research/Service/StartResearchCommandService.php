@@ -15,6 +15,7 @@ use App\Research\Exception\MaxLevelReachedException;
 use App\Research\Exception\PrerequisiteNotMetException;
 use App\Research\Exception\ResearchLabMissingException;
 use App\Research\Model\ActiveResearch;
+use App\Research\Model\Prerequisite\PlayerResearchLookup;
 use App\Research\Repository\ActiveResearchRepository;
 use App\Research\Repository\PlayerResearchRepository;
 use App\Resource\ValueObject\ResourceType;
@@ -35,7 +36,7 @@ use Doctrine\ORM\EntityManagerInterface;
  * Effekt: Resources abziehen (FIFO über Planeten), ActiveResearch persistieren
  * mit `finished_at = now + duration`.
  */
-readonly class StartResearchCommandService
+readonly class StartResearchCommandService implements PlayerResearchLookup
 {
     public function __construct(
         private EntityManagerInterface $em,
@@ -46,6 +47,13 @@ readonly class StartResearchCommandService
         private ResearchDurationConfig $durationConfig,
         private ClockInterface $clock,
     ) {
+    }
+
+    public function getPlayerResearchLevel(\App\Player\Model\Player $player, string $nodeSlug): int
+    {
+        return $this->playerResearchRepository
+            ->findOneByPlayerAndSlug($player, $nodeSlug)
+            ?->getLevel() ?? 0;
     }
 
     public function __invoke(PlayerId $playerId, string $nodeSlug): ActiveResearch
@@ -80,13 +88,10 @@ readonly class StartResearchCommandService
             throw new MaxLevelReachedException($nodeSlug, $node->maxLevel);
         }
 
-        // 6. Prerequisites
+        // 6. Prerequisites (T-170: polymorph — Research- + Building-Levels)
         foreach ($node->prerequisites as $prereq) {
-            $prereqLevel = $this->playerResearchRepository
-                ->findOneByPlayerAndSlug($player, $prereq['slug'])
-                ?->getLevel() ?? 0;
-            if ($prereqLevel < $prereq['level']) {
-                throw new PrerequisiteNotMetException($nodeSlug, $prereq['slug'], $prereq['level'], $prereqLevel);
+            if (!$prereq->isMetBy($player, $now, $this)) {
+                throw new PrerequisiteNotMetException($nodeSlug, $prereq);
             }
         }
 

@@ -69,6 +69,28 @@ Alle extenden `\DomainException`. Failing Validation → kein State-Change (Pre-
 
 `IRON_SMELTER` ist kein Mining-Building, sondern Refinement-Building. Mapping nicht in `ResourceBuildingMap` sondern in `RefinementConfig`. Eigener Tick-Processor (`RefinementProductionProcessor`).
 
+## Tech-Tree-Locks (T-170)
+
+Buildings sind hinter Forschung versteckt. Tier-0 (`IRON_MINE, HUB, RESEARCH_LAB,
+WATER_TANK, FOOD_SILO, OXYGEN_STORAGE`) frei; alle anderen via Research gated.
+
+`BuildingUnlockConfig::requiredResearch(BuildingType): ?{slug, level}` ist Single-
+Source-of-Truth. `BuildBuildingCommandService` validiert vor Cost-Check und wirft
+`BuildingLockedException`. Demo-CLI Build-Menu zeigt locked Buildings als
+🔒 mit Reason.
+
+| Forschung | Unlocks |
+|-----------|---------|
+| `basic_mining` | COAL_MINE, COPPER_MINE, IRON_STORAGE, COAL_STORAGE |
+| `metallurgy` | IRON_SMELTER, IRON_BAR_STORAGE |
+| `astronomy` | TELESCOPE, PROBE_LAB |
+| `shipbuilding` | SHIPYARD |
+| `advanced_mining` | SILICON_MINE, ALUMINUM_MINE, TITANIUM_MINE, URANIUM_MINE |
+| `recycling` | RECYCLING_PLANT |
+
+Forschungen selbst haben Building-Prereqs ("currently-has-ready"). Vollständiges
+Tier-Mapping: research.md.
+
 ## Strategic Buildings (Voraussetzungs-Gates)
 
 | Building | Gate | Helper | Cross-Domain |

@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Research\Exception;
 
+use App\Research\Model\Prerequisite\ResearchPrerequisite;
 use DomainException;
 
 class PrerequisiteNotMetException extends DomainException
 {
-    public function __construct(string $nodeSlug, string $missingPrereqSlug, int $requiredLevel, int $actualLevel)
+    public function __construct(string $nodeSlug, ResearchPrerequisite $missing)
     {
         parent::__construct(sprintf(
-            'Prerequisite für "%s" nicht erfüllt: braucht "%s" Level %d, hat %d.',
+            'Prerequisite für "%s" nicht erfüllt: %s.',
             $nodeSlug,
-            $missingPrereqSlug,
-            $requiredLevel,
-            $actualLevel,
+            $missing->describe(),
         ));
     }
 }

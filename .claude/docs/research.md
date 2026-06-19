@@ -67,6 +67,43 @@ TickForward → ResearchCompletionService.runTickForPlayer
   ↓ Upsert PlayerResearch.level++ + Remove ActiveResearch
 ```
 
+## Polymorphe Prerequisites (T-170)
+
+ResearchNode.prerequisites ist `list<ResearchPrerequisite>`. 2 Implementations:
+
+| Implementation | Bedingung |
+|----------------|-----------|
+| `ResearchLevelPrerequisite(slug, level)` | `PlayerResearch[slug].level >= level` |
+| `BuildingLevelPrerequisite(BuildingType, level)` | Player hat Building auf >= level + isReady($now) auf irgendeinem Planeten |
+
+`StartResearchCommandService` implementiert `PlayerResearchLookup` und ruft
+`prereq->isMetBy($player, $now, $this)` für jeden Eintrag. `PrerequisiteNotMetException`
+zeigt das fehlende Prereq via `describe()` an den Player ("Building iron_mine L2").
+
+**Decision: "currently-has-ready":** Building-Prereq braucht das Gebäude im
+aktuellen Tick + ready. Während Upgrade-Phase fällt es kurz aus dem Prereq —
+akzeptable Friktion. Foundation hat keinen Demolish, also kein nachträgliches
+Lock-Risiko.
+
+## Tech-Tree-Tier-Mapping (T-170)
+
+Tier-0 (frei): IRON_MINE, HUB, RESEARCH_LAB, WATER_TANK, FOOD_SILO, OXYGEN_STORAGE.
+
+| Forschung | Building-Prereq | Forschungs-Prereq | Unlocks Buildings |
+|-----------|-----------------|-------------------|-------------------|
+| `basic_mining` | IRON_MINE L1 | — | COAL_MINE, COPPER_MINE, IRON_STORAGE, COAL_STORAGE |
+| `metallurgy` | IRON_MINE L2 | basic_mining L1 | IRON_SMELTER, IRON_BAR_STORAGE |
+| `astronomy` | HUB L2 | basic_mining L1 | TELESCOPE, PROBE_LAB |
+| `shipbuilding` | IRON_SMELTER L1 | metallurgy L1 | SHIPYARD |
+| `advanced_mining` | IRON_SMELTER L1 | metallurgy L1 | SILICON_MINE, ALUMINUM_MINE, TITANIUM_MINE, URANIUM_MINE |
+| `recycling` | HUB L2 | basic_mining L1 | RECYCLING_PLANT |
+
+`BuildingUnlockConfig` mappt BuildingType → required Research. `BuildBuildingCommandService`
+prüft via `checkUnlock($planet, $type)` vor Cost-Validation und wirft `BuildingLockedException`.
+
+`BuildBuildingCommandService::isUnlockedFor($player, $type)` als Public-Helper für
+Demo-CLI / UI (zeigt 🔒 + Reason).
+
 ## Stub-Nodes (T-025 Foundation)
 
 T-026 ersetzt diese Stubs durch echten Antrieb-Tree (inkl. `ftl_tier_2` für

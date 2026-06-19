@@ -7,7 +7,9 @@ namespace App\Demo\Command;
 use App\Building\Command\BuildBuildingCommand;
 use App\Building\Command\UpgradeBuildingCommand;
 use App\Building\Model\Building;
+use App\Building\Service\BuildBuildingCommandService;
 use App\Building\Service\BuildingCostConfig;
+use App\Building\Service\BuildingUnlockConfig;
 use App\Building\ValueObject\BuildingId;
 use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\CommandBusInterface;
@@ -119,6 +121,8 @@ class InteractiveDemoCommand extends Command
         private readonly ResearchCompletionService $researchCompletion,
         private readonly PlayerResearchRepository $playerResearchRepository,
         private readonly ActiveResearchRepository $activeResearchRepository,
+        private readonly BuildBuildingCommandService $buildService,
+        private readonly BuildingUnlockConfig $unlockConfig,
     ) {
         parent::__construct();
     }
@@ -547,9 +551,23 @@ class InteractiveDemoCommand extends Command
                     $costParts[] = sprintf('%d %s', $amount, $rType);
                 }
                 $costParts[] = sprintf('%d pop', $cost->populationCost);
-                $choices[$bt->value] = sprintf('%s (%s)', $bt->value, implode(', ', $costParts));
+                $costStr = implode(', ', $costParts);
             } catch (\Throwable) {
-                $choices[$bt->value] = sprintf('%s (no cost configured)', $bt->value);
+                $costStr = 'no cost configured';
+            }
+
+            // T-170: Tech-Tree-Lock anzeigen
+            $unlock = $this->unlockConfig->requiredResearch($bt);
+            if ($unlock !== null && !$this->buildService->isUnlockedFor($player, $bt)) {
+                $choices[$bt->value] = sprintf(
+                    '🔒 %s (%s) — erfordert %s L%d',
+                    $bt->value,
+                    $costStr,
+                    $unlock['slug'],
+                    $unlock['level'],
+                );
+            } else {
+                $choices[$bt->value] = sprintf('%s (%s)', $bt->value, $costStr);
             }
         }
         $type = $io->choice('Building Type', $choices);

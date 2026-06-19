@@ -165,3 +165,4 @@
 | 164-battle-replay-ui.md | Feature | Draft | Battle-Replay (Table-MVP, Animated-Folge) |
 | 165-settings-personalization.md | Feature | Draft | UI-Theme/Default-Tactic/Galaxy-Filter/Notification-Prefs |
 | 166-animated-battle-replay.md | Feature | Draft | Animated-Battle-Replay-View (Folge zu T-164) |
+| 170-tech-tree-building-research-gating.md | Feature | In Progress | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated |

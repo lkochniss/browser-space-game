@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Building\Service;
 
+use App\Building\Exception\BuildingLockedException;
 use App\Building\Exception\InsufficientPopulationException;
 use App\Building\Exception\InsufficientResourcesException;
 use App\Building\Exception\PlanetNotFoundException;
@@ -14,6 +15,8 @@ use App\Common\Interface\ClockInterface;
 use App\Planet\Model\Planet;
 use App\Planet\Repository\PlanetRepository;
 use App\Planet\ValueObject\PlanetId;
+use App\Player\Model\Player;
+use App\Research\Repository\PlayerResearchRepository;
 use App\Resource\ValueObject\ResourceType;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +29,26 @@ readonly class BuildBuildingCommandService
         private BuildingCostConfig $costConfig,
         private BuildingDurationConfig $durationConfig,
         private ClockInterface $clock,
+        private BuildingUnlockConfig $unlockConfig,
+        private PlayerResearchRepository $playerResearchRepository,
     ) {
+    }
+
+    /**
+     * T-170: Public Helper für Demo-CLI / UI — checkt ob ein Player ein
+     * Building bauen darf (Research-Gate). Wirft KEINE Exception.
+     */
+    public function isUnlockedFor(Player $player, BuildingType $type): bool
+    {
+        $req = $this->unlockConfig->requiredResearch($type);
+        if ($req === null) {
+            return true;
+        }
+        $level = $this->playerResearchRepository
+            ->findOneByPlayerAndSlug($player, $req['slug'])
+            ?->getLevel() ?? 0;
+
+        return $level >= $req['level'];
     }
 
     public function __invoke(PlanetId $planetId, BuildingType $type): Building
@@ -35,6 +57,8 @@ readonly class BuildBuildingCommandService
         if ($planet === null) {
             throw new PlanetNotFoundException($planetId);
         }
+
+        $this->checkUnlock($planet, $type);
 
         $cost = $this->costConfig->getCost($type);
 
@@ -58,6 +82,26 @@ readonly class BuildBuildingCommandService
         $this->em->flush();
 
         return $building;
+    }
+
+    private function checkUnlock(Planet $planet, BuildingType $type): void
+    {
+        $req = $this->unlockConfig->requiredResearch($type);
+        if ($req === null) {
+            return;
+        }
+        $owner = $planet->getPlayer();
+        if ($owner === null) {
+            // Foundation: unowned Planet ist Demo/Test-Edge — kein Lock-Check (passiert
+            // nur via Direct-Service-Call ohne ClaimStartPlanet-Bootstrap).
+            return;
+        }
+        $level = $this->playerResearchRepository
+            ->findOneByPlayerAndSlug($owner, $req['slug'])
+            ?->getLevel() ?? 0;
+        if ($level < $req['level']) {
+            throw new BuildingLockedException($type, $req['slug'], $req['level']);
+        }
     }
 
     private function checkResources(Planet $planet, BuildingCost $cost): void

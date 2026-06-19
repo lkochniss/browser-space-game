@@ -36,7 +36,7 @@ Galaxy via `ClaimStartPlanetCommand`. Mit `--reset` zusätzlich Schema-Drop.
 | Status | Planet, Resources, Pop, Buildings, Ships, Fleets, POIs |
 | **Goals** (T-082c) | `DemoGoalChecker` — 5 Mini-Quests mit ✓/✗ |
 | Galaxy Overview | `SolarSystemRepository` filterd auf entdeckte (T-018) |
-| Build Building | `BuildBuildingCommand` mit Cost-Preview im Label |
+| Build Building | `BuildBuildingCommand` mit Cost-Preview im Label; locked Buildings mit 🔒 + Forschungs-Reason (T-170) |
 | Upgrade Building | `UpgradeBuildingCommand` |
 | Build Ship | `BuildShipCommand` mit Shipyard-Pre-Check |
 | Build Probe | `BuildProbeCommand` mit Probe-Lab-Pre-Check |
