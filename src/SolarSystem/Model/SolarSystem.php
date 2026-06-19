@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\SolarSystem\Model;
 
 use App\Common\Doctrine\Type\SolarSystemIdType;
+use App\POI\Model\Poi;
 use App\Planet\Model\Planet;
 use App\SolarSystem\Repository\SolarSystemRepository;
 use App\SolarSystem\ValueObject\SolarSystemId;
@@ -24,6 +25,14 @@ class SolarSystem
     )]
     private Collection $planets;
 
+    /** @var Collection<int, Poi> */
+    #[ORM\OneToMany(
+        targetEntity: Poi::class,
+        mappedBy: 'solarSystem',
+        cascade: ['persist'],
+    )]
+    private Collection $pois;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(type: SolarSystemIdType::NAME)]
@@ -33,6 +42,7 @@ class SolarSystem
         private string $name,
     ) {
         $this->planets = new ArrayCollection();
+        $this->pois = new ArrayCollection();
     }
 
     /**
@@ -66,6 +76,19 @@ class SolarSystem
         if (!$this->planets->contains($planet)) {
             $this->planets->add($planet);
             $planet->setSolarSystem($this);
+        }
+    }
+
+    /** @return Collection<int, Poi> */
+    public function getPois(): Collection
+    {
+        return $this->pois;
+    }
+
+    public function addPoi(Poi $poi): void
+    {
+        if (!$this->pois->contains($poi)) {
+            $this->pois->add($poi);
         }
     }
 }

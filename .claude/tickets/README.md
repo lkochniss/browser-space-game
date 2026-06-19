@@ -20,7 +20,7 @@
 | 016-bergungsschiff.md | Feature | Open | Bergungsschiff + Salvage-Action |
 | 017-flotte-movement.md | Feature | Done | Persistent-Fleet + Wallclock-Movement (Slowest-Ship-Speed) + FleetArrivalService; Magic-Dock-Cleanup |
 | 018-teleskop-discovery.md | Feature | Open | Teleskop-Building + Meta-Erkundung von Systemen |
-| 019-poi-system.md | Feature | Open | POI-Basis + Subtypes |
+| 019-poi-system.md | Feature | Done | POI-Foundation (STI) + 7 PoiTypes + SolarSystem.pois |
 | 020-asteroidenfeld.md | Feature | Open | Asteroidenfeld POI + endliche Rohstoffe |
 | 021-truemmerfeld-recycling.md | Feature | Open | Trümmerfeld + Trümmer + Recycling-Anlage Chain |
 | 022-nebel-poi.md | Feature | Open | Nebel POI + Stealth |
