@@ -97,6 +97,43 @@ final class StartResearchCommandServiceTest extends IntegrationTestCase
         $service->__invoke($player->getId(), 'ftl_tier_1');
     }
 
+    public function test_multi_lab_aggregates_with_diminishing_returns(): void
+    {
+        // T-025b: 3 Labs L1 auf einem Planeten → effective 1+0.5+0.25 = 1.75
+        $player = $this->seedPlayerWithLab(labLevel: 0); // ohne Default-Lab seeden
+        $planet = $player->getPlanets()->first();
+        for ($i = 0; $i < 3; $i++) {
+            $b = new Building(BuildingId::generate(), BuildingType::RESEARCH_LAB, 1);
+            $b->setFinishedAt(new DateTimeImmutable('-1 minute'));
+            $planet->addBuilding($b);
+        }
+        $this->em->flush();
+
+        $service = $this->makeStartService();
+        $effective = $service->getEffectiveLabLevel($player, new DateTimeImmutable());
+
+        self::assertEqualsWithDelta(1.75, $effective, 0.01);
+    }
+
+    public function test_single_lab_l3_beats_three_l1_labs(): void
+    {
+        // Eine starke Forschungs-Pyramide ist besser als verteilte Foundation-Labs.
+        $playerSingle = $this->seedPlayerWithLab(labLevel: 3);
+        $effSingle = $this->makeStartService()->getEffectiveLabLevel($playerSingle, new DateTimeImmutable());
+
+        $playerMulti = $this->seedPlayerWithLab(labLevel: 0);
+        $planet = $playerMulti->getPlanets()->first();
+        for ($i = 0; $i < 3; $i++) {
+            $b = new Building(BuildingId::generate(), BuildingType::RESEARCH_LAB, 1);
+            $b->setFinishedAt(new DateTimeImmutable('-1 minute'));
+            $planet->addBuilding($b);
+        }
+        $this->em->flush();
+        $effMulti = $this->makeStartService()->getEffectiveLabLevel($playerMulti, new DateTimeImmutable());
+
+        self::assertGreaterThan($effMulti, $effSingle, 'Single L3 (3.0) > 3×L1 (1.75)');
+    }
+
     public function test_lab_higher_level_reduces_duration(): void
     {
         $playerWithBigLab = $this->seedPlayerWithLab(labLevel: 5);

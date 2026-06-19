@@ -118,6 +118,7 @@ class InteractiveDemoCommand extends Command
         private readonly StateSnapshotter $snapshotter,
         private readonly ResearchTree $researchTree,
         private readonly ResearchDurationConfig $researchDurationConfig,
+        private readonly \App\Research\Service\StartResearchCommandService $startResearchService,
         private readonly ResearchCompletionService $researchCompletion,
         private readonly PlayerResearchRepository $playerResearchRepository,
         private readonly ActiveResearchRepository $activeResearchRepository,
@@ -964,17 +965,14 @@ class InteractiveDemoCommand extends Command
             $io->newLine();
         }
 
-        // Lab-Level
-        $maxLab = 0;
-        foreach ($player->getPlanets() as $planet) {
-            $maxLab = max($maxLab, $planet->getResearchLabLevel($now));
-        }
-        if ($maxLab === 0) {
+        // T-025b Multi-Lab-Aggregat
+        $effectiveLab = $this->startResearchService->getEffectiveLabLevel($player, $now);
+        if ($effectiveLab < 1.0) {
             $io->note('Kein fertiges RESEARCH_LAB — bauen, dann zurückkommen.');
 
             return true;
         }
-        $io->text(sprintf('Höchstes Research-Lab Level: <info>%d</info>', $maxLab));
+        $io->text(sprintf('Effective Research-Lab-Level (Multi-Lab-Aggregat): <info>%.2f</info>', $effectiveLab));
         $io->newLine();
 
         // Choice der verfügbaren Nodes mit Cost + Duration-Preview
@@ -989,7 +987,7 @@ class InteractiveDemoCommand extends Command
             }
             $targetLevel = $currentLevel + 1;
             $cost = $this->researchDurationConfig->resourceCost($node, $targetLevel);
-            $duration = $this->researchDurationConfig->durationSeconds($node, $targetLevel, $maxLab);
+            $duration = $this->researchDurationConfig->durationSeconds($node, $targetLevel, $effectiveLab);
             $costParts = [];
             foreach ($cost as $resVal => $amount) {
                 $costParts[] = sprintf('%d %s', $amount, $resVal);

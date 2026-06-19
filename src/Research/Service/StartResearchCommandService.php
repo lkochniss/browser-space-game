@@ -66,8 +66,8 @@ readonly class StartResearchCommandService implements PlayerResearchLookup
         $now = $this->clock->now();
 
         // 2. Lab-Gate
-        $maxLabLevel = $this->getMaxLabLevel($player, $now);
-        if ($maxLabLevel === 0) {
+        $effectiveLab = $this->getEffectiveLabLevel($player, $now);
+        if ($effectiveLab < 1.0) {
             throw new ResearchLabMissingException();
         }
 
@@ -111,7 +111,7 @@ readonly class StartResearchCommandService implements PlayerResearchLookup
         }
 
         // ActiveResearch persistieren
-        $duration = $this->durationConfig->durationSeconds($node, $targetLevel, $maxLabLevel);
+        $duration = $this->durationConfig->durationSeconds($node, $targetLevel, $effectiveLab);
         $finishedAt = $now->add(new \DateInterval(sprintf('PT%dS', $duration)));
         $entry = ActiveResearch::generate($player, $nodeSlug, $targetLevel, $now, $finishedAt);
         $this->em->persist($entry);
@@ -120,9 +120,18 @@ readonly class StartResearchCommandService implements PlayerResearchLookup
         return $entry;
     }
 
-    private function getMaxLabLevel(Player $player, \DateTimeImmutable $now): int
+    /**
+     * T-025b Multi-Lab-Aggregator. Sammelt alle ready Lab-Levels über alle Player-
+     * Planeten, sortiert desc, summiert mit geometrischer Decay (Faktor 0.5):
+     *
+     *   effective = L1 × 1.0 + L2 × 0.5 + L3 × 0.25 + L4 × 0.125 + ...
+     *
+     * Ergebnis als float in `ResearchDurationConfig::durationSeconds` konsumiert.
+     * Public damit Demo-CLI denselben Wert anzeigen kann.
+     */
+    public function getEffectiveLabLevel(Player $player, \DateTimeImmutable $now): float
     {
-        $max = 0;
+        $levels = [];
         foreach ($player->getPlanets() as $planet) {
             foreach ($planet->getBuildings() as $b) {
                 if ($b->getType() !== BuildingType::RESEARCH_LAB) {
@@ -131,13 +140,19 @@ readonly class StartResearchCommandService implements PlayerResearchLookup
                 if (!$b->isReady($now)) {
                     continue;
                 }
-                if ($b->getLevel() > $max) {
-                    $max = $b->getLevel();
-                }
+                $levels[] = $b->getLevel();
             }
         }
+        if ($levels === []) {
+            return 0.0;
+        }
+        rsort($levels);
+        $effective = 0.0;
+        foreach ($levels as $idx => $level) {
+            $effective += $level * (0.5 ** $idx);
+        }
 
-        return $max;
+        return $effective;
     }
 
     /**

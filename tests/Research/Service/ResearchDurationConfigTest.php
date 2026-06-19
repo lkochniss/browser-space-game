@@ -16,7 +16,7 @@ final class ResearchDurationConfigTest extends TestCase
         $node = new ResearchNode('test', 'Test', '', 600, 5);
 
         // L1 + Lab L1: keine Skalierung weder oben noch unten
-        self::assertSame(600, $config->durationSeconds($node, targetLevel: 1, maxLabLevel: 1));
+        self::assertSame(600, $config->durationSeconds($node, targetLevel: 1, effectiveLabLevel: 1.0));
     }
 
     public function test_level_skaliert_2_pow(): void
@@ -48,6 +48,29 @@ final class ResearchDurationConfigTest extends TestCase
 
         // 0 Lab → behandelt wie 1, kein NaN/0
         self::assertSame(600, $config->durationSeconds($node, 1, 0));
+    }
+
+    public function test_fractional_lab_level_scales_continuously(): void
+    {
+        // T-025b: float-Lab-Level (Multi-Lab-Aggregat) skaliert kontinuierlich
+        $config = new ResearchDurationConfig();
+        $node = new ResearchNode('test', 'Test', '', 600, 5);
+
+        // Effective 1.5 → 600 / pow(1.18, 0.5) ≈ 552
+        $d = $config->durationSeconds($node, 1, 1.5);
+        self::assertGreaterThan(540, $d);
+        self::assertLessThan(560, $d);
+    }
+
+    public function test_more_labs_faster(): void
+    {
+        // 2 Labs L1 → effective 1.5 (1.0 + 0.5*1.0). Schneller als 1 Lab L1.
+        $config = new ResearchDurationConfig();
+        $node = new ResearchNode('test', 'Test', '', 600, 5);
+
+        $oneLab = $config->durationSeconds($node, 1, 1.0);
+        $twoLabs = $config->durationSeconds($node, 1, 1.5);
+        self::assertLessThan($oneLab, $twoLabs);
     }
 
     public function test_resource_cost_skaliert_2_pow(): void

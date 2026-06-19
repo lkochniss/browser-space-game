@@ -1,7 +1,7 @@
 # T-025b: Multi-Lab Research-Boost
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done
 **Effort:** S (~1h)
 **Depends on:** T-025 (Forschungs-Foundation)
 **Blocks:** —
@@ -12,22 +12,19 @@ T-025-Foundation nutzt nur das **höchste** RESEARCH_LAB-Level eines einzelnen
 Planeten als Speed-Multiplier. T-025b stackt mehrere Labs aus mehreren Planeten
 des Players, sodass Multi-Planet-Strategie belohnt wird.
 
-## Decision-Idee (zu klären beim Start)
+## Decision (2026-06-19)
 
-`effectiveLabBonus = max(labLevel) + Σ(otherLabs × diminishing)` — z.B. Haupt-
-Lab = 100% Wirkung, jedes weitere Lab = +20% Bonus (mit Cap).
-
-Konkrete Formel offen — abhängig vom Tuning aus T-025-Demo-Erfahrung.
+Geometric Decay 0.5: `effective = L1×1.0 + L2×0.5 + L3×0.25 + L4×0.125 + ...`.
+Asymptotic cap bei 2× max-Lab-Level. Single Lab L3 (3.0) > 3 Labs L1 (1.75).
 
 ## Acceptance Criteria
 
-- [ ] `Planet::getResearchLabLevel` bleibt (max-pro-Planet); neuer Helper auf
-  Player-Ebene: `Player::getEffectiveResearchSpeedMultiplier()` aggregiert über
-  alle Planeten
-- [ ] `ResearchDurationConfig::computeDuration` nutzt Player-Helper statt nur
-  einen Planet
-- [ ] Tests: Single-Lab → unverändert; 2 Labs → erhöhter Speed; 5 Labs → cap
-- [ ] Doc-Update: research.md
+- [x] `StartResearchCommandService::getEffectiveLabLevel(Player, now): float` (public)
+- [x] `ResearchDurationConfig::durationSeconds` nimmt jetzt `float $effectiveLabLevel`
+- [x] Demo-CLI Forschung-Action zeigt Effective-Lab-Level (Multi-Lab-Aggregat)
+- [x] Tests: 4 neue (multi-aggregate, single-better-than-many, fractional-lab, more-labs-faster)
+- [x] Suite grün (502/502)
+- [x] Doc-Update: research.md
 
 ## Out of Scope
 

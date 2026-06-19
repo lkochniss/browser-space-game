@@ -30,7 +30,7 @@
 | 023b-station-maintenance-takeover.md | Feature | Draft | Station-Maintenance-Tick + Pop-Mortality + ABANDONED-State + ClaimAbandonedStationCommand |
 | 024-raumschlacht.md | Feature | Open | Legacy-Anker, abgelöst durch T-103 (PvE-Pivot) |
 | 025-forschung-framework.md | Feature | Done | Wallclock-Forschung Foundation: Node + Active/PlayerResearch + RESEARCH_LAB-Building + Demo-Action + Stub-Nodes |
-| 025b-multi-lab-research-boost.md | Feature | Draft | Mehrere Labs auf mehreren Planeten stacken Speed-Multiplier (Folge zu T-025) |
+| 025b-multi-lab-research-boost.md | Feature | Done | Multi-Lab-Aggregat (geometric decay 0.5); single L3 > 3×L1; ResearchDurationConfig nimmt float |
 | 026-antriebstechnologie-tree.md | Feature | Done | 7 Antriebs-Nodes + Inter-System-Travel-Lock (ftl_hyperdrive); PropulsionType/Fuel via Folge |
 | 027-planetologie-research.md | Feature | Open | Planetologie-Forschung (Sondendetails + Terraform-Gate) |
 | 028-techdebt-wrong-namespaces.md | TechDebt | Done | `use ValueObject\PlanetId` etc. — falsche Imports (gefixt) |
