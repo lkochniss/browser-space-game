@@ -48,6 +48,22 @@ class Ship
     #[ORM\Embedded(class: CargoManifest::class, columnPrefix: 'cargo_')]
     private CargoManifest $cargo;
 
+    /**
+     * T-016 Salvage-Action State (nur SALVAGE-Schiffe).
+     * NULL = kein Salvage aktiv.
+     * Pro Tick rechnet SalvageProcessor `now - salvage_last_tick_at` × Rate
+     * und extrahiert aus dem Target-POI in den Cargo. Stop-Conditions: Field
+     * leer ODER Schiff-Cargo voll → State wird gecleart.
+     */
+    #[ORM\Column(name: 'salvage_target_poi_id', type: 'string', length: 36, nullable: true)]
+    private ?string $salvageTargetPoiId = null;
+
+    #[ORM\Column(name: 'salvage_resource_type', type: 'string', length: 32, nullable: true)]
+    private ?string $salvageResourceType = null;
+
+    #[ORM\Column(name: 'salvage_last_tick_at', type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $salvageLastTickAt = null;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(type: ShipIdType::NAME)]
@@ -228,5 +244,48 @@ class Ship
     public function setFleet(?Fleet $fleet): void
     {
         $this->fleet = $fleet;
+    }
+
+    public function getSalvageTargetPoiId(): ?string
+    {
+        return $this->salvageTargetPoiId;
+    }
+
+    public function getSalvageResourceType(): ?ResourceType
+    {
+        if ($this->salvageResourceType === null) {
+            return null;
+        }
+
+        return ResourceType::from($this->salvageResourceType);
+    }
+
+    public function getSalvageLastTickAt(): ?DateTimeImmutable
+    {
+        return $this->salvageLastTickAt;
+    }
+
+    public function isSalvaging(): bool
+    {
+        return $this->salvageTargetPoiId !== null;
+    }
+
+    public function startSalvage(string $poiId, ResourceType $resource, DateTimeImmutable $now): void
+    {
+        $this->salvageTargetPoiId = $poiId;
+        $this->salvageResourceType = $resource->value;
+        $this->salvageLastTickAt = $now;
+    }
+
+    public function updateSalvageTick(DateTimeImmutable $now): void
+    {
+        $this->salvageLastTickAt = $now;
+    }
+
+    public function stopSalvage(): void
+    {
+        $this->salvageTargetPoiId = null;
+        $this->salvageResourceType = null;
+        $this->salvageLastTickAt = null;
     }
 }

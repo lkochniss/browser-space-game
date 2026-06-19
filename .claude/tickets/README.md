@@ -18,7 +18,7 @@
 | 014-kolonisationsschiff.md | Feature | Done | COLONY_SHIP + ColonizePlanetCommand mit Pop-Transfer + ShipCostConfig-Refactor |
 | 015-transportschiff.md | Feature | Done | 3 Transport-Klassen + CargoManifest Embeddable + Load/Unload/DockCommands |
 | 015b-station-cargo-transfer.md | Feature | Draft | Station als LoadCargo/UnloadCargo-Target (T-015 Erweiterung für T-023b) |
-| 016-bergungsschiff.md | Feature | Open | Bergungsschiff + Salvage-Action |
+| 016-bergungsschiff.md | Feature | Done | ShipType::SALVAGE + Echtzeit-Salvage (50 Units/min) für AsteroidField + Field-Cleanup |
 | 017-flotte-movement.md | Feature | Done | Persistent-Fleet + Wallclock-Movement (Slowest-Ship-Speed) + FleetArrivalService; Magic-Dock-Cleanup |
 | 017b-fleet-movement-modifiers.md | Feature | Draft | Nebel-Detection-Hook + Wormhole-Travel-Reduktion/Cooldown/Treibstoff (Folge-Modifier zu T-017) |
 | 018-teleskop-discovery.md | Feature | Open | Teleskop-Building + Meta-Erkundung von Systemen |

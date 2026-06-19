@@ -17,6 +17,8 @@ enum ShipType: string
     case TRANSPORT_MEDIUM = 'transport_medium';
     case TRANSPORT_LARGE = 'transport_large';
 
+    case SALVAGE = 'salvage';
+
     public function isTransport(): bool
     {
         return match ($this) {
@@ -25,6 +27,11 @@ enum ShipType: string
             self::TRANSPORT_LARGE => true,
             default => false,
         };
+    }
+
+    public function isSalvage(): bool
+    {
+        return $this === self::SALVAGE;
     }
 
     /**
@@ -41,6 +48,22 @@ enum ShipType: string
             self::TRANSPORT_SMALL => 1.2,    // klein + schnell
             self::TRANSPORT_MEDIUM => 0.9,
             self::TRANSPORT_LARGE => 0.6,    // Heavy-Hauler
+            self::SALVAGE => 0.8,            // mittelträge wegen Bergungs-Equipment
+        };
+    }
+
+    /**
+     * T-016 Salvage-Rate (Resource-Units pro Minute) bei aktivem Salvage-Action.
+     * Nur SALVAGE-Schiffe können salvagen — andere returnen 0.
+     *
+     * Foundation-Wert: 50 Units/min = 3000/h. T-127 Mining/Industrie-Branch
+     * kann später Rate-Boni bringen.
+     */
+    public function getSalvageRatePerMinute(): int
+    {
+        return match ($this) {
+            self::SALVAGE => 50,
+            default => 0,
         };
     }
 }

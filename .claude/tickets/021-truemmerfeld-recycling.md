@@ -33,7 +33,13 @@ Trümmerfeld (T-021 Out-of-Scope-Marker in T-012 platziert). T-021 erweitert das
 - [ ] `BuildingType::RECYCLING_PLANT`
 - [ ] `RecyclingProcessor` (TickProcessor): pro Tick verbraucht Trümmer auf Planet,
   würfelt Erzeugnis nach Tier-Wahrscheinlichkeit
-- [ ] T-016 Salvage-Action kann DebrisField extrahieren analog AsteroidField
+- [ ] T-016 Salvage-Action für DebrisField:
+  - `StartSalvageCommandService` Validation erweitern: DebrisField als gültiger
+    `InvalidSalvageTargetException`-Fallback raus, akzeptieren wenn AsteroidField
+    ODER DebrisField
+  - `SalvageProcessor` polymorphisch: extract gegen `AsteroidField` ODER
+    `DebrisField` (gemeinsame Extract-API in eigenem Interface oder Match-Branch)
+  - DebrisField-Cleanup bei isEmpty analog AsteroidField (em->remove)
 
 ## Affected
 

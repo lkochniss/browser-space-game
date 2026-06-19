@@ -69,6 +69,17 @@ class ShipCostConfig
                 'durationSeconds' => 7200, // 120min — Heavy-Hauler
                 'cargoCapacity' => 20000,
             ],
+
+            // T-016 Bergungsschiff
+            ShipType::SALVAGE->value => [
+                'resources' => [
+                    ResourceType::IRON_BAR->value => 250,
+                    ResourceType::ALUMINUM_ORE->value => 50,
+                ],
+                'populationCost' => 25,
+                'durationSeconds' => 2700, // 45min
+                'cargoCapacity' => 3000,
+            ],
         ];
     }
 

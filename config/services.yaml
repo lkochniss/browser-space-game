@@ -51,5 +51,9 @@ services:
     App\Fleet\Service\FleetArrivalService:
         public: true
 
+    # T-016: SalvageProcessor (globaler Tick-Service analog FleetArrivalService).
+    App\Ship\Service\SalvageProcessor:
+        public: true
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
