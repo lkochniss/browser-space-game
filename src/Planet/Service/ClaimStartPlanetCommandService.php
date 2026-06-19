@@ -7,6 +7,8 @@ namespace App\Planet\Service;
 use App\Building\Model\Building;
 use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\ClockInterface;
+use App\POI\Model\AsteroidField;
+use App\POI\ValueObject\PoiId;
 use App\Planet\Model\Planet;
 use App\Planet\ValueObject\PlanetId;
 use App\Planet\ValueObject\PlanetSize;
@@ -15,6 +17,7 @@ use App\Player\Model\Player;
 use App\Player\ValueObject\PlayerId;
 use App\Resource\Model\Resource;
 use App\Resource\Model\ResourceDeposit;
+use App\Resource\ValueObject\ResourceCategory;
 use App\Resource\ValueObject\ResourceType;
 use App\SolarSystem\Model\SolarSystem;
 use App\SolarSystem\ValueObject\SolarSystemId;
@@ -26,6 +29,12 @@ class ClaimStartPlanetCommandService
     private const START_POPULATION = 50;
     private const START_GALAXY_SYSTEM_COUNT = 5;
     private const START_IRON_DEPOSIT = 1000;
+
+    // T-020: 0-2 Asteroidenfelder pro System, jeweils 1-3 zufällige FINITE-Resources mit 500-2000 Amount
+    private const ASTEROID_FIELD_MAX_PER_SYSTEM = 2;
+    private const ASTEROID_FIELD_MAX_RESOURCE_TYPES = 3;
+    private const ASTEROID_FIELD_AMOUNT_MIN = 500;
+    private const ASTEROID_FIELD_AMOUNT_MAX = 2000;
 
     /** @var ResourceType[] */
     private const RENEWABLES = [
@@ -70,6 +79,7 @@ class ClaimStartPlanetCommandService
 
         $startSystem = SolarSystem::generate(SolarSystemId::generate());
         $startSystem->addPlanet($startPlanet);
+        $this->generateAsteroidFields($startSystem);
         $systems[] = $startSystem;
 
         for ($i = 1; $i < self::START_GALAXY_SYSTEM_COUNT; $i++) {
@@ -79,10 +89,49 @@ class ClaimStartPlanetCommandService
             $unowned = Planet::generatePlanet(PlanetId::generate(), $type, $size);
             $this->seedRandomPlanet($unowned);
             $system->addPlanet($unowned);
+            $this->generateAsteroidFields($system);
             $systems[] = $system;
         }
 
         return $systems;
+    }
+
+    /**
+     * T-020: 0..MAX zufällige Asteroidenfelder pro System mit 1..MAX zufälligen
+     * FINITE-Resources im Bereich [MIN_AMOUNT, MAX_AMOUNT].
+     */
+    private function generateAsteroidFields(SolarSystem $system): void
+    {
+        $fieldCount = random_int(0, self::ASTEROID_FIELD_MAX_PER_SYSTEM);
+        if ($fieldCount === 0) {
+            return;
+        }
+
+        $finiteResources = array_filter(
+            ResourceType::cases(),
+            static fn (ResourceType $r) => $r->getCategory() === ResourceCategory::FINITE,
+        );
+        $finiteResources = array_values($finiteResources);
+
+        for ($i = 0; $i < $fieldCount; $i++) {
+            $resourceCount = random_int(1, min(self::ASTEROID_FIELD_MAX_RESOURCE_TYPES, count($finiteResources)));
+            shuffle($finiteResources);
+            $contents = [];
+            for ($j = 0; $j < $resourceCount; $j++) {
+                $contents[$finiteResources[$j]->value] = random_int(
+                    self::ASTEROID_FIELD_AMOUNT_MIN,
+                    self::ASTEROID_FIELD_AMOUNT_MAX,
+                );
+            }
+
+            $field = new AsteroidField(
+                id: PoiId::generate(),
+                solarSystem: $system,
+                name: sprintf('Asteroid Belt #%d', $i + 1),
+                contents: $contents,
+            );
+            $system->addPoi($field);
+        }
     }
 
     private function seedStartPlanet(Planet $planet): void

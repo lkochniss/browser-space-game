@@ -128,6 +128,38 @@ final class ClaimStartPlanetCommandServiceTest extends IntegrationTestCase
         }
     }
 
+    public function test_t020_asteroid_fields_spawn_with_finite_resources(): void
+    {
+        // Multiple Runs damit RNG-Variabilität nicht zu false-negative führt
+        $totalFields = 0;
+        for ($run = 0; $run < 10; $run++) {
+            $this->setUp();
+            $this->claimFreshPlayer();
+            $repo = self::getContainer()->get(\App\POI\Repository\PoiRepository::class);
+            $fields = array_filter(
+                $repo->findAll(),
+                fn ($poi) => $poi instanceof \App\POI\Model\AsteroidField,
+            );
+            $totalFields += count($fields);
+            foreach ($fields as $field) {
+                self::assertGreaterThan(0, $field->getTotalAmount(), 'asteroid field should have content at spawn');
+                foreach ($field->getContents() as $resourceValue => $amount) {
+                    $type = \App\Resource\ValueObject\ResourceType::from($resourceValue);
+                    self::assertSame(
+                        \App\Resource\ValueObject\ResourceCategory::FINITE,
+                        $type->getCategory(),
+                        sprintf('Only FINITE resources allowed in asteroids, got %s', $resourceValue),
+                    );
+                    self::assertGreaterThanOrEqual(500, $amount);
+                    self::assertLessThanOrEqual(2000, $amount);
+                }
+            }
+        }
+        // Über 10 Runs × 5 Systeme × max 2 Felder = max 100; im Schnitt ~50.
+        // Mind. 1 Feld erwartet — ansonsten ist Spawn-Logic broken.
+        self::assertGreaterThan(0, $totalFields, 'expected at least 1 asteroid field across 10 runs');
+    }
+
     private function claimFreshPlayer(): Player
     {
         $service = self::getContainer()->get(ClaimStartPlanetCommandService::class);

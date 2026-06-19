@@ -31,7 +31,7 @@ use Doctrine\ORM\Mapping as ORM;
     'nebula' => Poi::class,
     'station' => Poi::class,
     'unknown_fleet' => Poi::class,
-    'asteroid_field' => Poi::class,
+    'asteroid_field' => AsteroidField::class,
     'wormhole' => Poi::class,
     'black_hole' => Poi::class,
 ])]
