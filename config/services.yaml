@@ -24,6 +24,10 @@ services:
         arguments:
             $container: '@service_container'
 
+    # T-062: Default Clock = SystemClock (Wall-Clock). Tests/Scenario können überschreiben.
+    App\Common\Interface\ClockInterface:
+        alias: App\Common\Service\SystemClock
+
     App\Simulation\Scenario\:
         resource: '../src/Simulation/Scenario/*'
         autowire: true
@@ -33,6 +37,14 @@ services:
     App\Simulation\Command\SimulateScenarioCommand:
         arguments:
             $container: '@service_container'
+
+    # T-073: FactionSeedService wird direkt von IntegrationTestCase + (späteres) Console-Command aufgerufen
+    # → public, damit der Compiler ihn nicht entfernt und Tests via getContainer() zugreifen können.
+    App\Faction\Service\FactionSeedService:
+        public: true
+
+    App\Faction\Service\ReputationService:
+        public: true
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
