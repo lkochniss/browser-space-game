@@ -1086,8 +1086,11 @@ class InteractiveDemoCommand extends Command
     }
 
     /**
-     * T-082b: Start-Planet bekommt Hub L1 + 300 W/F/O statt 100, damit Pop nicht
-     * gleich verhungert.
+     * T-082b/T-082e: Start-Planet bekommt Hub L1 + großzügigen Resource-Buff.
+     *
+     * Day-1 soll flüssig spielbar sein: Tier-0-Bauten + erste Forschung möglich
+     * ohne Mining-Tick abzuwarten + ohne Wasser/Nahrung-Sorge. Long-term-Survival
+     * via T-097a Renewable-Producer.
      */
     private function applyDemoBuff(Player $player): void
     {
@@ -1101,13 +1104,29 @@ class InteractiveDemoCommand extends Command
         $hub->setFinishedAt($now);
         $startPlanet->addBuilding($hub, $now);
 
-        // Resources auf 300 boosten (waren 100)
-        foreach ([ResourceType::WATER, ResourceType::FOOD, ResourceType::OXYGEN] as $r) {
+        // T-082e Resource-Buff für Day-1-Komfort:
+        //   IRON_ORE   3000 — Tier-0-Bauten + Upgrades + Forschung
+        //   COAL        800 — HUB/Forschung-Cost-Buffer
+        //   COPPER_ORE  400 — RESEARCH_LAB + astronomy/shipbuilding/recycling
+        //   SILICON     300 — RESEARCH_LAB + ftl_tier_1
+        //   IRON_BAR    200 — shipbuilding-Forschung-Cost-Anteil
+        //   W/F/O      1500 — ~30 Ticks Buffer bei 50 Pop, deckt bis Producer steht
+        $boosts = [
+            ResourceType::IRON_ORE->value => 3000,
+            ResourceType::COAL->value => 800,
+            ResourceType::COPPER_ORE->value => 400,
+            ResourceType::SILICON->value => 300,
+            ResourceType::IRON_BAR->value => 200,
+            ResourceType::WATER->value => 1500,
+            ResourceType::FOOD->value => 1500,
+            ResourceType::OXYGEN->value => 1500,
+        ];
+        foreach ($boosts as $resVal => $amount) {
+            $type = ResourceType::from($resVal);
             try {
-                $startPlanet->getResource($r)->setAmount(300);
+                $startPlanet->getResource($type)->setAmount($amount);
             } catch (\Throwable) {
-                // Resource fehlt → ensure
-                $startPlanet->ensureResource($r)->setAmount(300);
+                $startPlanet->ensureResource($type)->setAmount($amount);
             }
         }
 

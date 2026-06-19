@@ -20,11 +20,13 @@ unter `var/demo.db` — isoliert von dev/prod.
 Auto-Setup: erkennt fehlendes Schema, erstellt es, seedet Faction + Player +
 Galaxy via `ClaimStartPlanetCommand`. Mit `--reset` zusätzlich Schema-Drop.
 
-## Demo-Buff (T-082b)
+## Demo-Buff (T-082b + T-082e)
 
 `applyDemoBuff()` nach Bootstrap:
 - Hub L1 vorab fertig
-- 300 W/F/O initial statt 100
+- Resource-Buff für Day-1-Komfort:
+  - 3000 IRON_ORE, 800 COAL, 400 COPPER_ORE, 300 SILICON, 200 IRON_BAR
+  - 1500 W/F/O (genug bis Renewable-Producer T-097a stehen)
 
 `ensureDemoGalaxyContent()` garantiert:
 - 1 AsteroidField (falls noch keiner) im Heimat-System

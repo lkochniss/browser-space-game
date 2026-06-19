@@ -1,7 +1,7 @@
 # T-082e: Demo Start-Resource-Buff (Day-1 Spielfluss)
 
 **Type:** Feature
-**Status:** Open
+**Status:** Done
 **Effort:** XS (~15min)
 **Depends on:** T-082b (applyDemoBuff existiert)
 **Blocks:** —
