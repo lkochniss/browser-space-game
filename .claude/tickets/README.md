@@ -17,14 +17,17 @@
 | 013-sonde-types.md | Feature | Done | Probe-Domain (SYSTEM/ORBITAL/DEEP_SCAN) + PROBE_LAB Building + BuildProbeCommand |
 | 014-kolonisationsschiff.md | Feature | Done | COLONY_SHIP + ColonizePlanetCommand mit Pop-Transfer + ShipCostConfig-Refactor |
 | 015-transportschiff.md | Feature | Done | 3 Transport-Klassen + CargoManifest Embeddable + Load/Unload/DockCommands |
+| 015b-station-cargo-transfer.md | Feature | Draft | Station als LoadCargo/UnloadCargo-Target (T-015 Erweiterung für T-023b) |
 | 016-bergungsschiff.md | Feature | Open | Bergungsschiff + Salvage-Action |
 | 017-flotte-movement.md | Feature | Done | Persistent-Fleet + Wallclock-Movement (Slowest-Ship-Speed) + FleetArrivalService; Magic-Dock-Cleanup |
+| 017b-fleet-movement-modifiers.md | Feature | Draft | Nebel-Detection-Hook + Wormhole-Travel-Reduktion/Cooldown/Treibstoff (Folge-Modifier zu T-017) |
 | 018-teleskop-discovery.md | Feature | Open | Teleskop-Building + Meta-Erkundung von Systemen |
 | 019-poi-system.md | Feature | Done | POI-Foundation (STI) + 7 PoiTypes + SolarSystem.pois |
 | 020-asteroidenfeld.md | Feature | Done | AsteroidField POI-Subtype (STI) + Galaxy-Spawn 0-2 pro System mit FINITE-Erzen |
 | 021-truemmerfeld-recycling.md | Feature | Open | Trümmerfeld + Trümmer + Recycling-Anlage Chain |
 | 022-nebel-poi.md | Feature | Done | Nebula POI-Subtype (STI) + concealmentLevel + 30%-Galaxy-Spawn |
 | 023-raumstation.md | Feature | Done | SpaceStation POI (max 1/System, Shipyard-L3-Gate, Storage 100k); Maintenance/Übernahme = T-023b |
+| 023b-station-maintenance-takeover.md | Feature | Draft | Station-Maintenance-Tick + Pop-Mortality + ABANDONED-State + ClaimAbandonedStationCommand |
 | 024-raumschlacht.md | Feature | Open | Legacy-Anker, abgelöst durch T-103 (PvE-Pivot) |
 | 025-forschung-framework.md | Feature | Open | Forschungs-Framework (Tree, Levels) |
 | 026-antriebstechnologie-tree.md | Feature | Open | Antriebs-Tree (4 Standard + 3 FTL) |
