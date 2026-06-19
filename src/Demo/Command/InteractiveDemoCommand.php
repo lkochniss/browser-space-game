@@ -96,6 +96,9 @@ class InteractiveDemoCommand extends Command
     /** @var array<string, mixed> Set per action via setLastActionParams; reset before each loop iteration */
     private array $lastActionParams = [];
 
+    /** T-169: nach Reset-Action gesetzter neuer Player; Main-Loop schwenkt um. */
+    private ?Player $pendingPlayerSwap = null;
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly AdjustableClock $clock,
@@ -234,12 +237,19 @@ class InteractiveDemoCommand extends Command
                 $success = false;
             }
 
-            // Reload Player after potential mutation/clear
-            $player = $this->playerRepository->find($player->getId());
-            if ($player === null) {
-                $io->warning('Player no longer exists — exiting.');
+            // T-169: Wenn Reset-Action neuen Player gebootstrapped hat, schwenken
+            // statt den alten (gelöschten) per-ID nachladen — alte ID existiert nicht mehr.
+            if ($this->pendingPlayerSwap !== null) {
+                $player = $this->pendingPlayerSwap;
+                $this->pendingPlayerSwap = null;
+            } else {
+                // Reload Player after potential mutation/clear
+                $player = $this->playerRepository->find($player->getId());
+                if ($player === null) {
+                    $io->warning('Player no longer exists — exiting.');
 
-                return Command::SUCCESS;
+                    return Command::SUCCESS;
+                }
             }
 
             // T-082d: Action-Log nach jeder Iteration. Read-only-Actions (Status/Goals/
@@ -322,31 +332,43 @@ class InteractiveDemoCommand extends Command
             if ($backup !== null) {
                 $io->text(sprintf('Previous demo-log backed up to %s', basename($backup)));
             }
-            if ($schemaExists) {
-                $tool->dropSchema($metadata);
-            }
-            $tool->createSchema($metadata);
-            $this->factionSeed->seed();
 
-            $playerId = PlayerId::generate();
-            $planetId = \App\Planet\ValueObject\PlanetId::generate();
-            $this->bus->dispatch(new ClaimStartPlanetCommand($playerId, $planetId));
-
-            $player = $this->playerRepository->find($playerId);
-            if ($player === null) {
-                return null;
-            }
-
-            $this->applyDemoBuff($player);
-            $this->ensureDemoGalaxyContent();
-
-            return $player;
+            return $this->bootstrapFreshPlayer($schemaExists);
         }
 
         // Resume existing
         $io->note(sprintf('Resuming with existing player %s. Use --reset for fresh state.', $players[0]->getId()));
 
         return $players[0];
+    }
+
+    /**
+     * T-169: Zentrale Bootstrap-Routine — wird von setupSession (initial + --reset)
+     * und resetSession (Menu-Action) genutzt damit Buff + Galaxy-Garantie konsistent
+     * angewendet werden.
+     */
+    private function bootstrapFreshPlayer(bool $schemaExists): ?Player
+    {
+        $tool = new SchemaTool($this->em);
+        $metadata = $this->em->getMetadataFactory()->getAllMetadata();
+        if ($schemaExists) {
+            $tool->dropSchema($metadata);
+        }
+        $tool->createSchema($metadata);
+        $this->factionSeed->seed();
+
+        $playerId = PlayerId::generate();
+        $planetId = \App\Planet\ValueObject\PlanetId::generate();
+        $this->bus->dispatch(new ClaimStartPlanetCommand($playerId, $planetId));
+
+        $player = $this->playerRepository->find($playerId);
+        if ($player === null) {
+            return null;
+        }
+        $this->applyDemoBuff($player);
+        $this->ensureDemoGalaxyContent();
+
+        return $player;
     }
 
     private function showStatus(SymfonyStyle $io, Player $player): bool
@@ -1070,17 +1092,21 @@ class InteractiveDemoCommand extends Command
         if (!$io->confirm('Wirklich alles löschen und frischen Player anlegen?', false)) {
             return true;
         }
-        $tool = new SchemaTool($this->em);
-        $metadata = $this->em->getMetadataFactory()->getAllMetadata();
-        $tool->dropSchema($metadata);
-        $tool->createSchema($metadata);
-        $this->factionSeed->seed();
+        $backup = $this->logger->backupOnReset();
+        if ($backup !== null) {
+            $io->text(sprintf('Previous demo-log backed up to %s', basename($backup)));
+        }
+        $newPlayer = $this->bootstrapFreshPlayer(schemaExists: true);
+        if ($newPlayer === null) {
+            $io->error('Reset failed — no new player could be bootstrapped.');
 
-        $playerId = PlayerId::generate();
-        $planetId = \App\Planet\ValueObject\PlanetId::generate();
-        $this->bus->dispatch(new ClaimStartPlanetCommand($playerId, $planetId));
+            return false;
+        }
+        // T-169: signalisiere Main-Loop, dass der referenzierte $player ungültig
+        // ist und durch den frisch erzeugten ersetzt werden muss.
+        $this->pendingPlayerSwap = $newPlayer;
 
-        $io->success('Demo state reset.');
+        $io->success(sprintf('Demo state reset. Neuer Player %s.', $newPlayer->getId()));
 
         return true;
     }
