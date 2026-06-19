@@ -6,6 +6,9 @@ namespace App\Demo\Command;
 
 use App\Building\Command\BuildBuildingCommand;
 use App\Building\Command\UpgradeBuildingCommand;
+use App\Building\Model\Building;
+use App\Building\Service\BuildingCostConfig;
+use App\Building\ValueObject\BuildingId;
 use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\CommandBusInterface;
 use App\Common\Service\AdjustableClock;
@@ -25,6 +28,7 @@ use App\POI\Repository\PoiRepository;
 use App\Planet\Command\ClaimStartPlanetCommand;
 use App\Planet\Command\ColonizePlanetCommand;
 use App\Planet\Repository\PlanetRepository;
+use App\Probe\Service\ProbeCostConfig;
 use App\Player\Model\Player;
 use App\Player\Repository\PlayerRepository;
 use App\Player\ValueObject\PlayerId;
@@ -38,7 +42,13 @@ use App\Ship\Command\StopSalvageCommand;
 use App\Ship\Command\UnloadCargoCommand;
 use App\Ship\Repository\ShipRepository;
 use App\Ship\Service\SalvageProcessor;
+use App\Ship\Service\ShipCostConfig;
 use App\Ship\ValueObject\ShipType;
+use App\SolarSystem\Model\SolarSystem;
+use App\SolarSystem\Repository\SolarSystemRepository;
+use App\SolarSystem\ValueObject\SolarSystemId;
+use App\POI\ValueObject\PoiId;
+use App\Resource\Model\Resource;
 use App\Tick\Engine\TickEngine;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -75,11 +85,15 @@ class InteractiveDemoCommand extends Command
         private readonly ShipRepository $shipRepository,
         private readonly FleetRepository $fleetRepository,
         private readonly PoiRepository $poiRepository,
+        private readonly SolarSystemRepository $solarSystemRepository,
         private readonly FactionSeedService $factionSeed,
         private readonly CommandBusInterface $bus,
         private readonly TickEngine $tickEngine,
         private readonly FleetArrivalService $fleetArrival,
         private readonly SalvageProcessor $salvageProcessor,
+        private readonly BuildingCostConfig $buildingCostConfig,
+        private readonly ShipCostConfig $shipCostConfig,
+        private readonly ProbeCostConfig $probeCostConfig,
     ) {
         parent::__construct();
     }
@@ -112,6 +126,7 @@ class InteractiveDemoCommand extends Command
             try {
                 $continue = match ($action) {
                     'Status' => $this->showStatus($io, $player),
+                    'Galaxy Overview' => $this->showGalaxy($io, $player),
                     'Build Building' => $this->buildBuilding($io, $player),
                     'Upgrade Building' => $this->upgradeBuilding($io, $player),
                     'Build Ship' => $this->buildShip($io, $player),
@@ -160,6 +175,7 @@ class InteractiveDemoCommand extends Command
     {
         return [
             'Status',
+            'Galaxy Overview',
             'Build Building',
             'Upgrade Building',
             'Build Ship',
@@ -216,6 +232,9 @@ class InteractiveDemoCommand extends Command
             if ($player === null) {
                 return null;
             }
+
+            $this->applyDemoBuff($player);
+            $this->ensureDemoGalaxyContent();
 
             return $player;
         }
@@ -327,6 +346,56 @@ class InteractiveDemoCommand extends Command
         return true;
     }
 
+    private function showGalaxy(SymfonyStyle $io, Player $player): bool
+    {
+        $io->section('Galaxy Overview');
+
+        $systems = $this->solarSystemRepository->findAll();
+        if ($systems === []) {
+            $io->note('No solar systems in galaxy.');
+
+            return true;
+        }
+
+        foreach ($systems as $system) {
+            $planets = $system->getPlanets()->toArray();
+            $pois = $this->poiRepository->findBySolarSystem($system);
+
+            $io->text(sprintf('<info>System</info> %s [%s]', $system->getName(), $system->getId()));
+
+            // Planets
+            foreach ($planets as $planet) {
+                $owner = $planet->getPlayer();
+                $ownerLabel = $owner === null
+                    ? '<comment>unclaimed</comment>'
+                    : ($owner->getId()->equals($player->getId()) ? '<info>you</info>' : 'other');
+                $io->text(sprintf(
+                    '  Planet %s [%s/%s] — %s',
+                    $planet->getId(),
+                    $planet->getType()->value,
+                    $planet->getSize()->value,
+                    $ownerLabel,
+                ));
+            }
+
+            // POIs
+            foreach ($pois as $poi) {
+                $detail = match (true) {
+                    $poi instanceof AsteroidField => sprintf('asteroid total=%d', $poi->getTotalAmount()),
+                    $poi instanceof Nebula => sprintf('nebula concealment=%d', $poi->getConcealmentLevel()),
+                    $poi instanceof Wormhole => sprintf('wormhole twin=%s', $poi->getTwin()?->getId() ?? '?'),
+                    $poi instanceof SpaceStation => sprintf('station status=%s', $poi->getStatus()->value),
+                    default => 'poi',
+                };
+                $io->text(sprintf('  POI %s — %s', $poi->getId(), $detail));
+            }
+
+            $io->newLine();
+        }
+
+        return true;
+    }
+
     private function buildBuilding(SymfonyStyle $io, Player $player): bool
     {
         $planet = $this->choosePlayerPlanet($io, $player);
@@ -334,9 +403,28 @@ class InteractiveDemoCommand extends Command
             return true;
         }
 
-        $type = $io->choice('Building Type', array_map(fn ($c) => $c->value, BuildingType::cases()));
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::from($type)));
-        $io->success(sprintf('Build started: %s on %s', $type, $planet->getId()));
+        $choices = [];
+        foreach (BuildingType::cases() as $bt) {
+            try {
+                $cost = $this->buildingCostConfig->getCost($bt, currentLevel: 0);
+                $costParts = [];
+                foreach ($cost->resources as $rType => $amount) {
+                    $costParts[] = sprintf('%d %s', $amount, $rType);
+                }
+                $costParts[] = sprintf('%d pop', $cost->populationCost);
+                $choices[$bt->value] = sprintf('%s (%s)', $bt->value, implode(', ', $costParts));
+            } catch (\Throwable) {
+                $choices[$bt->value] = sprintf('%s (no cost configured)', $bt->value);
+            }
+        }
+        $type = $io->choice('Building Type', $choices);
+        // $type ist hier der Display-Wert; finde den enum-Key zurück
+        $enumValue = array_search($type, $choices, true);
+        if ($enumValue === false) {
+            $enumValue = $type;
+        }
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::from((string) $enumValue)));
+        $io->success(sprintf('Build started: %s on %s', $enumValue, $planet->getId()));
 
         return true;
     }
@@ -380,9 +468,31 @@ class InteractiveDemoCommand extends Command
         if ($planet === null) {
             return true;
         }
-        $type = $io->choice('Ship Type', array_map(fn ($c) => $c->value, ShipType::cases()));
-        $ship = $this->bus->dispatch(new BuildShipCommand($planet->getId(), ShipType::from($type)));
-        $io->success(sprintf('Building Ship %s (%s) — finishedAt %s', $ship->getId(), $type, $ship->getFinishedAt()?->format('H:i:s') ?? '—'));
+
+        if (!$planet->hasShipyard($this->clock->now())) {
+            $io->warning('Dieser Planet hat keine fertige Raumwerft (SHIPYARD). Build eine zuerst.');
+
+            return true;
+        }
+
+        $choices = [];
+        foreach (ShipType::cases() as $st) {
+            $resources = $this->shipCostConfig->getResourceCost($st);
+            $costParts = [];
+            foreach ($resources as $rType => $amount) {
+                $costParts[] = sprintf('%d %s', $amount, $rType);
+            }
+            $costParts[] = sprintf('%d pop', $this->shipCostConfig->getPopulationCost($st));
+            $costParts[] = sprintf('%dmin', (int) round($this->shipCostConfig->getDurationSeconds($st) / 60));
+            $choices[$st->value] = sprintf('%s (%s, cargo %d)', $st->value, implode(', ', $costParts), $this->shipCostConfig->getCargoCapacity($st));
+        }
+        $label = $io->choice('Ship Type', $choices);
+        $enumValue = array_search($label, $choices, true);
+        if ($enumValue === false) {
+            $enumValue = $label;
+        }
+        $ship = $this->bus->dispatch(new BuildShipCommand($planet->getId(), ShipType::from((string) $enumValue)));
+        $io->success(sprintf('Building Ship %s (%s) — finishedAt %s', $ship->getId(), $enumValue, $ship->getFinishedAt()?->format('H:i:s') ?? '—'));
 
         return true;
     }
@@ -393,9 +503,30 @@ class InteractiveDemoCommand extends Command
         if ($planet === null) {
             return true;
         }
-        $type = $io->choice('Probe Type', array_map(fn ($c) => $c->value, ProbeType::cases()));
-        $probe = $this->bus->dispatch(new BuildProbeCommand($planet->getId(), ProbeType::from($type)));
-        $io->success(sprintf('Building Probe %s (%s)', $probe->getId(), $type));
+
+        if (!$planet->hasProbeLab($this->clock->now())) {
+            $io->warning('Dieser Planet hat kein fertiges Probe-Lab. Build eines zuerst.');
+
+            return true;
+        }
+
+        $choices = [];
+        foreach (ProbeType::cases() as $pt) {
+            $resources = $this->probeCostConfig->getResourceCost($pt);
+            $costParts = [];
+            foreach ($resources as $rType => $amount) {
+                $costParts[] = sprintf('%d %s', $amount, $rType);
+            }
+            $costParts[] = sprintf('%dmin', (int) round($this->probeCostConfig->getDurationSeconds($pt) / 60));
+            $choices[$pt->value] = sprintf('%s (%s)', $pt->value, implode(', ', $costParts));
+        }
+        $label = $io->choice('Probe Type', $choices);
+        $enumValue = array_search($label, $choices, true);
+        if ($enumValue === false) {
+            $enumValue = $label;
+        }
+        $probe = $this->bus->dispatch(new BuildProbeCommand($planet->getId(), ProbeType::from((string) $enumValue)));
+        $io->success(sprintf('Building Probe %s (%s)', $probe->getId(), $enumValue));
 
         return true;
     }
@@ -663,6 +794,99 @@ class InteractiveDemoCommand extends Command
         $io->success('Demo state reset.');
 
         return true;
+    }
+
+    /**
+     * T-082b: Start-Planet bekommt Hub L1 + 300 W/F/O statt 100, damit Pop nicht
+     * gleich verhungert.
+     */
+    private function applyDemoBuff(Player $player): void
+    {
+        $startPlanet = $player->getPlanets()->first();
+        if ($startPlanet === false) {
+            return;
+        }
+
+        $now = $this->clock->now();
+        $hub = new Building(BuildingId::generate(), BuildingType::HUB, 1);
+        $hub->setFinishedAt($now);
+        $startPlanet->addBuilding($hub, $now);
+
+        // Resources auf 300 boosten (waren 100)
+        foreach ([ResourceType::WATER, ResourceType::FOOD, ResourceType::OXYGEN] as $r) {
+            try {
+                $startPlanet->getResource($r)->setAmount(300);
+            } catch (\Throwable) {
+                // Resource fehlt → ensure
+                $startPlanet->ensureResource($r)->setAmount(300);
+            }
+        }
+
+        $this->em->flush();
+    }
+
+    /**
+     * T-082b: garantiert mindestens 1 AsteroidField + 1 Wormhole-Pair in der
+     * Galaxy (für Salvage- und Travel-Demo). Falls Galaxy-Init bereits welche
+     * generiert hat, no-op.
+     */
+    private function ensureDemoGalaxyContent(): void
+    {
+        $systems = $this->solarSystemRepository->findAll();
+        if (count($systems) < 2) {
+            return;
+        }
+
+        $hasAsteroid = false;
+        $hasWormhole = false;
+        foreach ($this->poiRepository->findAll() as $poi) {
+            if ($poi instanceof AsteroidField) {
+                $hasAsteroid = true;
+            }
+            if ($poi instanceof Wormhole) {
+                $hasWormhole = true;
+            }
+        }
+
+        if (!$hasAsteroid) {
+            // Asteroid auf erstem System (= Heimat-System)
+            $asteroid = new AsteroidField(
+                id: PoiId::generate(),
+                solarSystem: $systems[0],
+                name: 'Demo Asteroid Belt',
+                contents: [
+                    ResourceType::IRON_ORE->value => 2000,
+                    ResourceType::COAL->value => 1000,
+                ],
+            );
+            $systems[0]->addPoi($asteroid);
+            $this->em->persist($asteroid);
+        }
+
+        if (!$hasWormhole) {
+            // Wormhole-Pair zwischen System 0 und letztem System
+            $sysA = $systems[0];
+            $sysB = $systems[count($systems) - 1];
+            $whA = new Wormhole(
+                id: PoiId::generate(),
+                solarSystem: $sysA,
+                name: sprintf('Wurmloch %s ↔ %s', $sysA->getName(), $sysB->getName()),
+                requiredTechSlug: 'ftl_tier_2',
+            );
+            $whB = new Wormhole(
+                id: PoiId::generate(),
+                solarSystem: $sysB,
+                name: sprintf('Wurmloch %s ↔ %s', $sysB->getName(), $sysA->getName()),
+                requiredTechSlug: 'ftl_tier_2',
+            );
+            $whA->pairWith($whB);
+            $sysA->addPoi($whA);
+            $sysB->addPoi($whB);
+            $this->em->persist($whA);
+            $this->em->persist($whB);
+        }
+
+        $this->em->flush();
     }
 
     private function choosePlayerPlanet(SymfonyStyle $io, Player $player): ?\App\Planet\Model\Planet
