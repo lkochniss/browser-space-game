@@ -27,6 +27,7 @@ readonly class UpgradeBuildingCommandService
         private BuildingCostConfig $costConfig,
         private BuildingDurationConfig $durationConfig,
         private ClockInterface $clock,
+        private ConstructionSpeedResearchConfig $constructionSpeedResearch,
     ) {
     }
 
@@ -45,8 +46,10 @@ readonly class UpgradeBuildingCommandService
         $currentLevel = $building->getLevel();
         $cost = $this->costConfig->getCost($building->getType(), $currentLevel);
         $rawDuration = $this->durationConfig->getDurationSeconds($building->getType(), $currentLevel);
-        // T-063: PlanetType × Size Construction-Speed-Bonus reduziert Upgrade-Duration
+        // T-063: PlanetType × Size Construction-Speed-Bonus
         $speedMulti = $planet->getEffectiveConstructionSpeedMultiplier($building->getType());
+        // T-064: Forschungs-Bonus stackt multiplikativ
+        $speedMulti *= $this->constructionSpeedResearch->getMultiplier($planet->getPlayer());
         $duration = (int) max(1, round($rawDuration / $speedMulti));
 
         $this->checkResources($planet, $cost);

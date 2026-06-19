@@ -71,7 +71,7 @@
 | 061-storage-system.md | Feature | Done | Storage-Cap live-computed (Base+Building); 6 Storage-Bldgs; Cap-Stop Production |
 | 062-realtime-construction.md | Feature | Done | Wall-Clock Bauzeit + isReady-Gates + ConstructionCompletionProcessor |
 | 063-planet-bonus-system.md | Feature | Done | Planet-Type-Boni (Mining-Multi pro Resource je Type) |
-| 064-construction-speed-boost.md | Feature | Open | Forschung + Buildings reduzieren Bauzeit — Folge T-062 |
+| 064-construction-speed-boost.md | Feature | Done | construction_speed_1 (3 Levels) reduziert Bauzeit multiplikativ; Stack mit T-063 Planet-Type |
 | 065-energy-system.md | Feature | Draft | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Draft | H2 + Promethium als FUEL-Resources für Schiffe |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Draft | Steel/Chip/Composite/Hull/Shield Tier-2-Outputs |

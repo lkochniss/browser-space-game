@@ -126,9 +126,18 @@ Production/Refinement clampen Output am Cap. Volles Lager → Produktion pausier
 
 Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->now()` über TickEngine. Siehe auch tick.md für globale Tick-Services (FleetArrival, Salvage, TelescopeDiscovery).
 
-## Geplant
+## Bauzeit-Boost (T-064)
 
-- **T-064** Bauzeit-Speed-Boost (Forschung + Spezial-Buildings reduzieren Duration); Decisions vorab dokumentiert (multiplikativ, no-retroactive, upgrades=initial)
+`ConstructionSpeedResearchConfig::getMultiplier(?Player): float` aggregiert
+Forschungs-Multiplier (multiplikativ über Nodes UND Levels). Aktuelle Quellen:
+
+| Node | Wirkung |
+|------|---------|
+| `construction_speed_1` (Tier-1, 3 Levels) | ×1.10 pro Level → L3 ≈ ×1.331 = -25% Duration |
+
+Build- und Upgrade-Service multiplizieren mit `Planet::getEffectiveConstructionSpeedMultiplier($type)` (T-063 Planet-Type-Bonus). **Decision: nicht retroaktiv** — wirkt nur auf neu gestartete Bauten.
+
+## Geplant
 - **High-Tier Cost-Migration:** Buildings mit IRON_BAR statt IRON_ORE als Cost
 - **T-025/T-026** Forschungs-Gating für höhere Building-Levels
 - **T-065** Power-Net (Energy-System) — Reaktoren + Consumer

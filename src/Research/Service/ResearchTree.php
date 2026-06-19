@@ -144,6 +144,24 @@ class ResearchTree
             ],
         ));
 
+        // T-064: Bauzeit-Boost für alle Buildings. Multiplikativer Stack mit Planet-
+        // Type-Bonus (T-063). 3 Levels — jede +10% Speed. L3 ≈ ×1.331 = -25% Duration.
+        $this->register(new ResearchNode(
+            slug: 'construction_speed_1',
+            name: 'Effiziente Bauverfahren',
+            description: 'Reduziert Bauzeit aller Gebäude (multiplikativ × 1.10 pro Level).',
+            baseDurationSeconds: 600,
+            maxLevel: 3,
+            prerequisites: [
+                new ResearchLevelPrerequisite('metallurgy', 1),
+                new BuildingLevelPrerequisite(BuildingType::IRON_SMELTER, 1),
+            ],
+            resourceCostBase: [
+                ResourceType::IRON_BAR->value => 150,
+                ResourceType::COPPER_ORE->value => 100,
+            ],
+        ));
+
         // T-026 Antriebs-Tree: 4 Standard + 3 FTL.
         // Gating-Chain:
         //   shipbuilding (T-170) → SHIPYARD baubar

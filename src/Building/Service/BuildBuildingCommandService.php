@@ -31,6 +31,7 @@ readonly class BuildBuildingCommandService
         private ClockInterface $clock,
         private BuildingUnlockConfig $unlockConfig,
         private PlayerResearchRepository $playerResearchRepository,
+        private ConstructionSpeedResearchConfig $constructionSpeedResearch,
     ) {
     }
 
@@ -70,8 +71,10 @@ readonly class BuildBuildingCommandService
 
         $now = $this->clock->now();
         $rawDuration = $this->durationConfig->getDurationSeconds($type, currentLevel: 0);
-        // T-063: PlanetType × Size Construction-Speed-Bonus reduziert Duration
+        // T-063: PlanetType × Size Construction-Speed-Bonus
         $speedMulti = $planet->getEffectiveConstructionSpeedMultiplier($type);
+        // T-064: Forschungs-Bonus stackt multiplikativ
+        $speedMulti *= $this->constructionSpeedResearch->getMultiplier($planet->getPlayer());
         $duration = (int) max(1, round($rawDuration / $speedMulti));
 
         $building = Building::createNewBuilding($type);

@@ -1,7 +1,7 @@
 # T-064: Bauzeit-Speed-Boost via Forschung + Buildings
 
 **Type:** Feature
-**Status:** Open
+**Status:** Done (Foundation: Forschungs-Multiplier; Construction-Hub-Building defer)
 **FX:** No
 **MIG:** No (computed multiplier; keine neuen Spalten)
 **Depends on:** T-062 ✓ (Echtzeit-Bauzeit), T-025/T-026 (Forschungs-Framework)
