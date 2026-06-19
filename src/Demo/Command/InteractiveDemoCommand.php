@@ -12,7 +12,9 @@ use App\Building\ValueObject\BuildingId;
 use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\CommandBusInterface;
 use App\Common\Service\AdjustableClock;
+use App\Demo\Service\DemoActionLogger;
 use App\Demo\Service\DemoGoalChecker;
+use App\Demo\Service\StateSnapshotter;
 use App\Discovery\Repository\PlayerSystemDiscoveryRepository;
 use App\Discovery\Service\TelescopeDiscoveryService;
 use App\Faction\Service\FactionSeedService;
@@ -81,6 +83,9 @@ use Throwable;
 )]
 class InteractiveDemoCommand extends Command
 {
+    /** @var array<string, mixed> Set per action via setLastActionParams; reset before each loop iteration */
+    private array $lastActionParams = [];
+
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly AdjustableClock $clock,
@@ -101,6 +106,8 @@ class InteractiveDemoCommand extends Command
         private readonly DemoGoalChecker $goalChecker,
         private readonly TelescopeDiscoveryService $telescopeDiscovery,
         private readonly PlayerSystemDiscoveryRepository $discoveryRepository,
+        private readonly DemoActionLogger $logger,
+        private readonly StateSnapshotter $snapshotter,
     ) {
         parent::__construct();
     }
@@ -129,12 +136,16 @@ class InteractiveDemoCommand extends Command
         // Main Menue Loop
         while (true) {
             $action = $io->choice('Action', $this->menuOptions(), 'Status');
+            $this->lastActionParams = [];
+            $error = null;
+            $success = true;
 
             try {
                 $continue = match ($action) {
                     'Status' => $this->showStatus($io, $player),
                     'Goals' => $this->showGoals($io, $player),
                     'Galaxy Overview' => $this->showGalaxy($io, $player),
+                    'Export Log' => $this->exportLog($io),
                     'Build Building' => $this->buildBuilding($io, $player),
                     'Upgrade Building' => $this->upgradeBuilding($io, $player),
                     'Build Ship' => $this->buildShip($io, $player),
@@ -156,6 +167,8 @@ class InteractiveDemoCommand extends Command
             } catch (Throwable $e) {
                 $io->error(sprintf('Error: %s', $e->getMessage()));
                 $continue = true;
+                $error = $e->getMessage();
+                $success = false;
             }
 
             // Reload Player after potential mutation/clear
@@ -164,6 +177,19 @@ class InteractiveDemoCommand extends Command
                 $io->warning('Player no longer exists — exiting.');
 
                 return Command::SUCCESS;
+            }
+
+            // T-082d: Action-Log nach jeder Iteration. Read-only-Actions (Status/Goals/
+            // Galaxy/Export Log) werden bewusst auch geloggt — sind günstig + zeigen
+            // KI späteren Spielfluss ("User hat zwischen 2 Tick-Advances 3× Status geprüft").
+            if ($action !== 'Quit') {
+                try {
+                    $snapshot = $this->snapshotter->snapshot($player);
+                    $this->logger->log($action, $this->lastActionParams, $snapshot, $success, $error);
+                } catch (Throwable $logException) {
+                    // Log-Failure darf Demo nicht crashen
+                    $io->warning(sprintf('Log-write failed: %s', $logException->getMessage()));
+                }
             }
 
             if ($continue === false) {
@@ -185,6 +211,7 @@ class InteractiveDemoCommand extends Command
             'Status',
             'Goals',
             'Galaxy Overview',
+            'Export Log',
             'Build Building',
             'Upgrade Building',
             'Build Ship',
@@ -226,6 +253,11 @@ class InteractiveDemoCommand extends Command
                 $io->text('Resetting demo state...');
             } else {
                 $io->text('First-time setup, creating fresh demo state...');
+            }
+            // T-082d: existierendes Action-Log nach .bak verschieben damit Vorgeschichte erhalten bleibt
+            $backup = $this->logger->backupOnReset();
+            if ($backup !== null) {
+                $io->text(sprintf('Previous demo-log backed up to %s', basename($backup)));
             }
             if ($schemaExists) {
                 $tool->dropSchema($metadata);
@@ -352,6 +384,44 @@ class InteractiveDemoCommand extends Command
                 $io->text($l);
             }
         }
+
+        return true;
+    }
+
+    private function exportLog(SymfonyStyle $io): bool
+    {
+        $io->section('Demo-Action-Log Export');
+
+        $path = $this->logger->getLogPath();
+        $count = $this->logger->lineCount();
+
+        $io->text(sprintf('Log-Pfad: <info>%s</info>', $path));
+        $io->text(sprintf('Einträge: <info>%d</info>', $count));
+
+        if ($count === 0) {
+            $io->note('Noch keine Einträge.');
+
+            return true;
+        }
+
+        $tail = $this->logger->readLast(20);
+        $io->newLine();
+        $io->text(sprintf('Letzte %d Einträge (kompakt):', count($tail)));
+        $io->newLine();
+
+        foreach ($tail as $entry) {
+            $ok = ($entry['success'] ?? true) ? '<info>OK</info>' : '<error>FAIL</error>';
+            $action = $entry['action'] ?? '?';
+            $ts = $entry['ts'] ?? '?';
+            $params = $entry['params'] ?? [];
+            $clock = $entry['snapshot']['clock_now'] ?? '?';
+            $paramStr = $params === [] ? '' : ' ' . json_encode($params, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $error = isset($entry['error']) ? sprintf(' <error>err: %s</error>', $entry['error']) : '';
+            $io->text(sprintf('  [%s] [clk %s] %s %s%s%s', $ts, $clock, $ok, $action, $paramStr, $error));
+        }
+
+        $io->newLine();
+        $io->note('Vollen Log via `cat ' . $path . '` oder direkt an die KI für Tuning kopieren.');
 
         return true;
     }
@@ -813,6 +883,13 @@ class InteractiveDemoCommand extends Command
         $arrived = $this->fleetArrival->resolveArrivedFleets();
         $salvaged = $this->salvageProcessor->runTick();
         $discovered = $this->telescopeDiscovery->runTickForPlayer($player);
+
+        $this->lastActionParams = [
+            'advance_seconds' => $seconds,
+            'fleets_arrived' => $arrived,
+            'salvages_processed' => $salvaged,
+            'systems_discovered' => $discovered,
+        ];
 
         $io->success(sprintf(
             'Tick advanced by %ds — Clock: %s | Fleets arrived: %d | Salvages: %d | Discovered: %d',

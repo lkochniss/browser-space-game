@@ -45,8 +45,9 @@ Galaxy via `ClaimStartPlanetCommand`. Mit `--reset` zusätzlich Schema-Drop.
 | Start/Stop Salvage | `Start/StopSalvageCommand` (polymorph: Asteroid + Debris) |
 | Colonize Planet | `ColonizePlanetCommand` |
 | **Tick Forward** | Choice 15min/1h/4h/1d/custom → `AdjustableClock.advanceSeconds` + `TickEngine.run` + `FleetArrivalService` + `SalvageProcessor` + `TelescopeDiscoveryService` |
+| **Export Log** (T-082d) | Zeigt Pfad + letzte 20 Action-Log-Einträge auf stdout |
 | Forschung (Stub) | T-025 noch offen |
-| Reset Demo | Drop+Recreate Schema + Re-Seed |
+| Reset Demo | Drop+Recreate Schema + Re-Seed (+ Log-Backup `.bak`) |
 
 ## Demo-Goals (T-082c)
 
@@ -61,6 +62,40 @@ Galaxy via `ClaimStartPlanetCommand`. Mit `--reset` zusätzlich Schema-Drop.
 Stateless Re-Compute aus Player-State, kein DB-Schema. Live-Progress in Hint
 ("Hub-Level: 1/2", "Debris gesamt: 35/50").
 
+## Action-Log (T-082d)
+
+`DemoActionLogger` schreibt **jede** Menü-Aktion als 1 JSONL-Line in
+`var/demo-log.jsonl` (gitignored). Format:
+
+```json
+{
+  "ts": "2026-06-19T15:25:30.320362+00:00",
+  "action": "BuildBuilding",
+  "params": { "advance_seconds": 900, "fleets_arrived": 0, ... },
+  "success": true,
+  "error": null,
+  "snapshot": { "clock_now": "...", "player_id": "...", "planets": [...], "ships": [...], "fleets": [...], "discovered_system_ids": [...] }
+}
+```
+
+**Vollständiger Snapshot** (T-082d Decision): alle IDs + Wallclock-Timestamps
+(`finished_at`, `arrived_at`, `salvage_last_tick`). Ermöglicht KI-Tuning von
+Cost-/Duration-/Speed-Werten gegen echte Sessions.
+
+`StateSnapshotter` baut den Snapshot aus Player-State + Repos. Read-only-Actions
+(Status/Goals/Galaxy/Export Log) werden **bewusst auch geloggt** — zeigen das
+Decision-Verhalten des Players.
+
+**Reset-Verhalten:** `--reset` benennt vorhandenes Log um nach
+`var/demo-log-{Ymd-His}.jsonl.bak` damit die Vorgeschichte erhalten bleibt.
+
+**Kein Auto-Rotate** (T-082d Decision) — Demo bleibt überschaubar groß; bei
+Bedarf manuell wegwerfen.
+
+**Export-Aktion** im Menü: zeigt den Pfad + letzte 20 Einträge kompakt. Vollen
+Inhalt bei Bedarf via `cat var/demo-log.jsonl` oder direkt an die KI-Tuning-
+Session geben.
+
 ## Time-Travel
 
 `AdjustableClock` (im `when@demo:` services-Block als ClockInterface aliased)
@@ -71,6 +106,8 @@ Action wickelt das mit Tick-Engine + Globalen Tick-Services in einem Schritt.
 
 - `src/Demo/Command/InteractiveDemoCommand.php` (zentraler Command, Choice-Loop)
 - `src/Demo/Service/DemoGoalChecker.php` (T-082c)
+- `src/Demo/Service/DemoActionLogger.php` (T-082d, JSONL-Append, Backup-on-Reset)
+- `src/Demo/Service/StateSnapshotter.php` (T-082d, vollständiger Player-Snapshot)
 - `src/Demo/ValueObject/DemoGoal.php` (readonly DTO)
 - `.env.demo` (`DATABASE_URL=sqlite:///var/demo.db`)
 - `config/services.yaml` `when@demo:` Block (ClockInterface=AdjustableClock)

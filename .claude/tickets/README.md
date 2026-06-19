@@ -29,7 +29,8 @@
 | 023-raumstation.md | Feature | Done | SpaceStation POI (max 1/System, Shipyard-L3-Gate, Storage 100k); Maintenance/Übernahme = T-023b |
 | 023b-station-maintenance-takeover.md | Feature | Draft | Station-Maintenance-Tick + Pop-Mortality + ABANDONED-State + ClaimAbandonedStationCommand |
 | 024-raumschlacht.md | Feature | Open | Legacy-Anker, abgelöst durch T-103 (PvE-Pivot) |
-| 025-forschung-framework.md | Feature | Open | Forschungs-Framework (Tree, Levels) |
+| 025-forschung-framework.md | Feature | In Progress | Wallclock-Forschung Foundation: Node + Active/PlayerResearch + RESEARCH_LAB-Building + Demo-Action |
+| 025b-multi-lab-research-boost.md | Feature | Draft | Mehrere Labs auf mehreren Planeten stacken Speed-Multiplier (Folge zu T-025) |
 | 026-antriebstechnologie-tree.md | Feature | Open | Antriebs-Tree (4 Standard + 3 FTL) |
 | 027-planetologie-research.md | Feature | Open | Planetologie-Forschung (Sondendetails + Terraform-Gate) |
 | 028-techdebt-wrong-namespaces.md | TechDebt | Done | `use ValueObject\PlanetId` etc. — falsche Imports (gefixt) |
@@ -90,6 +91,7 @@
 | 082-interactive-demo-cli.md | Feature | Done | Sandbox-CLI `app:demo:run` mit Choice-Menü für alle Game-Actions + Time-Travel |
 | 082b-demo-cli-ux-polish.md | Feature | Done | Galaxy-Overview + Cost-Preview + Demo-Buff (Hub L1, 300 W/F/O) + Wormhole-Garantie |
 | 082c-demo-goals.md | Feature | Done | 5 fixe Demo-Goals (Hub L2, Mines, Recycling, Debris, 2. Planet) als On-Demand-Check |
+| 082d-demo-action-log.md | Feature | Done | DemoActionLogger + StateSnapshotter + Export-Menu (JSONL, vollständige Snapshots, Backup-on-Reset) |
 | 084-galactic-council.md | Feature | Draft | Endgame-Influence-Voting auf Crusade-Targets / Galaxy-Boni |
 | 088-combat-munition.md | Feature | Draft | BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE Verbrauch im Battle |
 | 089-luxury-civilian-goods.md | Feature | Draft | Pop-Tier-Layer (Working/Middle/Upper) + Civilian-Goods |
