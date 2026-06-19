@@ -4,6 +4,7 @@
 **Status:** Open
 **FX:** No
 **MIG:** No
+**Blocks:** T-026, T-027, T-064, T-069, T-098, T-115, T-117, T-126 (Tech-Tree-Erweiterungen)
 
 ## Description
 

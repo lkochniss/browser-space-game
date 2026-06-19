@@ -5,6 +5,7 @@
 **FX:** No
 **MIG:** No
 **Depends on:** T-007
+**Blocks:** T-020, T-021, T-022, T-023, T-075, T-076, T-085, T-086 (POI-Subtype-Tree)
 
 ## Description
 
