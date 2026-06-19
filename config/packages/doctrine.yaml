@@ -17,6 +17,7 @@ doctrine:
             faction_id: App\Common\Doctrine\Type\FactionIdType
             ship_id: App\Common\Doctrine\Type\ShipIdType
             probe_id: App\Common\Doctrine\Type\ProbeIdType
+            fleet_id: App\Common\Doctrine\Type\FleetIdType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

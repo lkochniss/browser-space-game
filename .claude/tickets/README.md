@@ -18,7 +18,7 @@
 | 014-kolonisationsschiff.md | Feature | Done | COLONY_SHIP + ColonizePlanetCommand mit Pop-Transfer + ShipCostConfig-Refactor |
 | 015-transportschiff.md | Feature | Done | 3 Transport-Klassen + CargoManifest Embeddable + Load/Unload/DockCommands |
 | 016-bergungsschiff.md | Feature | Open | Bergungsschiff + Salvage-Action |
-| 017-flotte-movement.md | Feature | Open | Flotte-Entity + Bewegung + Verbrauch unterwegs |
+| 017-flotte-movement.md | Feature | Done | Persistent-Fleet + Wallclock-Movement (Slowest-Ship-Speed) + FleetArrivalService; Magic-Dock-Cleanup |
 | 018-teleskop-discovery.md | Feature | Open | Teleskop-Building + Meta-Erkundung von Systemen |
 | 019-poi-system.md | Feature | Open | POI-Basis + Subtypes |
 | 020-asteroidenfeld.md | Feature | Open | Asteroidenfeld POI + endliche Rohstoffe |

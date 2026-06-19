@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Ship\Model;
 
 use App\Common\Doctrine\Type\ShipIdType;
+use App\Fleet\Model\Fleet;
 use App\Planet\Model\Planet;
 use App\Resource\ValueObject\ResourceType;
 use App\Ship\Repository\ShipRepository;
@@ -31,6 +32,14 @@ class Ship
      */
     #[ORM\Column(name: 'finished_at', type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $finishedAt = null;
+
+    /**
+     * T-017: Schiff in genau einer Fleet (Doc-Vorgabe). NULL = nicht in Fleet
+     * (frisch gebaut, noch nicht zugewiesen).
+     */
+    #[ORM\ManyToOne(targetEntity: Fleet::class, inversedBy: 'ships')]
+    #[ORM\JoinColumn(name: 'fleet_id', referencedColumnName: 'id', nullable: true)]
+    private ?Fleet $fleet = null;
 
     /**
      * T-015: Cargo-Manifest. Bei non-Transport-Schiffen leer + cargoCapacity=0 → Hard-Reject
@@ -209,5 +218,15 @@ class Ship
     public function unloadPopCargo(int $amount): void
     {
         $this->cargo->unloadPop($amount);
+    }
+
+    public function getFleet(): ?Fleet
+    {
+        return $this->fleet;
+    }
+
+    public function setFleet(?Fleet $fleet): void
+    {
+        $this->fleet = $fleet;
     }
 }

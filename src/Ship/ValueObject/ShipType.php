@@ -26,4 +26,21 @@ enum ShipType: string
             default => false,
         };
     }
+
+    /**
+     * T-017: Travel-Speed-Multiplier pro Schiffsklasse. Höher = schneller.
+     * Fleet-Speed = min(getSpeed) aller Schiffe (langsamstes Schiff bestimmt).
+     *
+     * Werte sind Foundation-Tuning. T-026 Antriebs-Tech bringt später Boni.
+     */
+    public function getSpeed(): float
+    {
+        return match ($this) {
+            self::GENERIC => 1.0,
+            self::COLONY_SHIP => 0.7,        // träge wegen Settler-Cargo
+            self::TRANSPORT_SMALL => 1.2,    // klein + schnell
+            self::TRANSPORT_MEDIUM => 0.9,
+            self::TRANSPORT_LARGE => 0.6,    // Heavy-Hauler
+        };
+    }
 }

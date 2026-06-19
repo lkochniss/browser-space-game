@@ -15,7 +15,6 @@ use App\Player\ValueObject\PlayerId;
 use App\Resource\Model\Resource;
 use App\Resource\ValueObject\ResourceType;
 use App\Ship\Command\BuildShipCommand;
-use App\Ship\Command\DockTransportShipCommand;
 use App\Ship\Command\LoadCargoCommand;
 use App\Ship\Command\UnloadCargoCommand;
 use App\Ship\Exception\CargoCapacityExceededException;
@@ -137,7 +136,7 @@ final class CargoTransferTest extends IntegrationTestCase
         ));
     }
 
-    public function test_unload_after_dock_transfers_resources_to_target_planet(): void
+    public function test_unload_after_arrival_transfers_resources_to_target_planet(): void
     {
         $ship = $this->seedReadyTransport(ironBarOnPlanet: 500);
 
@@ -151,7 +150,11 @@ final class CargoTransferTest extends IntegrationTestCase
         $this->em->persist($target);
         $this->em->flush();
 
-        $this->bus->dispatch(new DockTransportShipCommand($ship->getId(), $target->getId()));
+        // T-017: Movement geschieht via Fleet. Hier simulieren wir die Ankunft
+        // direkt durch ship.setPlanet — wirklicher Fleet-Flow ist in T-017 Tests.
+        $ship->setPlanet($target);
+        $this->em->flush();
+
         $this->bus->dispatch(new UnloadCargoCommand(
             shipId: $ship->getId(),
             resources: [ResourceType::IRON_BAR->value => 300],
@@ -180,23 +183,6 @@ final class CargoTransferTest extends IntegrationTestCase
             shipId: $ship->getId(),
             resources: [ResourceType::IRON_BAR->value => 100],
         ));
-    }
-
-    public function test_dock_changes_ships_planet(): void
-    {
-        $ship = $this->seedReadyTransport(ironBarOnPlanet: 100);
-        $oldHome = $ship->getPlanet();
-
-        $target = Planet::generatePlanet(PlanetId::generate());
-        $this->em->persist($target);
-        $this->em->flush();
-
-        $this->bus->dispatch(new DockTransportShipCommand($ship->getId(), $target->getId()));
-
-        $this->em->clear();
-        $reloaded = self::getContainer()->get(ShipRepository::class)->find($ship->getId());
-        self::assertNotSame($oldHome->getId()->__toString(), $reloaded->getPlanet()->getId()->__toString());
-        self::assertSame($target->getId()->__toString(), $reloaded->getPlanet()->getId()->__toString());
     }
 
     public function test_load_throws_when_ship_not_docked(): void

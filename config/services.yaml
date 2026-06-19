@@ -46,5 +46,10 @@ services:
     App\Faction\Service\ReputationService:
         public: true
 
+    # T-017: FleetArrivalService wird vom Tick-Scheduler (T-044) und Tests
+    # direkt via Container aufgerufen.
+    App\Fleet\Service\FleetArrivalService:
+        public: true
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
