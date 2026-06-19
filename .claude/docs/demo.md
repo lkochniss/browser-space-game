@@ -9,9 +9,13 @@ unter `var/demo.db`, isoliert von dev/test.
 ## Aufruf
 
 ```bash
-APP_ENV=demo php bin/console app:demo:run --env=demo            # ersten Mal / weitermachen
-APP_ENV=demo php bin/console app:demo:run --reset --env=demo    # frischer Reset
+php bin/console app:demo:run            # läuft direkt; auto-switch zu demo-env (T-168)
+php bin/console app:demo:run --reset    # mit Reset
 ```
+
+T-168: Command auto-re-exect sich selbst mit `APP_ENV=demo` + `--env=demo` falls
+in anderer Env gestartet (Symfony\Process + setTty). Demo nutzt eigene SQLite-DB
+unter `var/demo.db` — isoliert von dev/prod.
 
 Auto-Setup: erkennt fehlendes Schema, erstellt es, seedet Faction + Player +
 Galaxy via `ClaimStartPlanetCommand`. Mit `--reset` zusätzlich Schema-Drop.

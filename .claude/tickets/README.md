@@ -166,4 +166,6 @@
 | 164-battle-replay-ui.md | Feature | Draft | Battle-Replay (Table-MVP, Animated-Folge) |
 | 165-settings-personalization.md | Feature | Draft | UI-Theme/Default-Tactic/Galaxy-Filter/Notification-Prefs |
 | 166-animated-battle-replay.md | Feature | Draft | Animated-Battle-Replay-View (Folge zu T-164) |
+| 167-cleanup-loose-ends.md | TechDebt | Open | Status-Sync (T-003/T-063), Stale-Stubs entfernen, 5+ Folge-Tickets explizit anlegen |
+| 168-demo-cli-env-preflight.md | Bug | Done | `app:demo:run` Auto-Re-Exec in demo-Env via Symfony\Process — kein --env=demo mehr nötig |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |

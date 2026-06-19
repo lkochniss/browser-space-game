@@ -72,6 +72,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Process\Process;
 use Throwable;
 
 /**
@@ -124,6 +126,10 @@ class InteractiveDemoCommand extends Command
         private readonly ActiveResearchRepository $activeResearchRepository,
         private readonly BuildBuildingCommandService $buildService,
         private readonly BuildingUnlockConfig $unlockConfig,
+        #[Autowire('%kernel.environment%')]
+        private readonly string $kernelEnv,
+        #[Autowire('%kernel.project_dir%')]
+        private readonly string $projectDir,
     ) {
         parent::__construct();
     }
@@ -133,10 +139,51 @@ class InteractiveDemoCommand extends Command
         $this->addOption('reset', null, InputOption::VALUE_NONE, 'Drop schema + new player');
     }
 
+    /**
+     * T-168: Wenn Command aus dev/prod env gestartet wird, in Sub-Prozess mit
+     * APP_ENV=demo + --env=demo neu aufrufen. setTty=true reicht stdin/stdout
+     * an Child-Prozess durch → Choice-Loop bleibt interaktiv.
+     */
+    private function reexecInDemoEnv(InputInterface $input, OutputInterface $output, SymfonyStyle $io): int
+    {
+        $args = [PHP_BINARY, $this->projectDir . '/bin/console', 'app:demo:run', '--env=demo'];
+        if ($input->getOption('reset')) {
+            $args[] = '--reset';
+        }
+        if (!$input->isInteractive()) {
+            $args[] = '--no-interaction';
+        }
+
+        $io->note(sprintf('Auto-switch %s → demo env (Demo nutzt eigene SQLite-DB var/demo.db).', $this->kernelEnv));
+
+        $process = new Process($args, $this->projectDir, ['APP_ENV' => 'demo']);
+        $process->setTimeout(null);
+
+        if (Process::isTtySupported() && $input->isInteractive()) {
+            $process->setTty(true);
+            $process->run();
+        } else {
+            // Fallback ohne TTY — Output direkt durchreichen (für --no-interaction
+            // smoke-tests + non-tty-CI).
+            $process->run(function (string $type, string $buffer) use ($output): void {
+                $output->write($buffer);
+            });
+        }
+
+        return $process->getExitCode() ?? Command::FAILURE;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Browser Space Game — Interactive Demo Sandbox');
+
+        // T-168 Auto-Switch: Demo-Command MUSS in demo-Env laufen (eigene SQLite-DB).
+        // Falls anders gestartet → in Sub-Prozess mit korrektem Env neu aufrufen
+        // (cleanes Re-Exec via Symfony\Process).
+        if ($this->kernelEnv !== 'demo') {
+            return $this->reexecInDemoEnv($input, $output, $io);
+        }
 
         $reset = (bool) $input->getOption('reset');
         $player = $this->setupSession($io, $reset);
