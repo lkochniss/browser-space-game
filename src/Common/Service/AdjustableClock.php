@@ -10,9 +10,9 @@ class AdjustableClock implements ClockInterface
 {
     private DateTimeImmutable $currentTime;
 
-    public function __construct(DateTimeImmutable $startTime)
+    public function __construct(?DateTimeImmutable $startTime = null)
     {
-        $this->currentTime = $startTime;
+        $this->currentTime = $startTime ?? new DateTimeImmutable();
     }
 
     public function now(): DateTimeImmutable
@@ -25,6 +25,10 @@ class AdjustableClock implements ClockInterface
         $this->currentTime = $this->currentTime->add($interval);
     }
 
+    public function advanceSeconds(int $seconds): void
+    {
+        $this->currentTime = $this->currentTime->add(new DateInterval(sprintf('PT%dS', max(0, $seconds))));
+    }
 
     public function reset(DateTimeImmutable $start): void
     {

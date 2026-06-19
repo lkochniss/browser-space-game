@@ -86,6 +86,7 @@
 | 079-spy-heist-infiltration.md | Feature | Draft | Spy-Erweiterung — Heist + Long-Term-Infiltration (PvE-only) |
 | 080-loot-system.md | Feature | Draft | Drop-Tabellen pro Faction, Resource/Tech-Fragment/Blueprint/Cosmetic |
 | 081-heimat-schutz-anti-crush.md | Feature | Draft | Immortal-HomePlanet + Pop-Loss-Cap + Vault + Schild-Cooldown |
+| 082-interactive-demo-cli.md | Feature | Done | Sandbox-CLI `app:demo:run` mit Choice-Menü für alle Game-Actions + Time-Travel |
 | 084-galactic-council.md | Feature | Draft | Endgame-Influence-Voting auf Crusade-Targets / Galaxy-Boni |
 | 088-combat-munition.md | Feature | Draft | BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE Verbrauch im Battle |
 | 089-luxury-civilian-goods.md | Feature | Draft | Pop-Tier-Layer (Working/Middle/Upper) + Civilian-Goods |

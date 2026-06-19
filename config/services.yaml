@@ -19,6 +19,14 @@ services:
     _instanceof:
         App\Common\Interface\CommandHandlerInterface:
             public: true
+        App\Tick\Interface\TickProcessorInterface:
+            tags: [app.tick_processor]
+
+    # T-082 / TickEngine-Wiring: alle TickProcessors als tagged_iterator injecten.
+    App\Tick\Engine\TickEngine:
+        arguments:
+            $processors: !tagged_iterator app.tick_processor
+        public: true
 
     App\Common\Service\CommandBus:
         arguments:
@@ -55,5 +63,18 @@ services:
     App\Ship\Service\SalvageProcessor:
         public: true
 
+    # T-082: AdjustableClock public, damit Demo-Command direkt advance kann.
+    App\Common\Service\AdjustableClock:
+        public: true
+
     # add more service definitions when explicit configuration is needed
+
+when@demo:
+    services:
+        # T-082 Demo-Env: ClockInterface ist AdjustableClock (Time-Travel via advance).
+        # Default-Constructor setzt now() — Demo-Command kann via reset() überschreiben.
+        App\Common\Service\AdjustableClock:
+            public: true
+        App\Common\Interface\ClockInterface:
+            alias: App\Common\Service\AdjustableClock
     # please note that last definitions always *replace* previous ones
