@@ -1,7 +1,7 @@
 # T-094 Bau-Queue
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done (Foundation: Parallel-Slots; Cancel/Refund/Slot-Bonus deferred)
 **Effort:** M
 **Depends on:** T-009 (Building-Cost), T-062 (Echtzeit-Bauzeit)
 **Blocks:** T-162 (Build-Templates)

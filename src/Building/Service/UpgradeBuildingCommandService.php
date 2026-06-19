@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Building\Service;
 
 use App\Building\Exception\BuildingNotFoundException;
+use App\Building\Exception\BuildQueueFullException;
 use App\Building\Exception\InsufficientPopulationException;
 use App\Building\Exception\InsufficientResourcesException;
 use App\Building\Exception\PlanetNotFoundException;
@@ -43,6 +44,12 @@ readonly class UpgradeBuildingCommandService
             throw new BuildingNotFoundException($planetId, $buildingId);
         }
 
+        $now = $this->clock->now();
+        $active = $planet->countActiveBuildJobs($now);
+        if ($active >= BuildBuildingCommandService::MAX_CONCURRENT_BUILDS) {
+            throw new BuildQueueFullException($active, BuildBuildingCommandService::MAX_CONCURRENT_BUILDS);
+        }
+
         $currentLevel = $building->getLevel();
         $cost = $this->costConfig->getCost($building->getType(), $currentLevel);
         $rawDuration = $this->durationConfig->getDurationSeconds($building->getType(), $currentLevel);
@@ -58,7 +65,6 @@ readonly class UpgradeBuildingCommandService
         $this->debitResources($planet, $cost);
         $planet->getPopulation()->assign($cost->populationCost);
 
-        $now = $this->clock->now();
         $building->setLevel($currentLevel + 1);
         $building->setFinishedAt($now->add(new DateInterval(sprintf('PT%dS', $duration))));
 

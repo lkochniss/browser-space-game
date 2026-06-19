@@ -103,7 +103,7 @@
 | 086-black-hole-poi.md | Feature | Draft | Schwarzes-Loch + Antimaterie-Harvest (Tech-gated) |
 | 087-fog-of-war.md | Feature | Draft | Player-spezifische Discovery-Levels (UNKNOWN/METADATA/SCANNED) |
 | 093-alliance-raumstation.md | Feature | Draft | Allianz-Raumstation pro System (Repair/Trade/Defense-Hub) |
-| 094-build-queue.md | Feature | Draft | Bau-Queue 3+ Slots pro Planet, Forschung erweitert |
+| 094-build-queue.md | Feature | Done | Parallel-Slot-Model (max 3); Cancel/Refund/Hub-Bonus/Forschungs-Slots deferred |
 | 095-auto-production-routing.md | Feature | Draft | Threshold-getriggerte Auto-Trade-Routes — Folge T-110 |
 | 096-player-history-stats.md | Feature | Draft | Persistent Player-Stats (Battles/Resources/Buildings) |
 | 097-pop-tier-buildings.md | Feature | Draft | GENEBANK/CLONING_VAT/CIVIC_CENTER/AGRI_DOME/WATER_RECLAIMER/ATMOSPHERIC_PROCESSOR |

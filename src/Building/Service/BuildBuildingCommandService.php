@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Building\Service;
 
 use App\Building\Exception\BuildingLockedException;
+use App\Building\Exception\BuildQueueFullException;
 use App\Building\Exception\InsufficientPopulationException;
 use App\Building\Exception\InsufficientResourcesException;
 use App\Building\Exception\PlanetNotFoundException;
@@ -23,6 +24,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 readonly class BuildBuildingCommandService
 {
+    /**
+     * T-094 Foundation: hardcoded Parallel-Slot-Cap pro Planet.
+     * Folge-Tickets erhöhen via Hub-Upgrade / Logistics-Forschung.
+     */
+    public const MAX_CONCURRENT_BUILDS = 3;
+
     public function __construct(
         private EntityManagerInterface $em,
         private PlanetRepository $planetRepository,
@@ -61,6 +68,12 @@ readonly class BuildBuildingCommandService
 
         $this->checkUnlock($planet, $type);
 
+        $now = $this->clock->now();
+        $active = $planet->countActiveBuildJobs($now);
+        if ($active >= self::MAX_CONCURRENT_BUILDS) {
+            throw new BuildQueueFullException($active, self::MAX_CONCURRENT_BUILDS);
+        }
+
         $cost = $this->costConfig->getCost($type);
 
         $this->checkResources($planet, $cost);
@@ -69,7 +82,6 @@ readonly class BuildBuildingCommandService
         $this->debitResources($planet, $cost);
         $planet->getPopulation()->assign($cost->populationCost);
 
-        $now = $this->clock->now();
         $rawDuration = $this->durationConfig->getDurationSeconds($type, currentLevel: 0);
         // T-063: PlanetType × Size Construction-Speed-Bonus
         $speedMulti = $planet->getEffectiveConstructionSpeedMultiplier($type);

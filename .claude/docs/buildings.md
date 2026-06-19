@@ -126,6 +126,16 @@ Production/Refinement clampen Output am Cap. Volles Lager → Produktion pausier
 
 Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->now()` über TickEngine. Siehe auch tick.md für globale Tick-Services (FleetArrival, Salvage, TelescopeDiscovery).
 
+## Bau-Queue (T-094 Foundation)
+
+Pro Planet max **3 parallele** unfertige Build/Upgrade-Jobs. `Planet::countActiveBuildJobs($now)`
+zählt Buildings mit `!isReady($now)`. `BuildBuildingCommandService` und
+`UpgradeBuildingCommandService` werfen `BuildQueueFullException` bei Überschreitung.
+
+Slot-Cap-Konstante: `BuildBuildingCommandService::MAX_CONCURRENT_BUILDS = 3`.
+Folge: Hub-Upgrade-Bonus (+1 Slot pro Lvl-5), Logistics-Forschung, Cancel-Refund —
+alles in T-094-Folge-Tickets.
+
 ## Bauzeit-Boost (T-064)
 
 `ConstructionSpeedResearchConfig::getMultiplier(?Player): float` aggregiert

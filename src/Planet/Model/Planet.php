@@ -309,6 +309,26 @@ class Planet
     }
 
     /**
+     * T-094 Bau-Queue: Anzahl gerade laufender Bau-/Upgrade-Jobs.
+     * Definition: Building.finishedAt > $now (= !isReady). Ein neu gebautes ODER
+     * gerade upgradetes Building zählt als aktiver Job.
+     */
+    public function countActiveBuildJobs(?DateTimeImmutable $now): int
+    {
+        if ($now === null) {
+            return 0;
+        }
+        $count = 0;
+        foreach ($this->buildings as $b) {
+            if (!$b->isReady($now)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
      * T-025: Höchstes Level eines fertigen RESEARCH_LAB auf diesem Planeten (0 wenn keiner).
      * StartResearchCommandService nutzt das maximum über alle Player-Planeten als Speed-Multiplier.
      */

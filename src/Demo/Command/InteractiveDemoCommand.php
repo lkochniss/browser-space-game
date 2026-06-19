@@ -335,6 +335,9 @@ class InteractiveDemoCommand extends Command
                 }
                 $io->text('  Buildings: ' . implode(', ', $bLines));
             }
+            // T-094: Bau-Queue Auslastung
+            $active = $planet->countActiveBuildJobs($this->clock->now());
+            $io->text(sprintf('  Build-Queue: %d/%d', $active, \App\Building\Service\BuildBuildingCommandService::MAX_CONCURRENT_BUILDS));
         }
 
         // Ships across all planets
