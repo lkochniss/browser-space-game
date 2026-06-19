@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Simulation\Scenario;
 
 use App\Common\Interface\CommandBusInterface;
@@ -7,16 +9,24 @@ use App\Common\Service\AdjustableClock;
 use App\GameState\Model\GameState;
 use App\Player\Command\CreateNewPlayerCommand;
 use App\Tick\Engine\TickEngine;
+use App\Tick\Processor\ConstructionCompletionProcessor;
+use App\Tick\Processor\PopulationConsumptionProcessor;
+use App\Tick\Processor\RefinementProductionProcessor;
 use App\Tick\Processor\ResourceProductionProcessor;
 use DateInterval;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 
 readonly class PlayerStartUpScenario
 {
     public function __construct(
         private CommandBusInterface $commandBus,
-        private ResourceProductionProcessor $resourceProductionProcessor
-    ){
+        private ConstructionCompletionProcessor $constructionCompletionProcessor,
+        private ResourceProductionProcessor $resourceProductionProcessor,
+        private RefinementProductionProcessor $refinementProductionProcessor,
+        private PopulationConsumptionProcessor $populationConsumptionProcessor,
+        private EntityManagerInterface $em,
+    ) {
     }
 
     public function run(): void
@@ -25,8 +35,11 @@ readonly class PlayerStartUpScenario
             new CreateNewPlayerCommand()
         );
 
-        $gameStateClock = new AdjustableClock(new DateTimeImmutable('2025-01-01T00:00:00Z'));
-        $simulationClock = new AdjustableClock(new DateTimeImmutable('2025-01-01T00:00:00Z'));
+        // T-062: Game-Clock startet bei "jetzt" (Wall-Clock), damit beim Claim gesetzte
+        // finishedAt-Werte konsistent zur Tick-Clock sind.
+        $startedAt = new DateTimeImmutable();
+        $gameStateClock = new AdjustableClock($startedAt);
+        $simulationClock = new AdjustableClock($startedAt);
 
         $simulationClock->advance(new DateInterval('PT30M'));
 
@@ -35,9 +48,13 @@ readonly class PlayerStartUpScenario
         $intervalSeconds = 900;
         $tickEngine = new TickEngine(
             [
-                $this->resourceProductionProcessor
+                $this->constructionCompletionProcessor,
+                $this->resourceProductionProcessor,
+                $this->refinementProductionProcessor,
+                $this->populationConsumptionProcessor,
             ],
-            $intervalSeconds
+            $this->em,
+            $intervalSeconds,
         );
 
         $elapsed = $simulationClock->diffInSeconds($gameStateClock);
@@ -47,17 +64,14 @@ readonly class PlayerStartUpScenario
             $elapsed -= $tickEngine->getIntervalSeconds();
         }
 
-//        $realtimeEngine = new RealtimeEngine(/* ProcessorCollection */);
-//        $realtimeEngine->run($gameState, $simulationClock);
-
-        $this->printSunmary($gameState);
-
+        $this->printSummary($gameState);
     }
 
-    private function printSunmary(GameState $gameState)
+    private function printSummary(GameState $gameState): void
     {
         foreach ($gameState->getPlayer()->getPlanets() as $planet) {
-            echo "Planet {$planet->getId()} hat Ressourcen:\n";
+            $pop = $planet->getPopulation();
+            echo "Planet {$planet->getId()} — Pop {$pop->getTotal()}/{$pop->getCap()} (free {$pop->getFree()})\n";
             foreach ($planet->getResources() as $res) {
                 echo "- {$res->getType()->value}: {$res->getAmount()}\n";
             }

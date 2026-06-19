@@ -6,7 +6,7 @@ use App\Common\Interface\CommandBusInterface;
 use App\Planet\Command\ClaimStartPlanetCommand;
 use App\Planet\Command\GeneratePlanetCommand;
 use App\Player\Model\Player;
-use ValueObject\PlayerId;
+use App\Player\ValueObject\PlayerId;
 
 class CreateNewPlayerService
 {

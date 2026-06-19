@@ -1,38 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Resource\Model;
 
-use ArrayIterator;
-use IteratorAggregate;
+use App\Resource\ValueObject\ResourceType;
+use Doctrine\Common\Collections\ArrayCollection;
+use OutOfBoundsException;
 
-class ResourceDepositCollection implements IteratorAggregate
+/**
+ * @extends ArrayCollection<int, ResourceDeposit>
+ */
+class ResourceDepositCollection extends ArrayCollection
 {
-    /** @var ResourceDeposit[] */
-    private array $resourceDeposits = [];
-
-    public function __construct(array $resourceDeposits = [])
+    public function getByType(ResourceType $type): ?ResourceDeposit
     {
-        $this->resourceDeposits = $resourceDeposits;
+        foreach ($this as $deposit) {
+            if ($deposit->getResourceType() === $type) {
+                return $deposit;
+            }
+        }
+
+        return null;
     }
 
-    public function add(ResourceDeposit $planet): void
+    public function getByTypeOrFail(ResourceType $type): ResourceDeposit
     {
-        $this->resourceDeposits[] = $planet;
-    }
+        $deposit = $this->getByType($type);
+        if ($deposit === null) {
+            throw new OutOfBoundsException(
+                sprintf('ResourceDeposit of type "%s" not present in collection', $type->value)
+            );
+        }
 
-    /**
-     * @return ResourceDeposit[]
-     */
-    public function getIterator(): ArrayIterator
-    {
-        return new ArrayIterator($this->resourceDeposits);
-    }
-
-    /**
-     * @return ResourceDeposit[]
-     */
-    public function toArray(): array
-    {
-        return $this->resourceDeposits;
+        return $deposit;
     }
 }

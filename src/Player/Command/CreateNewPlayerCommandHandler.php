@@ -5,7 +5,7 @@ namespace App\Player\Command;
 use App\Common\Interface\CommandHandlerInterface;
 use App\Player\Model\Player;
 use App\Player\Service\CreateNewPlayerService;
-use ValueObject\PlayerId;
+use App\Player\ValueObject\PlayerId;
 
 class CreateNewPlayerCommandHandler implements CommandHandlerInterface
 {

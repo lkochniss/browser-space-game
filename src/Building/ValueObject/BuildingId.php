@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Resource\ValueObject;
+namespace App\Building\ValueObject;
 
 use App\Common\ValueObject\AbstractUuid;
 

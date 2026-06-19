@@ -1,28 +1,41 @@
 # T-001: Renewable Rohstoffe
 
 **Type:** Feature
-**Status:** Open
-**FX:** No (kein Persistence-Layer)
-**MIG:** No
+**Status:** Done
+**FX:** No
+**MIG:** No (enum-Erweiterung; Spalte bleibt `string length 32`)
 
 ## Description
 
-`docs/Rohstoff.md` listet erneuerbare Rohstoffe Wasser/Nahrung/Sauerstoff. Code kennt bislang nur `IRON_ORE`. Diese 3 als `ResourceType` ergänzen — Voraussetzung für Pop-Verbrauch (T-005) und Ship-Life-Support (T-012).
+`docs/Rohstoff.md` listet erneuerbare Rohstoffe Wasser/Nahrung/Sauerstoff. Diese 3 als `ResourceType` ergänzt — Voraussetzung für Pop-Verbrauch (T-005), Storage-System (T-061) und Ship-Life-Support (T-012).
+
+## Scope (final)
+
+Daten-Setup + Base-Werte. Keine Tick-Produktion (T-005/T-006). Keine Storage-Caps (T-061). Kein Deposit für renewables.
 
 ## AC
 
-- [ ] `ResourceType` enum: `WATER`, `FOOD`, `OXYGEN` ergänzt
-- [ ] Planet generiert mit diesen 3 als `Resource`-Einträgen (Start-Amount = 0 oder Default — entscheiden)
-- [ ] `ResourceProductionConfig` kennt Base-Production für renewables (initial sinnvolle Defaults)
-- [ ] Bestehende Tests/Sim-Run grün
+- [x] `ResourceType` enum erweitert um `WATER`, `FOOD`, `OXYGEN`
+- [x] `ClaimStartPlanetCommandService` legt für jeden renewable einen `Resource`-Eintrag mit `amount = 100` an
+- [x] Keine `ResourceDeposit` für renewables (Vorkommen-Konzept gilt nur für endliche Rohstoffe)
+- [x] `ResourceProductionConfig` kennt Base-Werte: `WATER=5.0`, `FOOD=3.0`, `OXYGEN=0.0`
+- [x] Bestehende Tests grün (21/21, vorher 17 + 4 neue Service-IT)
 
-## Affected
+## Implementation
 
-- `src/Resource/ValueObject/ResourceType.php`
-- `src/Resource/Service/ResourceProductionConfig.php`
-- `src/Planet/Service/ClaimStartPlanetCommandService.php` (oder wo Resources initialisiert werden)
+- `Resource::generateWithAmount(ResourceType, int)` neu — Factory für initialisierte Resources
+- `ClaimStartPlanetCommandService::RENEWABLES` Konstanten-Liste; Loop legt Resources mit `RENEWABLE_START_AMOUNT = 100` an
+- IT `tests/Planet/Service/ClaimStartPlanetCommandServiceTest`:
+  - IRON_ORE bleibt bei 0 + Deposit 1000
+  - 3 renewables bei 100
+  - Renewables ohne Deposit (Deposit-Count = 1)
+  - Persistierung über `clear() + find()` reloaded korrekt 4 Resources
 
-## Open Questions
+## Folge-Tickets
 
-1. Wasser/Nahrung/Sauerstoff: per-Tick passive Produktion auf erdähnlichem Planet ja/nein? (Doc sagt: nur auf Planeten ohne Atmosphäre wird Sauerstoff "benötigt" — auf erdähnlichen kostenlos?)
-2. Start-Amount nach Claim: 0, oder mit kleinem Vorrat?
+- T-061 Storage-System (Lager-Kapazität, Speicher-Gebäude)
+- T-005 Pop-Verbrauch (verknüpft Resource-Diff mit Population)
+
+### Token Usage (estimate)
+- Input: ~6k
+- Output: ~3k

@@ -5,7 +5,7 @@ namespace App\Planet\Command;
 use App\Common\Interface\CommandHandlerInterface;
 use App\Planet\Model\Planet;
 use App\Planet\Service\GeneratePlanetCommandService;
-use ValueObject\PlanetId;
+use App\Planet\ValueObject\PlanetId;
 
 class GeneratePlanetCommandHandler implements CommandHandlerInterface
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace ValueObject;
+namespace App\Player\ValueObject;
 
 use App\Common\ValueObject\AbstractUuid;
 

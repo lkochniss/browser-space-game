@@ -1,38 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Resource\Model;
 
-use ArrayIterator;
-use IteratorAggregate;
+use App\Resource\ValueObject\ResourceType;
+use Doctrine\Common\Collections\ArrayCollection;
+use OutOfBoundsException;
 
-class ResourceCollection implements IteratorAggregate
+/**
+ * @extends ArrayCollection<int, Resource>
+ */
+class ResourceCollection extends ArrayCollection
 {
-    /** @var Resource[] */
-    private array $resources = [];
-
-    public function __construct(array $resources = [])
+    public function getByType(ResourceType $type): ?Resource
     {
-        $this->resources = $resources;
+        foreach ($this as $resource) {
+            if ($resource->getType() === $type) {
+                return $resource;
+            }
+        }
+
+        return null;
     }
 
-    public function add(Resource $planet): void
+    public function getByTypeOrFail(ResourceType $type): Resource
     {
-        $this->resources[] = $planet;
-    }
+        $resource = $this->getByType($type);
+        if ($resource === null) {
+            throw new OutOfBoundsException(
+                sprintf('Resource of type "%s" not present in collection', $type->value)
+            );
+        }
 
-    /**
-     * @return Resource[]
-     */
-    public function getIterator(): ArrayIterator
-    {
-        return new ArrayIterator($this->resources);
-    }
-
-    /**
-     * @return Resource[]
-     */
-    public function toArray(): array
-    {
-        return $this->resources;
+        return $resource;
     }
 }

@@ -4,8 +4,8 @@ namespace App\Planet\Command;
 
 use App\Common\Interface\CommandInterface;
 use App\Player\Model\Player;
-use ValueObject\PlanetId;
-use ValueObject\PlayerId;
+use App\Planet\ValueObject\PlanetId;
+use App\Player\ValueObject\PlayerId;
 
 /**
  * @implements CommandInterface<Player>

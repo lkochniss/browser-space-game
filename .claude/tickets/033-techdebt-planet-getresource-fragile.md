@@ -1,41 +1,33 @@
 # TD-033: Planet::getResource fragil
 
 **Type:** TechDebt
-**Status:** Open
+**Status:** Done
 **Severity:** Medium
 **Effort:** S
 **Affected Domain(s):** Planet, Resource
 
 ## Beschreibung
 
-`src/Planet/Model/Planet.php:87-93`:
-```php
-public function getResource(ResourceType $resourceType): Resource
-{
-    return current(array_filter(
-        $this->resources->toArray(),
-        fn(Resource $resource) => $resource->getType() === $resourceType
-    ));
-}
-```
-
-`current()` returnt `false` wenn nichts gefunden — TypeError zur Laufzeit (Methode deklariert `Resource` als Returntype, `false` ist kein `Resource`). Gleiches Problem in `getResourceDeposit()`.
+`Planet::getResource()` und `Planet::getResourceDeposit()` nutzten `current(array_filter(...))`. `current()` returned `false` wenn nichts gefunden — TypeError zur Laufzeit, da Returntype `Resource`/`ResourceDeposit` keine `false` zulässt.
 
 ## Risk if ignored
 
-Crash sobald Resource-Type abgefragt wird, der noch nicht im Planet-Lager existiert (z.B. nach T-001/T-002 Erweiterung). Passiert garantiert.
+Crash bei Resource-Lookup für nicht-existierenden Type (passiert sicher mit T-001/T-002).
 
 ## AC
 
-- [ ] Methode auf `ResourceCollection` verschoben: `ResourceCollection::getByType(ResourceType): ?Resource` oder `getByTypeOrFail()`
-- [ ] Verwendung in Processor explizit fail-fast (`getByTypeOrFail`)
-- [ ] Initialisierung bei Planet-Generation füllt **alle** ResourceTypes auf (auch wenn 0) → keine Misses zur Laufzeit
-- [ ] Gleiche Behandlung für `ResourceDepositCollection::getByType()`
-- [ ] Integration-Test deckt fehlende Resource ab (sobald T-031 fertig)
+- [x] `ResourceCollection::getByType(ResourceType): ?Resource`
+- [x] `ResourceCollection::getByTypeOrFail(ResourceType): Resource` — wirft `OutOfBoundsException`
+- [x] `ResourceDepositCollection::getByType()` + `getByTypeOrFail()` analog
+- [x] `Planet::getResource()` nutzt `getByTypeOrFail` (fail-fast)
+- [x] `Planet::getResourceDeposit()` nutzt `getByTypeOrFail` (fail-fast)
+- [x] IT-Coverage: 7 Tests (4 Resource + 3 Deposit)
+- [ ] Variante B (Invariant — Planet hält immer alle ResourceTypes preloaded) — bewusst NICHT umgesetzt: aktuell nur 1 ResourceType (IRON_ORE) im Enum; Invariante macht Sinn sobald T-001/T-002 mehr Types einführen — wird dann dort umgesetzt
 
 ## Refactor Strategy
 
-Variante A (defensiv): jede Collection bietet beide APIs (`getByType` nullable + `getByTypeOrFail`).
-Variante B (invariant): Planet hält IMMER alle ResourceTypes als Resource(0) — Lookup fail-fast garantiert.
+Variante A (Defensive Lookup) gewählt. Variante B (Invariant) wird mit T-001 (Renewable Resources) fällig — Note in TD-033-Folge ergänzt.
 
-Empfehlung: B — saubere Invariante.
+### Token Usage (estimate)
+- Input: ~3k tokens
+- Output: ~2k tokens (3 Edits + 2 Tests)

@@ -4,7 +4,11 @@ Stub. Feature docs werden erstellt sobald Tickets `Done`.
 
 | File | Domain | Summary |
 |------|--------|---------|
-| _(none yet)_ | | |
+| persistence.md | (cross) | Doctrine ORM Mapping, UUID-Types, Aggregate-Pattern, Repos, Migrations, Test-Setup |
+| resources.md | Resource | Resource-Types (endlich + renewable + refined), Start-Amounts, Base-Werte, Storage-Plan |
+| population.md | Planet | Population-VO (total/assigned/cap), Operations, Invarianten, Hydration-Caveat, Type-Multi |
+| planets.md | Planet | Aggregat-Struktur, PlanetType (7), PlanetSize (5), Generierung, Pop-Cap |
+| buildings.md | Building | BuildingTypes, Cost-Config, Bauprozess, Exceptions, Cap-Recalc, Refinement |
 
 ## Source of Truth (raw concept docs)
 
@@ -15,10 +19,11 @@ Stub. Feature docs werden erstellt sobald Tickets `Done`.
 | Folder | Status |
 |--------|--------|
 | `Player/` | Player + CreatePlayer flow |
-| `Planet/` | Planet entity + Generate/Claim commands |
-| `Building/` | Building model + production helpers (only IRON_MINE) |
-| `Resource/` | Resource + Deposit + Production config (only IRON_ORE) |
-| `Tick/` | TickEngine + ResourceProductionProcessor |
+| `Planet/` | Planet entity (+Type/Size T-008, +Population T-004) + Claim flow + Galaxy-Gen |
+| `SolarSystem/` | SolarSystem + Planet-Container (T-007) |
+| `Building/` | 8 BuildingTypes, Cost-Config, Build/Upgrade-Commands, Refinement-Smelter |
+| `Resource/` | 11 ResourceTypes, Mining-Production, Refinement-Recipes, Pop-Consumption |
+| `Tick/` | TickEngine (atomic) + 3 Processors (Production, Refinement, Pop-Consumption) |
 | `GameState/` | GameState wrapper |
 | `Simulation/` | PlayerStartUpScenario (CLI demo) |
-| `Common/` | CommandBus, Clock, base interfaces |
+| `Common/` | CommandBus, Clock, UUID-Types |

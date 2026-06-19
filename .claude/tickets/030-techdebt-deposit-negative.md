@@ -1,35 +1,39 @@
 # TD-030: Deposit kann negativ werden + Level-Math fragwürdig
 
 **Type:** TechDebt
-**Status:** Open
+**Status:** Done
 **Severity:** Medium
 **Effort:** S
 **Affected Domain(s):** Tick, Resource, Building
 
 ## Beschreibung
 
-`src/Tick/Processor/ResourceProductionProcessor.php:38-44`:
-```php
-$amount += $baseValue * ($building->getLevel() + 1) * $multiplier;
-$deposit->setAmount($deposit->getAmount() - $amount);
-```
+`src/Tick/Processor/ResourceProductionProcessor.php` hatte zwei Probleme:
 
-Probleme:
-1. **Deposit-Negativ:** Kein Clamp. Wenn `amount > deposit.amount` → Deposit wird negativ. Resource zählt trotzdem voll auf Player-Lager → Resource aus dem Nichts.
-2. **Level off-by-one verdächtig:** `Building::createNewBuilding` setzt `level = 1`. Im Processor wird mit `(level + 1) = 2` multipliziert. Heißt: neues Lvl-1-Building produziert sofort 2× Base. Vermutlich unbeabsichtigt — entweder Level startet bei 0, oder Multiplikator sollte `level` (nicht `level+1`) sein.
+1. **Deposit-Negativ:** Kein Clamp. Wenn extrahierte Menge > Deposit-Bestand → Deposit wurde negativ, Resource bekam trotzdem volle Menge → Cheating-Vektor.
+2. **Level off-by-one:** `($building->getLevel() + 1)` als Multiplikator → Level-1-Building produzierte 2× Base.
 
 ## Risk if ignored
 
-Wirtschafts-Bug. Cheating-Vektor (unendliche Resources über erschöpfte Deposits). Falsche Balance bei Building-Levels.
+Wirtschafts-Bug, Balance-Bug, Cheating-Vektor.
 
 ## AC
 
-- [ ] Extraktion clamped: `$actual = min($desiredAmount, $deposit->getAmount())`; nur `$actual` an Resource gutschreiben
-- [ ] Entscheidung Level-Start: bei 0 oder bei 1? Build-Counter konsistent korrigieren oder Multiplikator anpassen
-- [ ] Kommentar im Code falls Designentscheidung (z.B. "level 1 = 1x base")
-- [ ] Bei leerem Deposit kein Krash, einfach 0 gewinnen
-- [ ] (Optional) DepositEmptyEvent dispatchen für T-020 (POI verschwindet)
+- [x] Extraktion clamped: `(int) min($desired, $deposit->getAmount())` — nur tatsächlich extrahierte Menge wird abgezogen UND gutgeschrieben
+- [x] Level-Math korrigiert: `* $building->getLevel()` (ohne +1). Konvention: **Level 1 = 1× Base**.
+- [x] Kommentar im Code (clamp-Begründung)
+- [x] Leerer Deposit → 0 extrahiert (Policy + Processor decken das ab)
+- [x] IT-Coverage:
+  - Level 1 → 1× Base
+  - Level 3 → 3× Base
+  - Deposit < desired → clamped
+  - Empty Deposit → 0/0
+- [ ] DepositEmptyEvent — bewusst NICHT umgesetzt, gehört zu T-057 (Domain-Events Foundation) bzw. T-020 (Asteroidenfeld)
 
 ## Refactor Strategy
 
-Pure Logik-Fix + 1 Integration-Test (sobald T-031 PHPUnit existiert).
+Pure Logik-Fix in `ResourceProductionProcessor::process()`. 4 Integration-Tests in `tests/Tick/Processor/ResourceProductionProcessorTest.php`.
+
+### Token Usage (estimate)
+- Input: ~2k tokens
+- Output: ~1.5k tokens (Edit + Test)
