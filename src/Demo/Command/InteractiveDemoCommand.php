@@ -12,6 +12,7 @@ use App\Building\ValueObject\BuildingId;
 use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\CommandBusInterface;
 use App\Common\Service\AdjustableClock;
+use App\Demo\Service\DemoGoalChecker;
 use App\Faction\Service\FactionSeedService;
 use App\Fleet\Command\CreateFleetCommand;
 use App\Fleet\Command\DisbandFleetCommand;
@@ -95,6 +96,7 @@ class InteractiveDemoCommand extends Command
         private readonly BuildingCostConfig $buildingCostConfig,
         private readonly ShipCostConfig $shipCostConfig,
         private readonly ProbeCostConfig $probeCostConfig,
+        private readonly DemoGoalChecker $goalChecker,
     ) {
         parent::__construct();
     }
@@ -127,6 +129,7 @@ class InteractiveDemoCommand extends Command
             try {
                 $continue = match ($action) {
                     'Status' => $this->showStatus($io, $player),
+                    'Goals' => $this->showGoals($io, $player),
                     'Galaxy Overview' => $this->showGalaxy($io, $player),
                     'Build Building' => $this->buildBuilding($io, $player),
                     'Upgrade Building' => $this->upgradeBuilding($io, $player),
@@ -176,6 +179,7 @@ class InteractiveDemoCommand extends Command
     {
         return [
             'Status',
+            'Goals',
             'Galaxy Overview',
             'Build Building',
             'Upgrade Building',
@@ -344,6 +348,25 @@ class InteractiveDemoCommand extends Command
                 $io->text($l);
             }
         }
+
+        return true;
+    }
+
+    private function showGoals(SymfonyStyle $io, Player $player): bool
+    {
+        $io->section('Demo-Goals');
+
+        $goals = $this->goalChecker->check($player);
+        $done = 0;
+        foreach ($goals as $g) {
+            $marker = $g->completed ? '<info>✓</info>' : '<comment>✗</comment>';
+            if ($g->completed) {
+                $done++;
+            }
+            $io->text(sprintf('  %s %s — %s', $marker, $g->label, $g->progressHint));
+        }
+        $io->newLine();
+        $io->text(sprintf('Progress: <info>%d/%d</info> Goals erledigt.', $done, count($goals)));
 
         return true;
     }
