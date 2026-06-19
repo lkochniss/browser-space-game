@@ -29,7 +29,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\DiscriminatorMap([
     'debris_field' => Poi::class,
     'nebula' => Nebula::class,
-    'station' => Poi::class,
+    'station' => SpaceStation::class,
     'unknown_fleet' => Poi::class,
     'asteroid_field' => AsteroidField::class,
     'wormhole' => Wormhole::class,

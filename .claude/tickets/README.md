@@ -24,7 +24,7 @@
 | 020-asteroidenfeld.md | Feature | Done | AsteroidField POI-Subtype (STI) + Galaxy-Spawn 0-2 pro System mit FINITE-Erzen |
 | 021-truemmerfeld-recycling.md | Feature | Open | Trümmerfeld + Trümmer + Recycling-Anlage Chain |
 | 022-nebel-poi.md | Feature | Done | Nebula POI-Subtype (STI) + concealmentLevel + 30%-Galaxy-Spawn |
-| 023-raumstation.md | Feature | Open | Raumstation pro System |
+| 023-raumstation.md | Feature | Done | SpaceStation POI (max 1/System, Shipyard-L3-Gate, Storage 100k); Maintenance/Übernahme = T-023b |
 | 024-raumschlacht.md | Feature | Open | Legacy-Anker, abgelöst durch T-103 (PvE-Pivot) |
 | 025-forschung-framework.md | Feature | Open | Forschungs-Framework (Tree, Levels) |
 | 026-antriebstechnologie-tree.md | Feature | Open | Antriebs-Tree (4 Standard + 3 FTL) |
