@@ -27,6 +27,10 @@ enum BuildingType: string
     // T-021: Recycling-Plant. Verarbeitet DEBRIS_* Cargo zu zufälligen FINITE/REFINED-Outputs.
     case RECYCLING_PLANT = 'recycling_plant';
 
+    // T-018: Teleskop. Deckt pro Tick `level` zufällige unbekannte SolarSystems
+    // für den Player auf (TelescopeDiscoveryProcessor).
+    case TELESCOPE = 'telescope';
+
     case IRON_STORAGE = 'iron_storage';
     case COAL_STORAGE = 'coal_storage';
     case IRON_BAR_STORAGE = 'iron_bar_storage';
@@ -64,6 +68,7 @@ enum BuildingType: string
             self::SHIPYARD => [],
             self::PROBE_LAB => [],
             self::RECYCLING_PLANT => [],
+            self::TELESCOPE => [],
             self::HUB => [
                 ResourceType::WATER->value => 200,
                 ResourceType::FOOD->value => 200,

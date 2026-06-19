@@ -35,6 +35,9 @@ class BuildingDurationConfig
         // T-021: Recycling-Plant (30min)
         BuildingType::RECYCLING_PLANT->value => 1800,
 
+        // T-018: Teleskop (45min)
+        BuildingType::TELESCOPE->value => 2700,
+
         // Storage (15min — moderate)
         BuildingType::IRON_STORAGE->value => 900,
         BuildingType::COAL_STORAGE->value => 900,

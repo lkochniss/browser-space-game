@@ -287,6 +287,28 @@ class Planet
     }
 
     /**
+     * T-018: Höchstes Level eines fertigen TELESCOPE auf diesem Planeten (0 wenn keiner).
+     * TelescopeDiscoveryProcessor summiert über alle Planeten des Players.
+     */
+    public function getTelescopeLevel(?DateTimeImmutable $now = null): int
+    {
+        $level = 0;
+        foreach ($this->buildings as $building) {
+            if ($building->getType() !== BuildingType::TELESCOPE) {
+                continue;
+            }
+            if (!$building->isReady($now)) {
+                continue;
+            }
+            if ($building->getLevel() > $level) {
+                $level = $building->getLevel();
+            }
+        }
+
+        return $level;
+    }
+
+    /**
      * Live-computed storage capacity for a resource type (T-061).
      * Cap = ResourceCategory base + Σ(building.type.getStorageContribution × building.level)
      */

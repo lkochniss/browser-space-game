@@ -21,7 +21,7 @@
 | 016-bergungsschiff.md | Feature | Done | ShipType::SALVAGE + Echtzeit-Salvage (50 Units/min) für AsteroidField + Field-Cleanup |
 | 017-flotte-movement.md | Feature | Done | Persistent-Fleet + Wallclock-Movement (Slowest-Ship-Speed) + FleetArrivalService; Magic-Dock-Cleanup |
 | 017b-fleet-movement-modifiers.md | Feature | Draft | Nebel-Detection-Hook + Wormhole-Travel-Reduktion/Cooldown/Treibstoff (Folge-Modifier zu T-017) |
-| 018-teleskop-discovery.md | Feature | Open | Teleskop-Building + Meta-Erkundung von Systemen |
+| 018-teleskop-discovery.md | Feature | Done | TELESCOPE-Building + PlayerSystemDiscovery + Tick-Reveal; Demo-Galaxy-Overview filtert auf entdeckte |
 | 019-poi-system.md | Feature | Done | POI-Foundation (STI) + 7 PoiTypes + SolarSystem.pois |
 | 020-asteroidenfeld.md | Feature | Done | AsteroidField POI-Subtype (STI) + Galaxy-Spawn 0-2 pro System mit FINITE-Erzen |
 | 021-truemmerfeld-recycling.md | Feature | Done | DebrisField POI + DEBRIS-ResourceTypes + RECYCLING_PLANT + RecyclingProcessor; Spawn via killShip + Fixture |

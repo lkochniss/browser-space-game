@@ -1,7 +1,7 @@
 # T-018: Teleskop + System-Erkundung
 
 **Type:** Feature
-**Status:** Open
+**Status:** Done
 **FX:** No
 **MIG:** No
 **Depends on:** T-007 (SolarSystem), T-019 (POI-Foundation)
@@ -20,17 +20,32 @@ Detail-Erkundung weiterhin per Sonde (T-013) / Schiff (T-017).
 - SpaceStation (T-023) — Player-Kontroll-Punkt
 - DebrisField, UnknownFleet, BlackHole — sobald T-021 / T-074-T-075 / T-086 done
 
+## Decisions (2026-06-19)
+
+1. **Discovery-State-Owner:** T-018 Foundation. Single-Boolean-Marker via
+   `PlayerSystemDiscovery`-Entity (Player + SolarSystem + discoveredAt).
+   T-087 Fog-of-War erweitert später um Tier-Levels + POI-Discovery.
+2. **Reveal-Mechanik:** pro Tick werden N=Total-Telescope-Level zufällige
+   unbekannte Systems entdeckt (Fisher-Yates über Randomizer).
+3. **Initial-Discovery:** ClaimStartPlanet markiert Heimat-System sofort
+   als entdeckt; Rest unbekannt.
+4. **POI-Discovery im eigenen System:** Out of Scope — kommt mit T-087 / T-027.
+
 ## AC
 
-- [ ] `BuildingType::TELESCOPE` BuildingType + Cost + Duration
-- [ ] Reichweite-Formel pro Level (z.B. `range = level * 1` System-Hops)
-- [ ] `TelescopeDiscoveryProcessor` (TickProcessor) entdeckt unbekannte Systeme
-  im Radius
-- [ ] Discovered-State persistiert pro Player auf SolarSystem-Ebene → Foundation
-  hier oder separat als T-087-Vorgriff
-- [ ] Im eigenen System: Teleskop deckt POIs nach Difficulty + Scanner-Tech auf
-- [ ] Scope-Decision: Foundation hier vs. T-087 Fog-of-War — wer hält
-  PlayerSystemDiscovery-Entity?
+- [x] `BuildingType::TELESCOPE` + Cost (150 IRON / 200 SI / 100 CU / 10 pop) + Duration (45min)
+- [x] `Planet::getTelescopeLevel($now)` Helper
+- [x] `PlayerSystemDiscovery`-Entity (own ID + UNIQUE(player, system) + discoveredAt)
+- [x] `PlayerSystemDiscoveryRepository` mit `findByPlayer` + `isDiscovered`
+- [x] `TelescopeDiscoveryService` (global, nicht TickProcessor) mit:
+  - `markDiscovered(player, system)` — idempotent
+  - `runTickForPlayer(player)` — N random unseen reveals
+- [x] `ClaimStartPlanetCommandService` markiert Heimat-System bei Claim
+- [x] Demo-CLI Tick-Forward callt `telescopeDiscovery->runTickForPlayer($player)`
+      und zeigt `Discovered: N` im Status
+- [x] Demo-CLI Galaxy-Overview filtert auf entdeckte Systeme + zeigt Counter unbekannter
+- [x] 5 IT-Tests (no-telescope/L1/L3/cap/idempotent) grün
+- [x] Suite grün (451/451)
 
 ## Out of Scope (Folge-Tickets)
 

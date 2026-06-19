@@ -97,6 +97,16 @@ class BuildingCostConfig
                 populationCost: 10,
             ),
 
+            // T-018: Teleskop. Deckt SolarSystems pro Tick auf.
+            BuildingType::TELESCOPE->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 150,
+                    ResourceType::SILICON->value => 200,
+                    ResourceType::COPPER_ORE->value => 100,
+                ],
+                populationCost: 10,
+            ),
+
             // Storage-Buildings (T-061)
             BuildingType::IRON_STORAGE->value => new BuildingCost(
                 resources: [ResourceType::IRON_ORE->value => 100, ResourceType::COAL->value => 50],

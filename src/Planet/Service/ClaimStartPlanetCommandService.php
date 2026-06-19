@@ -7,6 +7,7 @@ namespace App\Planet\Service;
 use App\Building\Model\Building;
 use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\ClockInterface;
+use App\Discovery\Service\TelescopeDiscoveryService;
 use App\POI\Model\AsteroidField;
 use App\POI\Model\Nebula;
 use App\POI\Model\Wormhole;
@@ -57,6 +58,7 @@ class ClaimStartPlanetCommandService
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly ClockInterface $clock,
+        private readonly TelescopeDiscoveryService $telescopeDiscovery,
     ) {
     }
 
@@ -77,6 +79,13 @@ class ClaimStartPlanetCommandService
         }
         $this->em->persist($player);
         $this->em->flush();
+
+        // T-018: Heimat-System sofort als entdeckt markieren
+        $homeSystem = $startPlanet->getSolarSystem();
+        if ($homeSystem !== null) {
+            $this->telescopeDiscovery->markDiscovered($player, $homeSystem);
+            $this->em->flush();
+        }
 
         return $player;
     }

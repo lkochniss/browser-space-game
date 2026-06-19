@@ -19,6 +19,7 @@ doctrine:
             probe_id: App\Common\Doctrine\Type\ProbeIdType
             fleet_id: App\Common\Doctrine\Type\FleetIdType
             poi_id: App\Common\Doctrine\Type\PoiIdType
+            discovery_id: App\Common\Doctrine\Type\DiscoveryIdType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

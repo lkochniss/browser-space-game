@@ -13,6 +13,8 @@ use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\CommandBusInterface;
 use App\Common\Service\AdjustableClock;
 use App\Demo\Service\DemoGoalChecker;
+use App\Discovery\Repository\PlayerSystemDiscoveryRepository;
+use App\Discovery\Service\TelescopeDiscoveryService;
 use App\Faction\Service\FactionSeedService;
 use App\Fleet\Command\CreateFleetCommand;
 use App\Fleet\Command\DisbandFleetCommand;
@@ -97,6 +99,8 @@ class InteractiveDemoCommand extends Command
         private readonly ShipCostConfig $shipCostConfig,
         private readonly ProbeCostConfig $probeCostConfig,
         private readonly DemoGoalChecker $goalChecker,
+        private readonly TelescopeDiscoveryService $telescopeDiscovery,
+        private readonly PlayerSystemDiscoveryRepository $discoveryRepository,
     ) {
         parent::__construct();
     }
@@ -375,11 +379,35 @@ class InteractiveDemoCommand extends Command
     {
         $io->section('Galaxy Overview');
 
-        $systems = $this->solarSystemRepository->findAll();
-        if ($systems === []) {
+        $allSystems = $this->solarSystemRepository->findAll();
+        if ($allSystems === []) {
             $io->note('No solar systems in galaxy.');
 
             return true;
+        }
+
+        // T-018: nur entdeckte Systeme zeigen
+        $discoveries = $this->discoveryRepository->findByPlayer($player);
+        $discoveredIds = [];
+        foreach ($discoveries as $d) {
+            $discoveredIds[$d->getSolarSystem()->getId()->__toString()] = true;
+        }
+
+        $systems = array_filter(
+            $allSystems,
+            fn ($s) => isset($discoveredIds[$s->getId()->__toString()]),
+        );
+        $undiscoveredCount = count($allSystems) - count($systems);
+
+        if ($systems === []) {
+            $io->note('No discovered systems yet — build a Telescope to scan the galaxy.');
+
+            return true;
+        }
+
+        if ($undiscoveredCount > 0) {
+            $io->text(sprintf('<comment>%d unbekannte System(e)</comment> — Teleskop bauen für mehr Sicht.', $undiscoveredCount));
+            $io->newLine();
         }
 
         foreach ($systems as $system) {
@@ -784,13 +812,15 @@ class InteractiveDemoCommand extends Command
         $this->tickEngine->run($gs);
         $arrived = $this->fleetArrival->resolveArrivedFleets();
         $salvaged = $this->salvageProcessor->runTick();
+        $discovered = $this->telescopeDiscovery->runTickForPlayer($player);
 
         $io->success(sprintf(
-            'Tick advanced by %ds — Clock: %s | Fleets arrived: %d | Salvages processed: %d',
+            'Tick advanced by %ds — Clock: %s | Fleets arrived: %d | Salvages: %d | Discovered: %d',
             $seconds,
             $this->clock->now()->format('Y-m-d H:i:s'),
             $arrived,
             $salvaged,
+            $discovered,
         ));
 
         return true;

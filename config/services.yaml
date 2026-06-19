@@ -67,6 +67,10 @@ services:
     App\Common\Service\AdjustableClock:
         public: true
 
+    # T-018: TelescopeDiscoveryService — Demo-Command und Tick-Loop greifen direkt zu.
+    App\Discovery\Service\TelescopeDiscoveryService:
+        public: true
+
     # add more service definitions when explicit configuration is needed
 
 when@demo:
