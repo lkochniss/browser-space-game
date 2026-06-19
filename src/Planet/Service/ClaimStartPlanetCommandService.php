@@ -8,6 +8,7 @@ use App\Building\Model\Building;
 use App\Building\ValueObject\BuildingType;
 use App\Common\Interface\ClockInterface;
 use App\POI\Model\AsteroidField;
+use App\POI\Model\Nebula;
 use App\POI\ValueObject\PoiId;
 use App\Planet\Model\Planet;
 use App\Planet\ValueObject\PlanetId;
@@ -35,6 +36,11 @@ class ClaimStartPlanetCommandService
     private const ASTEROID_FIELD_MAX_RESOURCE_TYPES = 3;
     private const ASTEROID_FIELD_AMOUNT_MIN = 500;
     private const ASTEROID_FIELD_AMOUNT_MAX = 2000;
+
+    // T-022: 30% Chance pro System für 1 Nebel mit zufälligem Concealment 3-9
+    private const NEBULA_SPAWN_CHANCE_PERCENT = 30;
+    private const NEBULA_CONCEALMENT_MIN = 3;
+    private const NEBULA_CONCEALMENT_MAX = 9;
 
     /** @var ResourceType[] */
     private const RENEWABLES = [
@@ -80,6 +86,7 @@ class ClaimStartPlanetCommandService
         $startSystem = SolarSystem::generate(SolarSystemId::generate());
         $startSystem->addPlanet($startPlanet);
         $this->generateAsteroidFields($startSystem);
+        $this->maybeGenerateNebula($startSystem);
         $systems[] = $startSystem;
 
         for ($i = 1; $i < self::START_GALAXY_SYSTEM_COUNT; $i++) {
@@ -90,6 +97,7 @@ class ClaimStartPlanetCommandService
             $this->seedRandomPlanet($unowned);
             $system->addPlanet($unowned);
             $this->generateAsteroidFields($system);
+            $this->maybeGenerateNebula($system);
             $systems[] = $system;
         }
 
@@ -132,6 +140,28 @@ class ClaimStartPlanetCommandService
             );
             $system->addPoi($field);
         }
+    }
+
+    /**
+     * T-022: 30% Chance, dass im System ein Nebel spawnt mit zufälligem
+     * Concealment-Level [3, 9].
+     */
+    private function maybeGenerateNebula(SolarSystem $system): void
+    {
+        if (random_int(1, 100) > self::NEBULA_SPAWN_CHANCE_PERCENT) {
+            return;
+        }
+
+        $nebula = new Nebula(
+            id: PoiId::generate(),
+            solarSystem: $system,
+            name: sprintf('Nebel %s', $system->getName()),
+            concealmentLevel: random_int(
+                self::NEBULA_CONCEALMENT_MIN,
+                self::NEBULA_CONCEALMENT_MAX,
+            ),
+        );
+        $system->addPoi($nebula);
     }
 
     private function seedStartPlanet(Planet $planet): void

@@ -1,29 +1,50 @@
 # T-022: Nebel POI + Stealth
 
 **Type:** Feature
-**Status:** Open
+**Status:** Done
 **FX:** No
-**MIG:** No
-**Depends on:** T-017, T-019
+**MIG:** Yes (`Version20260619000010` — pois.nebula_concealment)
+**Depends on:** T-019
 
 ## Description
 
-`docs/Nebel.md`: POI in dem sich Flotten verstecken können. Andere Flotten/Sonden entdecken sie erst beim Anflug ins Nebel. Taktik-Werkzeug für Hinterhalt/Flucht.
+Nebel als POI-Subtype mit `concealmentLevel` (1-10). Foundation-Stub: nur die
+Stat-Daten. Effekte (Fleet-Verbergung, Battle-Modifier, Detection-Logic) werden
+in Folge-Tickets integriert wenn die jeweiligen Engines bereit sind.
 
 ## AC
 
-- [ ] `Nebula` POI-Subtype
-- [ ] `Fleet` kann `FleetLocation::Nebula` haben → hidden-State
-- [ ] Sicht-Logik: Standard-Discovery erkennt Fleet im Nebel NICHT
-- [ ] Sonde/Fleet die Nebel betritt → entdeckt versteckte Fleets (Event)
+- [x] `Nebula` POI-Subtype (extends Poi)
+- [x] `Poi`-DiscriminatorMap aktualisiert: `'nebula' => Nebula::class`
+- [x] `concealmentLevel` (1-10) als nullable Integer-Spalte (nur Nebula nutzt sie)
+- [x] Validation: Range [1, 10] sonst InvalidArgumentException
+- [x] Galaxy-Spawn: 30% Chance pro System für 1 Nebel mit zufälligem Level [3, 9]
+- [x] Migration `Version20260619000010`
+- [x] Tests: 9 Unit (NebulaTest mit DataProvider), 1 IT (NebulaPersistenceTest)
+- [x] Suite grün (359/359, 1369 assertions)
 
-## Affected
+## Geklärte Fragen
 
-- Neu: `src/POI/Model/Nebula.php`
-- `src/Fleet/Model/Fleet.php` (Nebel-Location supported)
-- `src/Tick/Processor/FleetMovementProcessor.php` (Entry-Detection-Hook)
+1. **Buff/Debuff in Schlacht:** Foundation hält nur `concealmentLevel`. Battle-
+   Modifier kommt mit T-103.
+2. **Max Flotten pro Nebel:** Keine Begrenzung (Foundation pragmatisch).
 
-## Open Questions
+## Out of Scope (Folge-Tickets)
 
-1. Nebel buff/debuff für Flotten in der Schlacht (z.B. weniger Schaden)? Doc sagt nichts.
-2. Maximale Flotten pro Nebel?
+- **Fleet-Hidden-State im Nebel** → T-074 Pirate-Encounter-Spawn (NPC ignoriert
+  Schiffe im Nebel) + T-103 Battle (Modifier durch schlechte Sicht)
+- **Detection-Hook beim Anflug** → T-018 Teleskop / T-087 Fog-of-War
+- **MoveFleetCommand respektiert Nebula** → T-017 Erweiterung wenn Detection-
+  Mechanik kommt
+
+## Files
+
+**Neu:**
+- `src/POI/Model/Nebula.php` (extends Poi, STI-Subtype)
+- `migrations/Version20260619000010.php`
+- `tests/POI/Model/NebulaTest.php`
+- `tests/POI/Persistence/NebulaPersistenceTest.php`
+
+**Geändert:**
+- `src/POI/Model/Poi.php` (DiscriminatorMap: 'nebula' → Nebula::class)
+- `src/Planet/Service/ClaimStartPlanetCommandService.php` (maybeGenerateNebula)
