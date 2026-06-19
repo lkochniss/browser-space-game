@@ -30,12 +30,12 @@ User-Vision (T-062-Klärung): "Es gibt später über Forschung und Gebäude die 
   - finishedAt entspricht reduzierter Duration
   - Cap auf min. 10% greift bei extremen Stacks
 
-## Open Questions
+## Decisions (geklärt 2026-06-19)
 
-1. Multiplikator-Stacking: multiplikativ (0.9 × 0.8 × 0.7) oder additiv (1 - 0.1 - 0.2 - 0.3)?
-2. Speed-Tech Forschungs-Branch im Tree (T-025) wo angesiedelt?
-3. Sollen aktiv laufende Bauten retroaktiv von neuer Forschung profitieren oder nur neue Bauten?
-4. Effekt auf Upgrades genauso wie Initial-Bauten?
+1. **Stacking:** multiplikativ (0.9 × 0.8 × 0.7) — konsistent zu T-151 SoftCap-Pattern; natural diminishing returns; Floor-Cap bleibt sauber.
+2. **Speed-Tech-Branch-Placement:** offen, im Rahmen von T-025 zu klären.
+3. **Retroaktiv:** Nein — nur neue Bauten. `finishedAt` ist immutable nach Start; konsistent zu T-062 isReady-Logic; vermeidet Race-Conditions.
+4. **Upgrades = Initial-Bauten:** Multiplier wirkt auf beide gleich.
 
 ## Affected
 

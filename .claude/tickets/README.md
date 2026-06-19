@@ -53,7 +53,8 @@
 | 046-onboarding-flow.md | Feature | Open | Erstanmeldung → Spielername + Start-Planet |
 | 047-in-game-notifications.md | Feature | Open | In-Game Benachrichtigungen (Glocken-Icon) |
 | 048-security-hardening.md | Feature | Open | Health-Check + Security-Headers + Rate-Limit |
-| 049-dev-fixtures.md | Feature | Open | Doctrine Fixtures (Demo-User + Welt) |
+| 049-dev-fixtures.md | Feature | Open | Doctrine Fixtures (Demo-User + Welt) — User-Teil blockiert von T-036 |
+| 049a-world-fixtures.md | Feature | Done | doctrine-fixtures-bundle + WorldFixture (5 Systems, deterministische POIs); User defer in T-049 |
 | 050-legal-pages.md | Feature | Open | Impressum / Datenschutz / ToS / Cookie-Banner |
 | 051-logging-monitoring.md | Feature | Open | Monolog-Channels + optional Sentry |
 | 052-allianz-system.md | Feature | Open | Allianzen (Multiplayer) |
