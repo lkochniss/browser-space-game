@@ -44,7 +44,7 @@ class ResearchTree
         $this->register(new ResearchNode(
             slug: 'ftl_tier_1',
             name: 'FTL-Tier 1',
-            description: 'Foundation für Antrieb-Tree (T-026). Voraussetzung für ftl_tier_2 → Wormholes.',
+            description: 'Foundation für Antrieb-Tree (T-026). Stub — T-026 nutzt eigene 7-Node-Chain ab propulsion_hydrogen.',
             baseDurationSeconds: 600,
             maxLevel: 1,
             prerequisites: [],
@@ -141,6 +141,116 @@ class ResearchTree
             resourceCostBase: [
                 ResourceType::IRON_ORE->value => 150,
                 ResourceType::COPPER_ORE->value => 100,
+            ],
+        ));
+
+        // T-026 Antriebs-Tree: 4 Standard + 3 FTL.
+        // Gating-Chain:
+        //   shipbuilding (T-170) → SHIPYARD baubar
+        //   propulsion_hydrogen (Standard-Foundation, braucht SHIPYARD L1)
+        //   propulsion_ion → propulsion_fusion → propulsion_antimatter
+        //   ftl_hyperdrive (braucht propulsion_fusion L1) — schaltet Inter-System-Travel frei
+        //   ftl_warp (braucht ftl_hyperdrive L1) — Tier-2-FTL (Wormhole-Tech)
+        //   ftl_jumpdrive (braucht ftl_warp L1) — Tier-3, Endgame
+        $this->register(new ResearchNode(
+            slug: 'propulsion_hydrogen',
+            name: 'Wasserstoff-Antrieb',
+            description: 'Foundation-Antrieb. Voraussetzung für höhere Standard-Antriebe + FTL-Tree.',
+            baseDurationSeconds: 360,
+            maxLevel: 1,
+            prerequisites: [
+                new ResearchLevelPrerequisite('shipbuilding', 1),
+                new BuildingLevelPrerequisite(BuildingType::SHIPYARD, 1),
+            ],
+            resourceCostBase: [
+                ResourceType::IRON_BAR->value => 80,
+                ResourceType::SILICON->value => 60,
+            ],
+        ));
+        $this->register(new ResearchNode(
+            slug: 'propulsion_ion',
+            name: 'Ionen-Antrieb',
+            description: 'Effizienter In-System-Antrieb (Tier-2 Standard).',
+            baseDurationSeconds: 540,
+            maxLevel: 1,
+            prerequisites: [
+                new ResearchLevelPrerequisite('propulsion_hydrogen', 1),
+            ],
+            resourceCostBase: [
+                ResourceType::IRON_BAR->value => 120,
+                ResourceType::COPPER_ORE->value => 80,
+            ],
+        ));
+        $this->register(new ResearchNode(
+            slug: 'propulsion_fusion',
+            name: 'Fusions-Antrieb',
+            description: 'Hochleistungs-Standard (Tier-3). Voraussetzung für FTL.',
+            baseDurationSeconds: 900,
+            maxLevel: 1,
+            prerequisites: [
+                new ResearchLevelPrerequisite('propulsion_ion', 1),
+            ],
+            resourceCostBase: [
+                ResourceType::IRON_BAR->value => 200,
+                ResourceType::TITANIUM_ORE->value => 80,
+            ],
+        ));
+        $this->register(new ResearchNode(
+            slug: 'propulsion_antimatter',
+            name: 'Antimaterie-Antrieb',
+            description: 'Endgame-Standard (Tier-4).',
+            baseDurationSeconds: 1800,
+            maxLevel: 1,
+            prerequisites: [
+                new ResearchLevelPrerequisite('propulsion_fusion', 1),
+            ],
+            resourceCostBase: [
+                ResourceType::URANIUM_ORE->value => 100,
+                ResourceType::TITANIUM_ORE->value => 200,
+            ],
+        ));
+        $this->register(new ResearchNode(
+            slug: 'ftl_hyperdrive',
+            name: 'Hyperraum-Antrieb (FTL Tier-1)',
+            description: 'Schaltet Inter-System-Reise frei (Foundation-FTL).',
+            baseDurationSeconds: 1200,
+            maxLevel: 1,
+            prerequisites: [
+                new ResearchLevelPrerequisite('propulsion_fusion', 1),
+            ],
+            resourceCostBase: [
+                ResourceType::IRON_BAR->value => 300,
+                ResourceType::URANIUM_ORE->value => 80,
+            ],
+        ));
+        $this->register(new ResearchNode(
+            slug: 'ftl_warp',
+            name: 'Warp-Antrieb (FTL Tier-2)',
+            description: 'Schnellere Inter-System-Reise; benötigt für Wormhole-Travel.',
+            baseDurationSeconds: 1800,
+            maxLevel: 1,
+            prerequisites: [
+                new ResearchLevelPrerequisite('ftl_hyperdrive', 1),
+            ],
+            resourceCostBase: [
+                ResourceType::IRON_BAR->value => 500,
+                ResourceType::URANIUM_ORE->value => 150,
+                ResourceType::TITANIUM_ORE->value => 100,
+            ],
+        ));
+        $this->register(new ResearchNode(
+            slug: 'ftl_jumpdrive',
+            name: 'Sprungantrieb (FTL Tier-3)',
+            description: 'Endgame-FTL. Quasi-instantane Sprünge.',
+            baseDurationSeconds: 3600,
+            maxLevel: 1,
+            prerequisites: [
+                new ResearchLevelPrerequisite('ftl_warp', 1),
+                new ResearchLevelPrerequisite('propulsion_antimatter', 1),
+            ],
+            resourceCostBase: [
+                ResourceType::URANIUM_ORE->value => 300,
+                ResourceType::TITANIUM_ORE->value => 400,
             ],
         ));
     }

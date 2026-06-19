@@ -46,7 +46,7 @@ class ClaimStartPlanetCommandService
 
     // T-085: 1 Wurmloch-Pair pro Galaxy (verbindet 2 zufällige unterschiedliche Systems)
     private const WORMHOLE_PAIRS_PER_GALAXY = 1;
-    private const WORMHOLE_REQUIRED_TECH_SLUG = 'ftl_tier_2';
+    private const WORMHOLE_REQUIRED_TECH_SLUG = 'ftl_warp';
 
     /** @var ResourceType[] */
     private const RENEWABLES = [

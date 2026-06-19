@@ -31,7 +31,7 @@
 | 024-raumschlacht.md | Feature | Open | Legacy-Anker, abgelöst durch T-103 (PvE-Pivot) |
 | 025-forschung-framework.md | Feature | Done | Wallclock-Forschung Foundation: Node + Active/PlayerResearch + RESEARCH_LAB-Building + Demo-Action + Stub-Nodes |
 | 025b-multi-lab-research-boost.md | Feature | Draft | Mehrere Labs auf mehreren Planeten stacken Speed-Multiplier (Folge zu T-025) |
-| 026-antriebstechnologie-tree.md | Feature | Open | Antriebs-Tree (4 Standard + 3 FTL) |
+| 026-antriebstechnologie-tree.md | Feature | Done | 7 Antriebs-Nodes + Inter-System-Travel-Lock (ftl_hyperdrive); PropulsionType/Fuel via Folge |
 | 027-planetologie-research.md | Feature | Open | Planetologie-Forschung (Sondendetails + Terraform-Gate) |
 | 028-techdebt-wrong-namespaces.md | TechDebt | Done | `use ValueObject\PlanetId` etc. — falsche Imports (gefixt) |
 | 029-techdebt-buildingid-namespace.md | TechDebt | Done | BuildingId/BuildingType-Namespace gefixt (lagen schon im richtigen Folder) |

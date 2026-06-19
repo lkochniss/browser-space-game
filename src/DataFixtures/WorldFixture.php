@@ -154,13 +154,13 @@ class WorldFixture extends Fixture
             id: new PoiId(self::WORMHOLE_ALPHA_ID),
             solarSystem: $alpha,
             name: 'Wurmloch Sol-Alpha ↔ Sol-Epsilon',
-            requiredTechSlug: 'ftl_tier_2',
+            requiredTechSlug: 'ftl_warp',
         );
         $whEpsilon = new Wormhole(
             id: new PoiId(self::WORMHOLE_EPSILON_ID),
             solarSystem: $epsilon,
             name: 'Wurmloch Sol-Epsilon ↔ Sol-Alpha',
-            requiredTechSlug: 'ftl_tier_2',
+            requiredTechSlug: 'ftl_warp',
         );
         $whAlpha->pairWith($whEpsilon);
         $alpha->addPoi($whAlpha);

@@ -62,6 +62,9 @@ final class MoveFleetCommandTest extends IntegrationTestCase
         [$fleet, , $target] = $this->seedFleetTwoSystems(ShipType::GENERIC);
         $fleetId = $fleet->getId();
 
+        // T-026: Inter-System braucht ftl_hyperdrive — Player seeden
+        $this->seedResearch($fleet->getPlayer(), 'ftl_hyperdrive', 1);
+
         $this->bus->dispatch(new MoveFleetCommand($fleetId, $target->getId()));
 
         $this->em->clear();
@@ -70,6 +73,21 @@ final class MoveFleetCommandTest extends IntegrationTestCase
         // Inter-System / Speed 1.0 → 14400s = 4h
         $diff = $reloaded->getArrivedAt()->getTimestamp() - $reloaded->getDepartedAt()->getTimestamp();
         self::assertEqualsWithDelta(14400, $diff, 5);
+    }
+
+    public function test_move_inter_system_blocked_without_ftl(): void
+    {
+        [$fleet, , $target] = $this->seedFleetTwoSystems(ShipType::GENERIC);
+
+        $this->expectException(\App\Fleet\Exception\InterSystemTravelLockedException::class);
+        $this->bus->dispatch(new MoveFleetCommand($fleet->getId(), $target->getId()));
+    }
+
+    private function seedResearch(\App\Player\Model\Player $player, string $slug, int $level): void
+    {
+        $entry = \App\Research\Model\PlayerResearch::generate($player, $slug, $level);
+        $this->em->persist($entry);
+        $this->em->flush();
     }
 
     public function test_slowest_ship_extends_duration(): void

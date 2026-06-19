@@ -16,11 +16,14 @@ final class ResearchTreeTest extends TestCase
 
         self::assertTrue($tree->has('mining_efficiency_1'));
         self::assertTrue($tree->has('ftl_tier_1'));
-        // T-170 ergänzt 6 Tier-1-Nodes (basic_mining, metallurgy, astronomy, shipbuilding,
-        // advanced_mining, recycling) → 2 Stubs + 6 = 8.
-        self::assertCount(8, $tree->all());
+        // T-170 ergänzt 6 Tier-1-Nodes; T-026 ergänzt 7 Antriebs-Nodes → 2 + 6 + 7 = 15.
+        self::assertCount(15, $tree->all());
         self::assertTrue($tree->has('basic_mining'));
         self::assertTrue($tree->has('metallurgy'));
+        self::assertTrue($tree->has('propulsion_hydrogen'));
+        self::assertTrue($tree->has('ftl_hyperdrive'));
+        self::assertTrue($tree->has('ftl_warp'));
+        self::assertTrue($tree->has('ftl_jumpdrive'));
     }
 
     public function test_get_returns_node(): void

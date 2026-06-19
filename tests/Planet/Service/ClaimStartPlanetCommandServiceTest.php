@@ -157,7 +157,7 @@ final class ClaimStartPlanetCommandServiceTest extends IntegrationTestCase
             'wormhole-pair connects 2 different systems',
         );
 
-        self::assertSame('ftl_tier_2', $wormholes[0]->getRequiredTechSlug());
+        self::assertSame('ftl_warp', $wormholes[0]->getRequiredTechSlug());
     }
 
     public function test_t020_asteroid_fields_spawn_with_finite_resources(): void

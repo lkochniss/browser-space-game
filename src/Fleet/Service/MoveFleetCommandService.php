@@ -7,6 +7,7 @@ namespace App\Fleet\Service;
 use App\Common\Interface\ClockInterface;
 use App\Fleet\Exception\FleetAlreadyInTransitException;
 use App\Fleet\Exception\FleetNotFoundException;
+use App\Fleet\Exception\InterSystemTravelLockedException;
 use App\Fleet\Exception\SameOriginAndTargetException;
 use App\Fleet\Model\Fleet;
 use App\Fleet\Repository\FleetRepository;
@@ -15,6 +16,7 @@ use App\Fleet\ValueObject\FleetStatus;
 use App\Planet\Exception\PlanetNotFoundException;
 use App\Planet\Repository\PlanetRepository;
 use App\Planet\ValueObject\PlanetId;
+use App\Research\Repository\PlayerResearchRepository;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -37,6 +39,7 @@ readonly class MoveFleetCommandService
         private PlanetRepository $planetRepository,
         private FleetMovementConfig $movementConfig,
         private ClockInterface $clock,
+        private PlayerResearchRepository $playerResearchRepository,
     ) {
     }
 
@@ -62,6 +65,16 @@ readonly class MoveFleetCommandService
         }
 
         $sameSystem = $this->isSameSystem($origin, $target);
+        if (!$sameSystem) {
+            // T-026: Inter-System-Travel braucht FTL (ftl_hyperdrive L1+)
+            $owner = $fleet->getPlayer();
+            $ftlLevel = $this->playerResearchRepository
+                ->findOneByPlayerAndSlug($owner, 'ftl_hyperdrive')
+                ?->getLevel() ?? 0;
+            if ($ftlLevel < 1) {
+                throw new InterSystemTravelLockedException();
+            }
+        }
         $duration = $this->movementConfig->computeDurationSeconds($sameSystem, $fleet->getMinSpeed());
 
         $now = $this->clock->now();

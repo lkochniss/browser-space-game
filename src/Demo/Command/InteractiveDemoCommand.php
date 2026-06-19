@@ -1131,13 +1131,13 @@ class InteractiveDemoCommand extends Command
                 id: PoiId::generate(),
                 solarSystem: $sysA,
                 name: sprintf('Wurmloch %s ↔ %s', $sysA->getName(), $sysB->getName()),
-                requiredTechSlug: 'ftl_tier_2',
+                requiredTechSlug: 'ftl_warp',
             );
             $whB = new Wormhole(
                 id: PoiId::generate(),
                 solarSystem: $sysB,
                 name: sprintf('Wurmloch %s ↔ %s', $sysB->getName(), $sysA->getName()),
-                requiredTechSlug: 'ftl_tier_2',
+                requiredTechSlug: 'ftl_warp',
             );
             $whA->pairWith($whB);
             $sysA->addPoi($whA);
