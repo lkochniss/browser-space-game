@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Tick\Processor;
 
+use App\POI\Model\DebrisField;
+use App\POI\Repository\PoiRepository;
 use App\Planet\Model\Planet;
 use App\Planet\ValueObject\PlanetId;
 use App\Player\Model\Player;
@@ -14,6 +16,8 @@ use App\Ship\Model\Ship;
 use App\Ship\Repository\ShipRepository;
 use App\Ship\ValueObject\ShipId;
 use App\Ship\ValueObject\ShipType;
+use App\SolarSystem\Model\SolarSystem;
+use App\SolarSystem\ValueObject\SolarSystemId;
 use App\Tests\Integration\IntegrationTestCase;
 use App\Tick\Processor\ShipSupplyProcessor;
 use DateTimeImmutable;
@@ -84,6 +88,33 @@ final class ShipSupplyProcessorTest extends IntegrationTestCase
         self::assertSame($popBefore - 20, $planet->getPopulation()->getTotal());
     }
 
+    public function test_killing_ship_spawns_debris_field_in_system(): void
+    {
+        $planet = $this->seedPlanetWithDockedShip(water: 0, food: 0, oxygen: 0, withSystem: true);
+
+        $this->processor->process($planet, new DateTimeImmutable());
+        $this->em->flush();
+
+        $poiRepo = self::getContainer()->get(PoiRepository::class);
+        $debris = array_filter($poiRepo->findAll(), fn ($p) => $p instanceof DebrisField);
+        self::assertCount(1, $debris, 'killShip spawnt 1 DebrisField');
+
+        $df = array_values($debris)[0];
+        self::assertSame(2, $df->getAmount(ResourceType::DEBRIS_LOW));
+    }
+
+    public function test_killing_ship_without_system_skips_debris_spawn(): void
+    {
+        $planet = $this->seedPlanetWithDockedShip(water: 0, food: 0, oxygen: 0, withSystem: false);
+
+        $this->processor->process($planet, new DateTimeImmutable());
+        $this->em->flush();
+
+        $poiRepo = self::getContainer()->get(PoiRepository::class);
+        $debris = array_filter($poiRepo->findAll(), fn ($p) => $p instanceof DebrisField);
+        self::assertCount(0, $debris, 'kein System → kein DebrisField');
+    }
+
     public function test_unfinished_ship_is_skipped(): void
     {
         $planet = $this->seedPlanetWithDockedShip(
@@ -112,10 +143,17 @@ final class ShipSupplyProcessorTest extends IntegrationTestCase
         int $shipFood = 0,
         int $shipOxygen = 0,
         ?DateTimeImmutable $shipFinishedAt = null,
+        bool $withSystem = false,
     ): Planet {
         $player = new Player(PlayerId::generate());
         $planet = Planet::generatePlanet(PlanetId::generate());
         $player->claimPlanet($planet);
+
+        if ($withSystem) {
+            $sys = new SolarSystem(SolarSystemId::generate(), 'Sol-Test');
+            $sys->addPlanet($planet);
+            $this->em->persist($sys);
+        }
 
         $planet->addResource(Resource::generateWithAmount(ResourceType::WATER, $water));
         $planet->addResource(Resource::generateWithAmount(ResourceType::FOOD, $food));

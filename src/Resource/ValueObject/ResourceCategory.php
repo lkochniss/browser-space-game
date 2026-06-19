@@ -15,6 +15,9 @@ enum ResourceCategory: string
     /** Veredelt aus Rohstoffen via Verarbeitungs-Building */
     case REFINED = 'refined';
 
+    /** T-021: Trümmer-Items aus DebrisFields, via Recycling-Plant in andere Resources konvertiert. */
+    case DEBRIS = 'debris';
+
     /**
      * Per-Planet Base-Storage-Cap. Building-Contributions stack on top (T-061).
      * - Renewables haben grosses natural buffer (Land/Atmosphäre)
@@ -27,6 +30,7 @@ enum ResourceCategory: string
             self::RENEWABLE => 500,
             self::FINITE => 100,
             self::REFINED => 100,
+            self::DEBRIS => 50,
         };
     }
 }

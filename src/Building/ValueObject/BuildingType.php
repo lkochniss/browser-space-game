@@ -24,6 +24,9 @@ enum BuildingType: string
 
     case PROBE_LAB = 'probe_lab';
 
+    // T-021: Recycling-Plant. Verarbeitet DEBRIS_* Cargo zu zufälligen FINITE/REFINED-Outputs.
+    case RECYCLING_PLANT = 'recycling_plant';
+
     case IRON_STORAGE = 'iron_storage';
     case COAL_STORAGE = 'coal_storage';
     case IRON_BAR_STORAGE = 'iron_bar_storage';
@@ -60,6 +63,7 @@ enum BuildingType: string
             self::IRON_SMELTER => [ResourceType::IRON_BAR->value => 100],
             self::SHIPYARD => [],
             self::PROBE_LAB => [],
+            self::RECYCLING_PLANT => [],
             self::HUB => [
                 ResourceType::WATER->value => 200,
                 ResourceType::FOOD->value => 200,

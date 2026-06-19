@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Ship\Service;
 
 use App\Common\Interface\ClockInterface;
-use App\POI\Model\AsteroidField;
+use App\POI\Model\SalvageableField;
 use App\POI\Repository\PoiRepository;
 use App\POI\ValueObject\PoiId;
 use App\Resource\ValueObject\ResourceType;
@@ -65,7 +65,7 @@ readonly class SalvageProcessor
         }
 
         $field = $this->poiRepository->find(new PoiId($targetIdStr));
-        if (!$field instanceof AsteroidField) {
+        if (!$field instanceof SalvageableField) {
             // Field weg (gelöscht / falscher Type) — Salvage stoppen.
             $ship->stopSalvage();
 

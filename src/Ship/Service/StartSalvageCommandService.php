@@ -6,7 +6,7 @@ namespace App\Ship\Service;
 
 use App\Common\Interface\ClockInterface;
 use App\Fleet\ValueObject\FleetStatus;
-use App\POI\Model\AsteroidField;
+use App\POI\Model\SalvageableField;
 use App\POI\Repository\PoiRepository;
 use App\POI\ValueObject\PoiId;
 use App\Resource\ValueObject\ResourceType;
@@ -72,17 +72,17 @@ readonly class StartSalvageCommandService
             throw new PoiNotFoundException($poiId);
         }
 
-        if (!$poi instanceof AsteroidField) {
+        if (!$poi instanceof SalvageableField) {
             throw new InvalidSalvageTargetException(
                 $poiId,
-                'only AsteroidField targets supported in T-016 (DebrisField via T-021)',
+                'only AsteroidField or DebrisField targets supported',
             );
         }
 
         if ($poi->getAmount($resourceType) <= 0) {
             throw new InvalidSalvageTargetException(
                 $poiId,
-                sprintf('AsteroidField has no %s available', $resourceType->value),
+                sprintf('Field has no %s available', $resourceType->value),
             );
         }
 

@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string', length: 32)]
 #[ORM\DiscriminatorMap([
-    'debris_field' => Poi::class,
+    'debris_field' => DebrisField::class,
     'nebula' => Nebula::class,
     'station' => SpaceStation::class,
     'unknown_fleet' => Poi::class,

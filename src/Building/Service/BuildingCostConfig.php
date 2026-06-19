@@ -86,6 +86,17 @@ class BuildingCostConfig
                 populationCost: 15,
             ),
 
+            // T-021: Recycling-Plant. Konsumiert DEBRIS_* aus Planet-Storage und produziert
+            // zufällige FINITE/REFINED-Outputs pro Tick.
+            BuildingType::RECYCLING_PLANT->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 250,
+                    ResourceType::COPPER_ORE->value => 100,
+                    ResourceType::SILICON->value => 80,
+                ],
+                populationCost: 10,
+            ),
+
             // Storage-Buildings (T-061)
             BuildingType::IRON_STORAGE->value => new BuildingCost(
                 resources: [ResourceType::IRON_ORE->value => 100, ResourceType::COAL->value => 50],

@@ -21,6 +21,7 @@ use App\Fleet\Service\FleetArrivalService;
 use App\Fleet\ValueObject\FleetStatus;
 use App\GameState\Model\GameState;
 use App\POI\Model\AsteroidField;
+use App\POI\Model\DebrisField;
 use App\POI\Model\Nebula;
 use App\POI\Model\SpaceStation;
 use App\POI\Model\Wormhole;
@@ -328,6 +329,7 @@ class InteractiveDemoCommand extends Command
             foreach ($this->poiRepository->findBySolarSystem($sys) as $poi) {
                 $detail = match (true) {
                     $poi instanceof AsteroidField => sprintf('asteroid contents=%d', $poi->getTotalAmount()),
+                    $poi instanceof DebrisField => sprintf('debris total=%d', $poi->getTotalAmount()),
                     $poi instanceof Nebula => sprintf('nebula concealment=%d', $poi->getConcealmentLevel()),
                     $poi instanceof Wormhole => 'wormhole',
                     $poi instanceof SpaceStation => sprintf('station status=%s', $poi->getStatus()->value),
@@ -382,6 +384,7 @@ class InteractiveDemoCommand extends Command
             foreach ($pois as $poi) {
                 $detail = match (true) {
                     $poi instanceof AsteroidField => sprintf('asteroid total=%d', $poi->getTotalAmount()),
+                    $poi instanceof DebrisField => sprintf('debris total=%d', $poi->getTotalAmount()),
                     $poi instanceof Nebula => sprintf('nebula concealment=%d', $poi->getConcealmentLevel()),
                     $poi instanceof Wormhole => sprintf('wormhole twin=%s', $poi->getTwin()?->getId() ?? '?'),
                     $poi instanceof SpaceStation => sprintf('station status=%s', $poi->getStatus()->value),
@@ -649,20 +652,21 @@ class InteractiveDemoCommand extends Command
             return true;
         }
         $pois = $this->poiRepository->findBySolarSystem($sys);
-        $asteroids = array_filter($pois, fn ($p) => $p instanceof AsteroidField);
-        if ($asteroids === []) {
-            $io->note('No asteroid fields in this system.');
+        $fields = array_filter($pois, fn ($p) => $p instanceof \App\POI\Model\SalvageableField);
+        if ($fields === []) {
+            $io->note('No salvageable fields (asteroid/debris) in this system.');
 
             return true;
         }
 
         $choices = [];
-        foreach ($asteroids as $a) {
-            $choices[$a->getId()->__toString()] = sprintf('%s (contents %d)', $a->getId(), $a->getTotalAmount());
+        foreach ($fields as $f) {
+            $kind = $f instanceof DebrisField ? 'debris' : 'asteroid';
+            $choices[$f->getId()->__toString()] = sprintf('%s [%s] (contents %d)', $f->getId(), $kind, $f->getTotalAmount());
         }
-        $poiIdStr = $io->choice('Asteroid Field', $choices);
+        $poiIdStr = $io->choice('Salvage Target', $choices);
 
-        /** @var AsteroidField $field */
+        /** @var \App\POI\Model\SalvageableField $field */
         $field = $this->poiRepository->find(new \App\POI\ValueObject\PoiId($poiIdStr));
         $resourceChoices = [];
         foreach ($field->getContents() as $resVal => $amount) {
@@ -839,12 +843,16 @@ class InteractiveDemoCommand extends Command
 
         $hasAsteroid = false;
         $hasWormhole = false;
+        $hasDebris = false;
         foreach ($this->poiRepository->findAll() as $poi) {
             if ($poi instanceof AsteroidField) {
                 $hasAsteroid = true;
             }
             if ($poi instanceof Wormhole) {
                 $hasWormhole = true;
+            }
+            if ($poi instanceof DebrisField) {
+                $hasDebris = true;
             }
         }
 
@@ -861,6 +869,21 @@ class InteractiveDemoCommand extends Command
             );
             $systems[0]->addPoi($asteroid);
             $this->em->persist($asteroid);
+        }
+
+        if (!$hasDebris) {
+            // T-021: kleines DebrisField im Heim-System für Recycling-Demo
+            $debris = new DebrisField(
+                id: PoiId::generate(),
+                solarSystem: $systems[0],
+                name: 'Demo Schlachtfeld',
+                contents: [
+                    ResourceType::DEBRIS_LOW->value => 6,
+                    ResourceType::DEBRIS_MEDIUM->value => 3,
+                ],
+            );
+            $systems[0]->addPoi($debris);
+            $this->em->persist($debris);
         }
 
         if (!$hasWormhole) {

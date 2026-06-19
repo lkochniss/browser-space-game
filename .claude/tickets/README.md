@@ -24,7 +24,7 @@
 | 018-teleskop-discovery.md | Feature | Open | Teleskop-Building + Meta-Erkundung von Systemen |
 | 019-poi-system.md | Feature | Done | POI-Foundation (STI) + 7 PoiTypes + SolarSystem.pois |
 | 020-asteroidenfeld.md | Feature | Done | AsteroidField POI-Subtype (STI) + Galaxy-Spawn 0-2 pro System mit FINITE-Erzen |
-| 021-truemmerfeld-recycling.md | Feature | Open | Trümmerfeld + Trümmer + Recycling-Anlage Chain |
+| 021-truemmerfeld-recycling.md | Feature | Done | DebrisField POI + DEBRIS-ResourceTypes + RECYCLING_PLANT + RecyclingProcessor; Spawn via killShip + Fixture |
 | 022-nebel-poi.md | Feature | Done | Nebula POI-Subtype (STI) + concealmentLevel + 30%-Galaxy-Spawn |
 | 023-raumstation.md | Feature | Done | SpaceStation POI (max 1/System, Shipyard-L3-Gate, Storage 100k); Maintenance/Übernahme = T-023b |
 | 023b-station-maintenance-takeover.md | Feature | Draft | Station-Maintenance-Tick + Pop-Mortality + ABANDONED-State + ClaimAbandonedStationCommand |

@@ -6,6 +6,7 @@ namespace App\Tests\DataFixtures;
 
 use App\DataFixtures\WorldFixture;
 use App\POI\Model\AsteroidField;
+use App\POI\Model\DebrisField;
 use App\POI\Model\Nebula;
 use App\POI\Model\Wormhole;
 use App\POI\Repository\PoiRepository;
@@ -48,6 +49,26 @@ final class WorldFixtureTest extends IntegrationTestCase
 
         $nebulae = array_filter($pois, fn ($p) => $p instanceof Nebula);
         self::assertCount(1, $nebulae, '1 Nebula in Sol-Beta');
+
+        $debrisFields = array_filter($pois, fn ($p) => $p instanceof DebrisField);
+        self::assertCount(1, $debrisFields, '1 DebrisField in Sol-Gamma');
+    }
+
+    public function test_debris_field_has_3_tier_contents(): void
+    {
+        $fixture = new WorldFixture();
+        $fixture->load($this->em);
+        $this->em->clear();
+
+        /** @var PoiRepository $poiRepo */
+        $poiRepo = self::getContainer()->get(PoiRepository::class);
+        $debris = $poiRepo->find(new PoiId(WorldFixture::DEBRIS_GAMMA_ID));
+
+        self::assertInstanceOf(DebrisField::class, $debris);
+        $contents = $debris->getContents();
+        self::assertSame(8, $contents['debris_low'] ?? 0);
+        self::assertSame(4, $contents['debris_medium'] ?? 0);
+        self::assertSame(1, $contents['debris_high'] ?? 0);
     }
 
     public function test_fixed_uuids_resolvable(): void

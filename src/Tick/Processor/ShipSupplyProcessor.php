@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tick\Processor;
 
+use App\POI\Model\DebrisField;
+use App\POI\ValueObject\PoiId;
 use App\Planet\Model\Planet;
 use App\Resource\Model\Resource;
 use App\Resource\ValueObject\ResourceType;
@@ -23,7 +25,7 @@ use Doctrine\ORM\EntityManagerInterface;
  *
  * Schiff-Death (T-012-Decision):
  * - Pop-Slots werden komplett verloren (release + kill auf Planet, wo das Schiff zuletzt war).
- * - Trümmerfeld: out-of-scope, T-021 ergänzt das.
+ * - T-021: kleines DebrisField (1-3 DEBRIS_LOW) spawnt im Heim-System.
  *
  * Hinweis: Undocked-Schiffe haben in T-012 noch keine Quelle (kein Movement). Der Code
  * behandelt den Fall trotzdem konsistent — T-017 wird Movement aktivieren.
@@ -98,6 +100,19 @@ readonly class ShipSupplyProcessor implements TickProcessorInterface
         // dann free gekillt — Netto: assigned -= n, total -= n.
         $pop->release($assigned);
         $pop->kill($assigned);
+
+        // T-021: Mini-DebrisField im Heim-System spawnen, wenn System bekannt.
+        $sys = $planet->getSolarSystem();
+        if ($sys !== null) {
+            $debris = new DebrisField(
+                id: PoiId::generate(),
+                solarSystem: $sys,
+                name: sprintf('Schiff-Wrack (%s)', $ship->getType()->value),
+                contents: [ResourceType::DEBRIS_LOW->value => 2],
+            );
+            $sys->addPoi($debris);
+            $this->em->persist($debris);
+        }
 
         $this->em->remove($ship);
     }

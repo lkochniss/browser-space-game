@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\DataFixtures;
 
 use App\POI\Model\AsteroidField;
+use App\POI\Model\DebrisField;
 use App\POI\Model\Nebula;
 use App\POI\Model\Wormhole;
 use App\POI\ValueObject\PoiId;
@@ -38,6 +39,7 @@ class WorldFixture extends Fixture
 
     public const WORMHOLE_ALPHA_ID = '49a00000-0000-4000-8000-0000000000c1';
     public const WORMHOLE_EPSILON_ID = '49a00000-0000-4000-8000-0000000000c5';
+    public const DEBRIS_GAMMA_ID = '49a00000-0000-4000-8000-0000000000d3';
 
     /**
      * @var list<array{id: string, name: string, planets: list<array{id: string, type: PlanetType, size: PlanetSize}>, asteroidId: string, asteroidContents: array<string, int>, nebulaId: ?string}>
@@ -165,6 +167,21 @@ class WorldFixture extends Fixture
         $epsilon->addPoi($whEpsilon);
         $manager->persist($whAlpha);
         $manager->persist($whEpsilon);
+
+        // T-021: deterministisches DebrisField in Sol-Gamma
+        $gamma = $systemsByName['Sol-Gamma'];
+        $debris = new DebrisField(
+            id: new PoiId(self::DEBRIS_GAMMA_ID),
+            solarSystem: $gamma,
+            name: 'Sol-Gamma Schlachtfeld',
+            contents: [
+                ResourceType::DEBRIS_LOW->value => 8,
+                ResourceType::DEBRIS_MEDIUM->value => 4,
+                ResourceType::DEBRIS_HIGH->value => 1,
+            ],
+        );
+        $gamma->addPoi($debris);
+        $manager->persist($debris);
 
         $manager->flush();
     }

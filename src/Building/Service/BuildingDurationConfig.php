@@ -32,6 +32,9 @@ class BuildingDurationConfig
         // T-013: Probe-Lab (30min)
         BuildingType::PROBE_LAB->value => 1800,
 
+        // T-021: Recycling-Plant (30min)
+        BuildingType::RECYCLING_PLANT->value => 1800,
+
         // Storage (15min — moderate)
         BuildingType::IRON_STORAGE->value => 900,
         BuildingType::COAL_STORAGE->value => 900,
