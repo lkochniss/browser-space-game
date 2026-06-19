@@ -19,6 +19,9 @@
 | `WATER_TANK` | +2000 WATER-Cap / Level | — | 100 Iron | 5 | 15min |
 | `FOOD_SILO` | +2000 FOOD-Cap / Level | — | 100 Iron | 5 | 15min |
 | `OXYGEN_STORAGE` | +2000 OXYGEN-Cap / Level | — | 150 Iron | 5 | 15min |
+| `WATER_RECLAIMER` | +10 WATER/tick/level | (Renewable) | 100 Iron | 5 | 15min |
+| `AGRI_DOME` | +6 FOOD/tick/level | (Renewable) | 100 Iron | 5 | 15min |
+| `ATMOSPHERIC_PROCESSOR` | +6 OXYGEN/tick/level | (Renewable) | 100 Iron | 5 | 15min |
 | `SHIPYARD` | Voraussetzung Schiffsbau (T-011) | — | 500 Iron + 100 Coal + 200 Al + 50 Ti | 30 | 60min |
 | `PROBE_LAB` | Voraussetzung Sondenbau (T-013) | — | 200 Iron + 100 Si + 50 Cu | 15 | 30min |
 | `RECYCLING_PLANT` | Konsumiert DEBRIS_* → random FINITE/REFINED (T-021) | — (recycling) | 250 Iron + 100 Cu + 80 Si | 10 | 30min |

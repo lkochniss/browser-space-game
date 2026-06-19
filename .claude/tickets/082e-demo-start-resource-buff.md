@@ -32,23 +32,25 @@ müssen.
 
 | Resource | Heute | Neu | Begründung |
 |----------|-------|-----|------------|
-| IRON_ORE | 0 | 1500 | Deckt alle Tier-0-Bauten (HUB+WATER_TANK+FOOD_SILO+OXYGEN_STORAGE+IRON_MINE = 500) + 1-2 Upgrades + Forschungs-Cost |
-| COAL | 0 | 300 | HUB-Upgrade (50/level), basic_mining-Forschung (50), Buffer |
-| COPPER_ORE | 0 | 150 | RESEARCH_LAB-Cost (50) + astronomy-Forschung (80) |
-| SILICON | 0 | 100 | RESEARCH_LAB-Cost (100) |
-| WATER | 300 | 600 | Mehr Buffer für Pop-Wachstum + Schiff-Build |
-| FOOD | 300 | 600 | Pop-Wachstum |
-| OXYGEN | 300 | 600 | Pop-Wachstum |
+| IRON_ORE | 0 | **3000** | Tier-0 (~700) + alle Tier-1-Mines (90) + 3-4 Upgrades (~600) + 2-3 Forschungen (~400) + Buffer |
+| COAL | 0 | **800** | HUB-Upgrades (100/level) + Forschung (50-100 pro) + URANIUM_MINE-Cost + Buffer |
+| COPPER_ORE | 0 | **400** | RESEARCH_LAB (50) + astronomy (80) + shipbuilding (100) + recycling (100) + Buffer |
+| SILICON | 0 | **300** | RESEARCH_LAB (100) + ftl_tier_1 (100) + Buffer |
+| IRON_BAR | 0 | **200** | shipbuilding-Forschung (100) + ftl_hyperdrive-Cost (300, partial) — restlicher kommt aus Smelter |
+| WATER | 300 | **1500** | Pop-Verbrauch 1/pop/tick × 50 pop = 50/tick → 30 Ticks Buffer |
+| FOOD | 300 | **1500** | siehe WATER |
+| OXYGEN | 300 | **1500** | siehe WATER |
 | Pop total | 50 | 50 (unverändert) | Cap 150 reicht für viele Bauten; Wachstum kommt im Tick |
 
 ## Acceptance Criteria
 
 - [ ] `InteractiveDemoCommand::applyDemoBuff` erweitern um:
-  - IRON_ORE 1500 setzen
-  - COAL 300
-  - COPPER_ORE 150
-  - SILICON 100
-  - W/F/O auf 600 boosten (heute 300)
+  - IRON_ORE 3000
+  - COAL 800
+  - COPPER_ORE 400
+  - SILICON 300
+  - IRON_BAR 200
+  - W/F/O je 1500 boosten (heute 300)
 - [ ] Smoke-Test: nach `--reset` zeigt Status alle Ziel-Werte
 - [ ] Suite grün
 - [ ] doc demo.md "Demo-Buff (T-082b/T-082e)" aktualisieren

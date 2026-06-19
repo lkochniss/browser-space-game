@@ -66,12 +66,27 @@
 Tunable. Salvage von DebrisField (T-021) füttert die Cargo-Pipeline analog
 AsteroidField, dank gemeinsamem `SalvageableField`-Interface.
 
+## Renewable-Production (T-097a)
+
+W/F/O sind RENEWABLE und werden via dedizierte Tier-0-Producer-Buildings
+hergestellt (statt Mining-Deposits). `RenewableProductionProcessor` iteriert:
+
+| Building | Resource | Base-Rate (per Tick × Level) |
+|----------|----------|------------------------------|
+| `WATER_RECLAIMER` | WATER | +10 |
+| `AGRI_DOME` | FOOD | +6 |
+| `ATMOSPHERIC_PROCESSOR` | OXYGEN | +6 |
+
+Storage-Cap-aware (clamp am Planet-Storage-Cap). Tier-0 (kein Research-Lock —
+sind Lebenserhaltung). Verbrauchs-Referenz: 50 Pop × 0.1 = 5 W/F per Tick.
+
 ## Tick-Reihenfolge (relevant für Resources)
 
 1. `ConstructionCompletionProcessor` (T-062, recalc Pop-Cap)
 2. `ResourceProductionProcessor` (Mining + T-151 Stockpile-SoftCap)
 3. `RefinementProductionProcessor` (Refinement, nutzt Mining-Output)
-4. `PopulationConsumptionProcessor` (Pop verbraucht W/F + T-151 Pop-Soft-Cap)
+4. `RenewableProductionProcessor` (W/F/O — T-097a, frische Resources für Pop-Tick)
+5. `PopulationConsumptionProcessor` (Pop verbraucht W/F + T-151 Pop-Soft-Cap)
 5. `ShipSupplyProcessor` (T-012, Ship-Life-Support)
 6. `RecyclingProcessor` (T-021, DEBRIS → random Output)
 

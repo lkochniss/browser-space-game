@@ -43,6 +43,11 @@ enum BuildingType: string
     case FOOD_SILO = 'food_silo';
     case OXYGEN_STORAGE = 'oxygen_storage';
 
+    // T-097a: Renewable-Producer. Tier-0, ohne sie kein Pop-Survival.
+    case WATER_RECLAIMER = 'water_reclaimer';
+    case AGRI_DOME = 'agri_dome';
+    case ATMOSPHERIC_PROCESSOR = 'atmospheric_processor';
+
     public function getPopulationCapBonusPerLevel(): int
     {
         return match ($this) {
@@ -86,6 +91,10 @@ enum BuildingType: string
             self::WATER_TANK => [ResourceType::WATER->value => 2000],
             self::FOOD_SILO => [ResourceType::FOOD->value => 2000],
             self::OXYGEN_STORAGE => [ResourceType::OXYGEN->value => 2000],
+            // T-097a: Producer haben kein Storage-Beitrag — bleibt bei Hub/Tank/Silo
+            self::WATER_RECLAIMER => [],
+            self::AGRI_DOME => [],
+            self::ATMOSPHERIC_PROCESSOR => [],
         };
 
         return $contributions[$resource->value] ?? 0;

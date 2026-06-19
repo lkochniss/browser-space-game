@@ -142,6 +142,20 @@ class BuildingCostConfig
                 resources: [ResourceType::IRON_ORE->value => 150],
                 populationCost: 5,
             ),
+
+            // T-097a: Renewable-Producer (Tier-0)
+            BuildingType::WATER_RECLAIMER->value => new BuildingCost(
+                resources: [ResourceType::IRON_ORE->value => 100],
+                populationCost: 5,
+            ),
+            BuildingType::AGRI_DOME->value => new BuildingCost(
+                resources: [ResourceType::IRON_ORE->value => 100],
+                populationCost: 5,
+            ),
+            BuildingType::ATMOSPHERIC_PROCESSOR->value => new BuildingCost(
+                resources: [ResourceType::IRON_ORE->value => 100],
+                populationCost: 5,
+            ),
         ];
     }
 

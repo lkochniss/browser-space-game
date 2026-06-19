@@ -48,6 +48,11 @@ class BuildingDurationConfig
         BuildingType::WATER_TANK->value => 900,
         BuildingType::FOOD_SILO->value => 900,
         BuildingType::OXYGEN_STORAGE->value => 900,
+
+        // T-097a: Renewable-Producer (15min — analog Storage)
+        BuildingType::WATER_RECLAIMER->value => 900,
+        BuildingType::AGRI_DOME->value => 900,
+        BuildingType::ATMOSPHERIC_PROCESSOR->value => 900,
     ];
 
     /**

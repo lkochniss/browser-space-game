@@ -94,6 +94,7 @@
 | 082c-demo-goals.md | Feature | Done | 5 fixe Demo-Goals (Hub L2, Mines, Recycling, Debris, 2. Planet) als On-Demand-Check |
 | 082d-demo-action-log.md | Feature | Done | DemoActionLogger + StateSnapshotter + Export-Menu (JSONL, vollständige Snapshots, Backup-on-Reset) |
 | 082e-demo-start-resource-buff.md | Feature | Open | Start-Resources erhöhen für flüssigen Day-1 (1500 IRON_ORE + Coal/Cu/Si Buffer + 600 W/F/O) |
+| 097a-renewable-production-buildings.md | Feature | Done | 3 Tier-0 Producer (WATER_RECLAIMER, AGRI_DOME, ATMOSPHERIC_PROCESSOR) + Processor; Pop-Survival selbsttragend |
 | 084-galactic-council.md | Feature | Draft | Endgame-Influence-Voting auf Crusade-Targets / Galaxy-Boni |
 | 088-combat-munition.md | Feature | Draft | BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE Verbrauch im Battle |
 | 089-luxury-civilian-goods.md | Feature | Draft | Pop-Tier-Layer (Working/Middle/Upper) + Civilian-Goods |
