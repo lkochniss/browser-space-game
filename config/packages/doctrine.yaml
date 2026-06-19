@@ -2,12 +2,21 @@ doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
 
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
-        #server_version: '16'
-
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+
+        # Custom UUID-based identifier types for domain ValueObjects.
+        # Each type stores as CHAR(36) and converts to/from the matching ID class.
+        types:
+            planet_id: App\Common\Doctrine\Type\PlanetIdType
+            player_id: App\Common\Doctrine\Type\PlayerIdType
+            building_id: App\Common\Doctrine\Type\BuildingIdType
+            resource_id: App\Common\Doctrine\Type\ResourceIdType
+            resource_deposit_id: App\Common\Doctrine\Type\ResourceDepositIdType
+            solar_system_id: App\Common\Doctrine\Type\SolarSystemIdType
+            faction_id: App\Common\Doctrine\Type\FactionIdType
+            ship_id: App\Common\Doctrine\Type\ShipIdType
+            probe_id: App\Common\Doctrine\Type\ProbeIdType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
@@ -15,10 +24,17 @@ doctrine:
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         identity_generation_preferences:
-            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
-        auto_mapping: true
+            Doctrine\DBAL\Platforms\MySQLPlatform: identity
+        # Domain-Architecture: entities live under src/<Domain>/Model/, not src/Entity/.
+        # We register App\ as one attribute-based mapping that scans all of src/.
+        auto_mapping: false
         mappings:
-          {}
+            App:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src'
+                prefix: 'App'
+                alias: App
         controller_resolver:
             auto_mapping: false
 
