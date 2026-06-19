@@ -71,6 +71,14 @@ services:
     App\Discovery\Service\TelescopeDiscoveryService:
         public: true
 
+    # T-025: ResearchCompletionService analog FleetArrival/TelescopeDiscovery (Wallclock-Tick-Resolver).
+    App\Research\Service\ResearchCompletionService:
+        public: true
+
+    # T-025: ResearchTree als public Singleton (StartResearchCommandService + Demo-CLI).
+    App\Research\Service\ResearchTree:
+        public: true
+
     # add more service definitions when explicit configuration is needed
 
 when@demo:
@@ -82,3 +90,14 @@ when@demo:
         App\Common\Interface\ClockInterface:
             alias: App\Common\Service\AdjustableClock
     # please note that last definitions always *replace* previous ones
+
+when@test:
+    services:
+        # T-025 Tests: ClockInterface ist AdjustableClock damit Wallclock-Mechaniken
+        # (Construction, Research, Salvage etc.) deterministisch via advanceSeconds()
+        # getestet werden können. Default-Konstruktor setzt now() — verhält sich wie
+        # SystemClock bis ein Test explizit advanced.
+        App\Common\Service\AdjustableClock:
+            public: true
+        App\Common\Interface\ClockInterface:
+            alias: App\Common\Service\AdjustableClock

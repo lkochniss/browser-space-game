@@ -309,6 +309,28 @@ class Planet
     }
 
     /**
+     * T-025: Höchstes Level eines fertigen RESEARCH_LAB auf diesem Planeten (0 wenn keiner).
+     * StartResearchCommandService nutzt das maximum über alle Player-Planeten als Speed-Multiplier.
+     */
+    public function getResearchLabLevel(?DateTimeImmutable $now = null): int
+    {
+        $level = 0;
+        foreach ($this->buildings as $building) {
+            if ($building->getType() !== BuildingType::RESEARCH_LAB) {
+                continue;
+            }
+            if (!$building->isReady($now)) {
+                continue;
+            }
+            if ($building->getLevel() > $level) {
+                $level = $building->getLevel();
+            }
+        }
+
+        return $level;
+    }
+
+    /**
      * Live-computed storage capacity for a resource type (T-061).
      * Cap = ResourceCategory base + Σ(building.type.getStorageContribution × building.level)
      */

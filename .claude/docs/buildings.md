@@ -23,6 +23,7 @@
 | `PROBE_LAB` | Voraussetzung Sondenbau (T-013) | — | 200 Iron + 100 Si + 50 Cu | 15 | 30min |
 | `RECYCLING_PLANT` | Konsumiert DEBRIS_* → random FINITE/REFINED (T-021) | — (recycling) | 250 Iron + 100 Cu + 80 Si | 10 | 30min |
 | `TELESCOPE` | Reveals N=Level random unseen Systems / Tick (T-018) | — (discovery) | 150 Iron + 200 Si + 100 Cu | 10 | 45min |
+| `RESEARCH_LAB` | Voraussetzung Forschung; höheres Level reduziert Forschungs-Dauer (T-025) | — (research) | 200 Iron + 100 Si + 50 Cu | 15 | 45min |
 
 Bauzeit-Skalierung: `effectiveDuration = base × 2^currentLevel`. L1→L2 = 2× base, L5→L6 = 32× base. Analog Cost (T-010).
 
@@ -76,6 +77,7 @@ Alle extenden `\DomainException`. Failing Validation → kein State-Change (Pre-
 | `PROBE_LAB` | Sondenbau | `Planet::hasProbeLab($now)` / `getProbeLabLevel($now)` | T-013, probes.md |
 | `TELESCOPE` | Galaxy-Discovery | `Planet::getTelescopeLevel($now)` | T-018, discovery.md |
 | `RECYCLING_PLANT` | DEBRIS-Konversion | (über `RecyclingProcessor` ausgewertet) | T-021, resources.md |
+| `RESEARCH_LAB` | Forschungs-Voraussetzung + Speed-Multiplier | `Planet::getResearchLabLevel($now)` | T-025, research.md |
 
 ## Storage (T-061)
 

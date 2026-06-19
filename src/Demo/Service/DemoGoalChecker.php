@@ -7,6 +7,7 @@ namespace App\Demo\Service;
 use App\Building\ValueObject\BuildingType;
 use App\Demo\ValueObject\DemoGoal;
 use App\Player\Model\Player;
+use App\Research\Repository\PlayerResearchRepository;
 use App\Resource\ValueObject\ResourceType;
 use App\Ship\Repository\ShipRepository;
 
@@ -17,6 +18,7 @@ readonly class DemoGoalChecker
 {
     public function __construct(
         private ShipRepository $shipRepository,
+        private PlayerResearchRepository $playerResearchRepository,
     ) {
     }
 
@@ -31,7 +33,20 @@ readonly class DemoGoalChecker
             $this->goalRecyclingPlant($player),
             $this->goalDebrisCollected($player),
             $this->goalSecondPlanet($player),
+            $this->goalFirstResearch($player),
         ];
+    }
+
+    private function goalFirstResearch(Player $player): DemoGoal
+    {
+        $known = $this->playerResearchRepository->findByPlayer($player);
+        $count = count($known);
+
+        return new DemoGoal(
+            label: 'Erste Forschung abschließen',
+            completed: $count > 0,
+            progressHint: sprintf('Forschungen abgeschlossen: %d', $count),
+        );
     }
 
     private function goalHubLevel2(Player $player): DemoGoal

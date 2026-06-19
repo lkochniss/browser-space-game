@@ -118,6 +118,7 @@ Buildings zählt (`isReady($now)`):
 | `getShipyardLevel($now)` / `hasShipyard($now)` | SHIPYARD (T-011) | Schiffsbau (ships.md) |
 | `getProbeLabLevel($now)` / `hasProbeLab($now)` | PROBE_LAB (T-013) | Sondenbau (probes.md) |
 | `getTelescopeLevel($now)` | TELESCOPE (T-018) | TelescopeDiscoveryService (discovery.md) |
+| `getResearchLabLevel($now)` | RESEARCH_LAB (T-025) | StartResearchCommandService (research.md) |
 
 ## Files
 

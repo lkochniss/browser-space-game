@@ -17,6 +17,12 @@ use App\Demo\Service\DemoGoalChecker;
 use App\Demo\Service\StateSnapshotter;
 use App\Discovery\Repository\PlayerSystemDiscoveryRepository;
 use App\Discovery\Service\TelescopeDiscoveryService;
+use App\Research\Command\StartResearchCommand;
+use App\Research\Repository\ActiveResearchRepository;
+use App\Research\Repository\PlayerResearchRepository;
+use App\Research\Service\ResearchCompletionService;
+use App\Research\Service\ResearchDurationConfig;
+use App\Research\Service\ResearchTree;
 use App\Faction\Service\FactionSeedService;
 use App\Fleet\Command\CreateFleetCommand;
 use App\Fleet\Command\DisbandFleetCommand;
@@ -108,6 +114,11 @@ class InteractiveDemoCommand extends Command
         private readonly PlayerSystemDiscoveryRepository $discoveryRepository,
         private readonly DemoActionLogger $logger,
         private readonly StateSnapshotter $snapshotter,
+        private readonly ResearchTree $researchTree,
+        private readonly ResearchDurationConfig $researchDurationConfig,
+        private readonly ResearchCompletionService $researchCompletion,
+        private readonly PlayerResearchRepository $playerResearchRepository,
+        private readonly ActiveResearchRepository $activeResearchRepository,
     ) {
         parent::__construct();
     }
@@ -159,7 +170,7 @@ class InteractiveDemoCommand extends Command
                     'Stop Salvage' => $this->stopSalvage($io, $player),
                     'Colonize Planet' => $this->colonizePlanet($io, $player),
                     'Tick Forward (advance time)' => $this->tickForward($io, $player),
-                    'Forschung (T-025 Stub)' => $this->researchStub($io),
+                    'Forschung' => $this->doResearch($io, $player),
                     'Reset Demo' => $this->resetSession($io, $player),
                     'Quit' => false,
                     default => true,
@@ -225,7 +236,7 @@ class InteractiveDemoCommand extends Command
             'Stop Salvage',
             'Colonize Planet',
             'Tick Forward (advance time)',
-            'Forschung (T-025 Stub)',
+            'Forschung',
             'Reset Demo',
             'Quit',
         ];
@@ -883,29 +894,107 @@ class InteractiveDemoCommand extends Command
         $arrived = $this->fleetArrival->resolveArrivedFleets();
         $salvaged = $this->salvageProcessor->runTick();
         $discovered = $this->telescopeDiscovery->runTickForPlayer($player);
+        $researchDone = $this->researchCompletion->runTickForPlayer($player);
 
         $this->lastActionParams = [
             'advance_seconds' => $seconds,
             'fleets_arrived' => $arrived,
             'salvages_processed' => $salvaged,
             'systems_discovered' => $discovered,
+            'research_completed' => $researchDone,
         ];
 
         $io->success(sprintf(
-            'Tick advanced by %ds — Clock: %s | Fleets arrived: %d | Salvages: %d | Discovered: %d',
+            'Tick advanced by %ds — Clock: %s | Fleets arrived: %d | Salvages: %d | Discovered: %d | Research-done: %d',
             $seconds,
             $this->clock->now()->format('Y-m-d H:i:s'),
             $arrived,
             $salvaged,
             $discovered,
+            $researchDone,
         ));
 
         return true;
     }
 
-    private function researchStub(SymfonyStyle $io): bool
+    private function doResearch(SymfonyStyle $io, Player $player): bool
     {
-        $io->note('Forschungs-Framework noch nicht implementiert. Siehe T-025 (Open).');
+        $io->section('Forschung');
+
+        // Aktive Forschung anzeigen
+        $active = $this->activeResearchRepository->findActiveForPlayer($player);
+        $now = $this->clock->now();
+        if ($active !== null) {
+            $remaining = max(0, $active->getFinishedAt()->getTimestamp() - $now->getTimestamp());
+            $io->text(sprintf(
+                'Aktiv: <info>%s</info> Level %d → finished_at %s (in %ds)',
+                $active->getNodeSlug(),
+                $active->getTargetLevel(),
+                $active->getFinishedAt()->format('Y-m-d H:i:s'),
+                $remaining,
+            ));
+            $io->newLine();
+        }
+
+        // Bisherige Levels anzeigen
+        $known = $this->playerResearchRepository->findByPlayer($player);
+        if ($known !== []) {
+            $io->text('Bereits erforscht:');
+            foreach ($known as $r) {
+                $io->text(sprintf('  %s — Level %d', $r->getNodeSlug(), $r->getLevel()));
+            }
+            $io->newLine();
+        }
+
+        // Lab-Level
+        $maxLab = 0;
+        foreach ($player->getPlanets() as $planet) {
+            $maxLab = max($maxLab, $planet->getResearchLabLevel($now));
+        }
+        if ($maxLab === 0) {
+            $io->note('Kein fertiges RESEARCH_LAB — bauen, dann zurückkommen.');
+
+            return true;
+        }
+        $io->text(sprintf('Höchstes Research-Lab Level: <info>%d</info>', $maxLab));
+        $io->newLine();
+
+        // Choice der verfügbaren Nodes mit Cost + Duration-Preview
+        $choices = [];
+        foreach ($this->researchTree->all() as $node) {
+            $current = $this->playerResearchRepository->findOneByPlayerAndSlug($player, $node->slug);
+            $currentLevel = $current?->getLevel() ?? 0;
+
+            if ($currentLevel >= $node->maxLevel) {
+                $choices[$node->slug] = sprintf('%s [MAX %d]', $node->slug, $node->maxLevel);
+                continue;
+            }
+            $targetLevel = $currentLevel + 1;
+            $cost = $this->researchDurationConfig->resourceCost($node, $targetLevel);
+            $duration = $this->researchDurationConfig->durationSeconds($node, $targetLevel, $maxLab);
+            $costParts = [];
+            foreach ($cost as $resVal => $amount) {
+                $costParts[] = sprintf('%d %s', $amount, $resVal);
+            }
+            $costParts[] = sprintf('%dmin', (int) round($duration / 60));
+            $choices[$node->slug] = sprintf('%s L%d (%s)', $node->slug, $targetLevel, implode(', ', $costParts));
+        }
+        if ($choices === []) {
+            $io->note('Keine Nodes im Tree (sollte nicht passieren — T-025 hat 2 Stub-Nodes).');
+
+            return true;
+        }
+
+        $label = $io->choice('Forschung starten', $choices);
+        $slug = array_search($label, $choices, true);
+        if ($slug === false) {
+            $slug = $label;
+        }
+
+        $this->lastActionParams = ['node_slug' => $slug];
+
+        $this->bus->dispatch(new StartResearchCommand($player->getId(), (string) $slug));
+        $io->success(sprintf('Forschung gestartet: %s', $slug));
 
         return true;
     }

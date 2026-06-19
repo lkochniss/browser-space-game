@@ -1,7 +1,7 @@
 # T-025: Forschungs-Framework (Wallclock-based Foundation)
 
 **Type:** Feature
-**Status:** Paused (T-082d zwischengeschoben 2026-06-19)
+**Status:** Done
 **Effort:** M-L (~3-4h)
 **FX:** No
 **MIG:** No (neue Tabellen via SchemaTool)
@@ -33,26 +33,17 @@ Building-Upgrades).
 
 ## Acceptance Criteria
 
-- [ ] Domain `src/Research/`:
-  - `ValueObject/ResearchId.php` (UUID)
-  - `Model/ResearchNode.php` (readonly VO: slug, name, description, baseDurationSeconds, maxLevel, prerequisites: list<{slug, level}>, resourceCostBase: array<resourceVal,int>)
-  - `Service/ResearchTree.php` (zentrale Config — analog BuildingCostConfig — startet mit 2 Stub-Nodes für Foundation-Test, T-026 ergänzt echte FTL-Nodes)
-  - `Model/PlayerResearch.php` (Entity: player_id + node_slug + level, UNIQUE(player, slug))
-  - `Model/ActiveResearch.php` (Entity: player_id UNIQUE, node_slug, target_level, started_at, finished_at)
-  - `Repository/{PlayerResearch,ActiveResearch}Repository.php`
-  - `Service/ResearchDurationConfig.php` (Berechnungs-Formel inkl. Lab-Boost)
-  - `Service/StartResearchCommandService.php` (Validation: prereqs, lab-level, no-active, cost; Effekt: Resources abziehen + ActiveResearch persistieren)
-  - `Service/ResearchCompletionService.php` (global, kein TickProcessor — analog FleetArrivalService/TelescopeDiscoveryService): findet ActiveResearch mit `finished_at <= now`, upsert PlayerResearch.level++, löscht ActiveResearch
-  - `Command/StartResearchCommand.php` + Handler
-  - `Exception/*.php` (Lab-Missing, AlreadyResearching, PrerequisiteNotMet, MaxLevelReached, ResearchNodeNotFound)
-- [ ] `BuildingType::RESEARCH_LAB` + Cost (~200 Iron + 100 Si + 50 Cu + 15 pop) + Duration (45min)
-- [ ] `Planet::getResearchLabLevel($now)` Helper
-- [ ] Demo-CLI: "Forschung" Menu-Action (ersetzt T-025-Stub) — listet Nodes mit ✓/Active-State/Locked-Reason, dispatcht StartResearchCommand
-- [ ] Demo-CLI: Tick-Forward callt `researchCompletion->runTickForPlayer($player)`
-- [ ] Tests: ResearchTree-Stub, DurationConfig (Formel), StartResearchCommandService (alle Validation-Pfade), ResearchCompletionService (advance time → level++)
-- [ ] Demo-Goal-Liste (T-082c) erweitern um "Erste Forschung abschließen" (6. Goal)
-- [ ] Doc: `.claude/docs/research.md` neu, README-Index ergänzen, buildings.md (RESEARCH_LAB), demo.md (Goals + Action)
-- [ ] Suite grün
+- [x] Research-Domain (Model, Repos, Services, Command, Handler, 6 Exceptions)
+- [x] `BuildingType::RESEARCH_LAB` + Cost + Duration + Storage-Stub
+- [x] `Planet::getResearchLabLevel($now)` Helper
+- [x] Demo-CLI Forschung-Action mit Cost/Duration-Preview, Active-Research-Anzeige
+- [x] Demo-CLI Tick-Forward callt `researchCompletion->runTickForPlayer($player)` + zeigt Research-done Counter
+- [x] StateSnapshotter erweitert um `research_levels` + `active_research`
+- [x] Demo-Goal #6 "Erste Forschung abschließen"
+- [x] 20 Tests grün (Tree, DurationConfig, StartCommand, CompletionService, GoalChecker)
+- [x] Suite grün (479/479)
+- [x] when@test: ClockInterface = AdjustableClock (Wallclock-Tests einheitlich)
+- [x] Doc neu: research.md, Updates: buildings.md, planets.md, demo.md, README-Index
 
 ## Open Questions
 

@@ -107,6 +107,16 @@ class BuildingCostConfig
                 populationCost: 10,
             ),
 
+            // T-025: Research-Lab. Voraussetzung für Forschung; reduziert Duration.
+            BuildingType::RESEARCH_LAB->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 200,
+                    ResourceType::SILICON->value => 100,
+                    ResourceType::COPPER_ORE->value => 50,
+                ],
+                populationCost: 15,
+            ),
+
             // Storage-Buildings (T-061)
             BuildingType::IRON_STORAGE->value => new BuildingCost(
                 resources: [ResourceType::IRON_ORE->value => 100, ResourceType::COAL->value => 50],

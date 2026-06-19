@@ -29,7 +29,7 @@
 | 023-raumstation.md | Feature | Done | SpaceStation POI (max 1/System, Shipyard-L3-Gate, Storage 100k); Maintenance/Übernahme = T-023b |
 | 023b-station-maintenance-takeover.md | Feature | Draft | Station-Maintenance-Tick + Pop-Mortality + ABANDONED-State + ClaimAbandonedStationCommand |
 | 024-raumschlacht.md | Feature | Open | Legacy-Anker, abgelöst durch T-103 (PvE-Pivot) |
-| 025-forschung-framework.md | Feature | In Progress | Wallclock-Forschung Foundation: Node + Active/PlayerResearch + RESEARCH_LAB-Building + Demo-Action |
+| 025-forschung-framework.md | Feature | Done | Wallclock-Forschung Foundation: Node + Active/PlayerResearch + RESEARCH_LAB-Building + Demo-Action + Stub-Nodes |
 | 025b-multi-lab-research-boost.md | Feature | Draft | Mehrere Labs auf mehreren Planeten stacken Speed-Multiplier (Folge zu T-025) |
 | 026-antriebstechnologie-tree.md | Feature | Open | Antriebs-Tree (4 Standard + 3 FTL) |
 | 027-planetologie-research.md | Feature | Open | Planetologie-Forschung (Sondendetails + Terraform-Gate) |

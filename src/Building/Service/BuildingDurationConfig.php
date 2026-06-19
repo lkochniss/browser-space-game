@@ -38,6 +38,9 @@ class BuildingDurationConfig
         // T-018: Teleskop (45min)
         BuildingType::TELESCOPE->value => 2700,
 
+        // T-025: Research-Lab (45min)
+        BuildingType::RESEARCH_LAB->value => 2700,
+
         // Storage (15min — moderate)
         BuildingType::IRON_STORAGE->value => 900,
         BuildingType::COAL_STORAGE->value => 900,

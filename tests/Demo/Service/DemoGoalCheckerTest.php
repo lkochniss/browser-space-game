@@ -14,6 +14,7 @@ use App\Player\Model\Player;
 use App\Player\ValueObject\PlayerId;
 use App\Resource\Model\Resource;
 use App\Resource\ValueObject\ResourceType;
+use App\Research\Repository\PlayerResearchRepository;
 use App\Ship\Repository\ShipRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -75,7 +76,9 @@ final class DemoGoalCheckerTest extends TestCase
 
         $shipRepo = $this->createMock(ShipRepository::class);
         $shipRepo->method('findByPlanet')->willReturn([]);
-        $checker = new DemoGoalChecker($shipRepo);
+        $researchRepo = $this->createMock(PlayerResearchRepository::class);
+        $researchRepo->method('findByPlayer')->willReturn([]);
+        $checker = new DemoGoalChecker($shipRepo, $researchRepo);
 
         $goals = $checker->check($player);
         self::assertFalse($goals[3]->completed, '40<50 incomplete');
@@ -111,7 +114,9 @@ final class DemoGoalCheckerTest extends TestCase
     {
         $shipRepo = $this->createMock(ShipRepository::class);
         $shipRepo->method('findByPlanet')->willReturn([]);
+        $researchRepo = $this->createMock(PlayerResearchRepository::class);
+        $researchRepo->method('findByPlayer')->willReturn([]);
 
-        return new DemoGoalChecker($shipRepo);
+        return new DemoGoalChecker($shipRepo, $researchRepo);
     }
 }

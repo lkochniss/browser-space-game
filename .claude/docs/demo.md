@@ -44,20 +44,21 @@ Galaxy via `ClaimStartPlanetCommand`. Mit `--reset` zusätzlich Schema-Drop.
 | Load/Unload Cargo | `Load/UnloadCargoCommand` |
 | Start/Stop Salvage | `Start/StopSalvageCommand` (polymorph: Asteroid + Debris) |
 | Colonize Planet | `ColonizePlanetCommand` |
-| **Tick Forward** | Choice 15min/1h/4h/1d/custom → `AdjustableClock.advanceSeconds` + `TickEngine.run` + `FleetArrivalService` + `SalvageProcessor` + `TelescopeDiscoveryService` |
+| **Tick Forward** | Choice 15min/1h/4h/1d/custom → `AdjustableClock.advanceSeconds` + `TickEngine.run` + `FleetArrivalService` + `SalvageProcessor` + `TelescopeDiscoveryService` + `ResearchCompletionService` |
 | **Export Log** (T-082d) | Zeigt Pfad + letzte 20 Action-Log-Einträge auf stdout |
-| Forschung (Stub) | T-025 noch offen |
+| **Forschung** (T-025) | Cost+Duration-Preview je Node; ein laufendes Research mit ETA; bei Abschluss Level++ |
 | Reset Demo | Drop+Recreate Schema + Re-Seed (+ Log-Backup `.bak`) |
 
 ## Demo-Goals (T-082c)
 
-5 fixe Mini-Quests, stateless on-demand check:
+6 fixe Mini-Quests, stateless on-demand check:
 
 1. Hub auf Level 2 ausbauen
 2. Alle 3 Basic-Mines (Iron + Coal + Copper) auf einem Planeten
 3. Recycling-Plant bauen
 4. 50+ Debris-Items sammeln (Planet+Ship-Cargo)
 5. 2. Planet kolonisieren
+6. Erste Forschung abschließen (T-025)
 
 Stateless Re-Compute aus Player-State, kein DB-Schema. Live-Progress in Hint
 ("Hub-Level: 1/2", "Debris gesamt: 35/50").

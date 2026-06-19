@@ -16,6 +16,7 @@ Vision. Vision-Konzepte liegen unter `/docs/*.md` (Obsidian-Notes, DE).
 | probes.md | Probe | 3 ProbeTypes + ProbeLab-Gate; Foundation, Effekte folgen mit T-018/T-027/T-087 |
 | tick.md | Tick | TickEngine (atomic, tagged_iterator), 6 Processors + 3 globale Tick-Services, Reihenfolge |
 | discovery.md | Discovery | T-018 PlayerSystemDiscovery + Telescope-Reveal, Galaxy-Fog-of-War-Foundation |
+| research.md | Research | T-025 Wallclock-Forschungs-Framework + RESEARCH_LAB + Stub-Nodes; Tree-Erweiterungen via Folge-Tickets |
 | factions.md | Faction | NPC-Faction-Foundation + Reputation-Service; aktuell nicht aktiv konsumiert |
 | player.md | Player | Player-Aggregat + Galaxy-Bootstrap (ClaimStartPlanet), Init-Konstanten |
 | demo.md | Demo | Interactive Sandbox-CLI `app:demo:run` + Demo-Goals + Time-Travel |
@@ -43,6 +44,7 @@ Vision. Vision-Konzepte liegen unter `/docs/*.md` (Obsidian-Notes, DE).
 | `POI/` | poi.md | T-019-T-023 + T-085 |
 | `Probe/` | probes.md | T-013 (Foundation only) |
 | `Discovery/` | discovery.md | T-018 |
+| `Research/` | research.md | T-025 (Foundation only, Branches folgen) |
 | `Faction/` | factions.md | T-073 (Foundation only) |
 | `Demo/` | demo.md | T-082 + T-082b + T-082c |
 | `DataFixtures/` | (in persistence.md) | T-049a WorldFixture |

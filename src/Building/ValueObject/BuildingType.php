@@ -31,6 +31,11 @@ enum BuildingType: string
     // für den Player auf (TelescopeDiscoveryProcessor).
     case TELESCOPE = 'telescope';
 
+    // T-025: Research-Lab. Voraussetzung für Forschung; höheres Lab-Level
+    // reduziert Forschungs-Dauer multiplikativ (1.18^(level-1)). T-069
+    // erweitert um Tier-Gates für höhere Tech-Tiers.
+    case RESEARCH_LAB = 'research_lab';
+
     case IRON_STORAGE = 'iron_storage';
     case COAL_STORAGE = 'coal_storage';
     case IRON_BAR_STORAGE = 'iron_bar_storage';
@@ -69,6 +74,7 @@ enum BuildingType: string
             self::PROBE_LAB => [],
             self::RECYCLING_PLANT => [],
             self::TELESCOPE => [],
+            self::RESEARCH_LAB => [],
             self::HUB => [
                 ResourceType::WATER->value => 200,
                 ResourceType::FOOD->value => 200,

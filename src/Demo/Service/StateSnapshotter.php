@@ -8,6 +8,8 @@ use App\Common\Interface\ClockInterface;
 use App\Discovery\Repository\PlayerSystemDiscoveryRepository;
 use App\Fleet\Repository\FleetRepository;
 use App\Player\Model\Player;
+use App\Research\Repository\ActiveResearchRepository;
+use App\Research\Repository\PlayerResearchRepository;
 use App\Ship\Repository\ShipRepository;
 
 /**
@@ -22,6 +24,8 @@ readonly class StateSnapshotter
         private ShipRepository $shipRepository,
         private FleetRepository $fleetRepository,
         private PlayerSystemDiscoveryRepository $discoveryRepository,
+        private PlayerResearchRepository $playerResearchRepository,
+        private ActiveResearchRepository $activeResearchRepository,
         private ClockInterface $clock,
     ) {
     }
@@ -132,6 +136,21 @@ readonly class StateSnapshotter
             $discoveredIds[] = (string) $d->getSolarSystem()->getId();
         }
 
+        $researchLevels = [];
+        foreach ($this->playerResearchRepository->findByPlayer($player) as $r) {
+            $researchLevels[$r->getNodeSlug()] = $r->getLevel();
+        }
+        $activeResearch = null;
+        $active = $this->activeResearchRepository->findActiveForPlayer($player);
+        if ($active !== null) {
+            $activeResearch = [
+                'node_slug' => $active->getNodeSlug(),
+                'target_level' => $active->getTargetLevel(),
+                'started_at' => $active->getStartedAt()->format(\DateTimeInterface::ATOM),
+                'finished_at' => $active->getFinishedAt()->format(\DateTimeInterface::ATOM),
+            ];
+        }
+
         return [
             'clock_now' => $now->format(\DateTimeInterface::ATOM),
             'player_id' => (string) $player->getId(),
@@ -139,6 +158,8 @@ readonly class StateSnapshotter
             'ships' => $ships,
             'fleets' => $fleets,
             'discovered_system_ids' => $discoveredIds,
+            'research_levels' => $researchLevels,
+            'active_research' => $activeResearch,
         ];
     }
 }
