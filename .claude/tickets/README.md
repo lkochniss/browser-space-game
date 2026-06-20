@@ -4,7 +4,7 @@
 |------|------|--------|---------|
 | 001-renewable-resources.md | Feature | Done | WATER/FOOD/OXYGEN als ResourceType; Start-Amount 100; Base-Werte gesetzt |
 | 002-finite-resources-extend.md | Feature | Done | 6 Erze + 6 Mines + Base-Werte gestaffelt; canProduce-Bug gefixt |
-| 003-erzeugnis-eisenbarren.md | Feature | Done | ResourceCategory + IRON_BAR + IRON_SMELTER + Refinement-Tick (2:1:1) |
+| 003-erzeugnis-eisenbarren.md | Feature | Done | ResourceCategory + IRON_BAR + IRON_SMELTER + Refinement-Tick (2:1:1) (T-167 Status-Sync) |
 | 004-population-entity.md | Feature | Done | Embeddable Population (total/assigned/cap) auf Planet + Migration |
 | 005-population-consumption.md | Feature | Done | Pop-Verbrauch W/F + Logistic Growth + Mangel-Kill (free first) |
 | 006-hub-building.md | Feature | Done | HUB BuildingType + Cap +50/Level + Auto-Recalc in addBuilding |
@@ -18,6 +18,7 @@
 | 014-kolonisationsschiff.md | Feature | Done | COLONY_SHIP + ColonizePlanetCommand mit Pop-Transfer + ShipCostConfig-Refactor |
 | 015-transportschiff.md | Feature | Done | 3 Transport-Klassen + CargoManifest Embeddable + Load/Unload/DockCommands |
 | 015b-station-cargo-transfer.md | Feature | Done | Ship.station-Field + LoadCargo/UnloadCargo branch für Station-Storage; Pop-Transfer skip |
+| 015c-station-pop-transfer.md | Feature | Draft | Pop-Transfer Ship ↔ Station (Foundation-Folge zu T-015b) |
 | 016-bergungsschiff.md | Feature | Done | ShipType::SALVAGE + Echtzeit-Salvage (50 Units/min) für AsteroidField + Field-Cleanup |
 | 017-flotte-movement.md | Feature | Done | Persistent-Fleet + Wallclock-Movement (Slowest-Ship-Speed) + FleetArrivalService; Magic-Dock-Cleanup |
 | 017b-fleet-movement-modifiers.md | Feature | Draft | Nebel-Detection-Hook + Wormhole-Travel-Reduktion/Cooldown/Treibstoff (Folge-Modifier zu T-017) |
@@ -28,11 +29,13 @@
 | 022-nebel-poi.md | Feature | Done | Nebula POI-Subtype (STI) + concealmentLevel + 30%-Galaxy-Spawn |
 | 023-raumstation.md | Feature | Done | SpaceStation POI (max 1/System, Shipyard-L3-Gate, Storage 100k); Maintenance/Übernahme = T-023b |
 | 023b-station-maintenance-takeover.md | Feature | Draft | Station-Maintenance-Tick + Pop-Mortality + ABANDONED-State + ClaimAbandonedStationCommand |
-| 024-raumschlacht.md | Feature | Open | Legacy-Anker, abgelöst durch T-103 (PvE-Pivot) |
+| 024-raumschlacht.md | Feature | Superseded | Abgelöst durch T-103 (T-167 Cleanup) |
 | 025-forschung-framework.md | Feature | Done | Wallclock-Forschung Foundation: Node + Active/PlayerResearch + RESEARCH_LAB-Building + Demo-Action + Stub-Nodes |
 | 025b-multi-lab-research-boost.md | Feature | Done (superseded T-025c) | Auto-Aggregator (geometric decay 0.5); wird durch T-025c-Opt-In-Modell ersetzt |
 | 025c-multi-lab-opt-in-with-cost.md | Feature | Open | Opt-In Multi-Lab beim StartResearch + marginal-Cost-Aufschlag pro Booster |
 | 026-antriebstechnologie-tree.md | Feature | Done | 7 Antriebs-Nodes + Inter-System-Travel-Lock (ftl_hyperdrive); PropulsionType/Fuel via Folge |
+| 026b-wormhole-tech-validation.md | Feature | Draft | Wormhole.requiredTechSlug aktiv validieren (Folge zu T-026) |
+| 026c-propulsion-type-field.md | Feature | Draft | Ship.propulsion + Speed/Range Mapping (Folge zu T-026) |
 | 027-planetologie-research.md | Feature | Open | Planetologie-Forschung (Sondendetails + Terraform-Gate) |
 | 028-techdebt-wrong-namespaces.md | TechDebt | Done | `use ValueObject\PlanetId` etc. — falsche Imports (gefixt) |
 | 029-techdebt-buildingid-namespace.md | TechDebt | Done | BuildingId/BuildingType-Namespace gefixt (lagen schon im richtigen Folder) |
@@ -72,6 +75,7 @@
 | 062-realtime-construction.md | Feature | Done | Wall-Clock Bauzeit + isReady-Gates + ConstructionCompletionProcessor |
 | 063-planet-bonus-system.md | Feature | Done | Planet-Type-Boni (Mining-Multi pro Resource je Type) |
 | 064-construction-speed-boost.md | Feature | Done | construction_speed_1 (3 Levels) reduziert Bauzeit multiplikativ; Stack mit T-063 Planet-Type |
+| 064b-construction-hub-building.md | Feature | Draft | Lokales Construction-Hub-Building (Folge zu T-064; +Bauzeit pro Hub-Level) |
 | 065-energy-system.md | Feature | Draft | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Draft | H2 + Promethium als FUEL-Resources für Schiffe |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Draft | Steel/Chip/Composite/Hull/Shield Tier-2-Outputs |
@@ -107,6 +111,8 @@
 | 087-fog-of-war.md | Feature | Draft | Player-spezifische Discovery-Levels (UNKNOWN/METADATA/SCANNED) |
 | 093-alliance-raumstation.md | Feature | Draft | Allianz-Raumstation pro System (Repair/Trade/Defense-Hub) |
 | 094-build-queue.md | Feature | Done | Parallel-Slot-Model (max 3); Cancel/Refund/Hub-Bonus/Forschungs-Slots deferred |
+| 094b-build-queue-cancel-refund.md | Feature | Draft | CancelBuildCommand + 50% Refund (Folge zu T-094) |
+| 094c-build-queue-slot-extensions.md | Feature | Draft | Slot-Cap dynamisch via Hub-Upgrade + Logistics-Forschung (Folge zu T-094) |
 | 095-auto-production-routing.md | Feature | Draft | Threshold-getriggerte Auto-Trade-Routes — Folge T-110 |
 | 096-player-history-stats.md | Feature | Draft | Persistent Player-Stats (Battles/Resources/Buildings) |
 | 097-pop-tier-buildings.md | Feature | Draft | GENEBANK/CLONING_VAT/CIVIC_CENTER/AGRI_DOME/WATER_RECLAIMER/ATMOSPHERIC_PROCESSOR |
@@ -169,7 +175,7 @@
 | 164-battle-replay-ui.md | Feature | Draft | Battle-Replay (Table-MVP, Animated-Folge) |
 | 165-settings-personalization.md | Feature | Draft | UI-Theme/Default-Tactic/Galaxy-Filter/Notification-Prefs |
 | 166-animated-battle-replay.md | Feature | Draft | Animated-Battle-Replay-View (Folge zu T-164) |
-| 167-cleanup-loose-ends.md | TechDebt | Open | Status-Sync (T-003/T-063), Stale-Stubs entfernen, 5+ Folge-Tickets explizit anlegen |
+| 167-cleanup-loose-ends.md | TechDebt | Done | Status-Sync, Stale-Stubs raus, 6 Folge-Drafts (T-026b/c, T-064b, T-094b/c, T-015c), T-024 superseded |
 | 168-demo-cli-env-preflight.md | Bug | Done | `app:demo:run` Auto-Re-Exec in demo-Env via Symfony\Process — kein --env=demo mehr nötig |
 | 169-demo-reset-action-bug.md | Bug | Done | Reset-Action zentralisiert via bootstrapFreshPlayer + pendingPlayerSwap; Buff+Galaxy konsistent, Loop schwenkt um |
 | 171-building-uniqueness-slot-concept.md | Feature | Done | 6 Strategic-Unique + Slot-Size pro Building (1-3) + Slot-Cap pro PlanetSize (8-40) |

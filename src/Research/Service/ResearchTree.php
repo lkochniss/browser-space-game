@@ -28,31 +28,8 @@ class ResearchTree
     {
         $this->nodes = [];
 
-        // T-025 Foundation-Stubs (kein Building-Effekt; bleiben für Tree-Tests + T-026 Folge)
-        $this->register(new ResearchNode(
-            slug: 'mining_efficiency_1',
-            name: 'Mining-Effizienz I',
-            description: 'Verbessert Förderrate (T-127 Hook).',
-            baseDurationSeconds: 300,
-            maxLevel: 3,
-            prerequisites: [],
-            resourceCostBase: [
-                ResourceType::IRON_ORE->value => 100,
-                ResourceType::COAL->value => 50,
-            ],
-        ));
-        $this->register(new ResearchNode(
-            slug: 'ftl_tier_1',
-            name: 'FTL-Tier 1',
-            description: 'Foundation für Antrieb-Tree (T-026). Stub — T-026 nutzt eigene 7-Node-Chain ab propulsion_hydrogen.',
-            baseDurationSeconds: 600,
-            maxLevel: 1,
-            prerequisites: [],
-            resourceCostBase: [
-                ResourceType::IRON_BAR->value => 200,
-                ResourceType::SILICON->value => 100,
-            ],
-        ));
+        // T-167: T-025-Stub-Nodes (mining_efficiency_1, ftl_tier_1) entfernt.
+        // T-026 Antrieb-Tree + T-127 Mining-Industry-Branch haben eigene Nodes.
 
         // T-170 Tier-1 Tech-Tree-Nodes (gated buildings)
         $this->register(new ResearchNode(

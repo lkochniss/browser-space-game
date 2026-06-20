@@ -1,7 +1,7 @@
 # T-003: Erzeugnis-Konzept + Eisenbarren via Eisenhütte
 
 **Type:** Feature
-**Status:** Open
+**Status:** Done
 **FX:** No
 **MIG:** No
 **Depends on:** T-002 (Kohle)

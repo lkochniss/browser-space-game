@@ -1,7 +1,7 @@
 # T-024: Raumschlacht-Resolution (PvE-Pivot)
 
 **Type:** Feature
-**Status:** Open (Scope-Pivot pending — siehe Notes)
+**Status:** Superseded by T-103 (T-167 Cleanup)
 **FX:** No
 **MIG:** No
 **Depends on:** T-017 (Flotte), T-021 (Trümmerfeld), T-073 (Faction)

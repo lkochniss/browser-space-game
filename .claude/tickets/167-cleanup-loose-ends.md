@@ -1,7 +1,7 @@
 # T-167: Cleanup Loose Ends — Status-Sync, Stale Stubs, Folge-Tickets
 
 **Type:** TechDebt
-**Status:** Open
+**Status:** Done
 **Severity:** Low
 **Effort:** S (~1h)
 **Risk if ignored:** Akkumulierende technische Inkonsistenz, verwirrende Stale-Entries, fehlende Verfolg-Verbindungen für deferred-Out-of-Scope-Punkte aus jüngsten Tickets (T-026/T-064/T-094).

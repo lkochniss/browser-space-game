@@ -104,19 +104,13 @@ prüft via `checkUnlock($planet, $type)` vor Cost-Validation und wirft `Building
 `BuildBuildingCommandService::isUnlockedFor($player, $type)` als Public-Helper für
 Demo-CLI / UI (zeigt 🔒 + Reason).
 
-## Stub-Nodes (T-025 Foundation)
+## Antriebs-Tree (T-026)
 
-T-026 ersetzt diese Stubs durch echten Antrieb-Tree (inkl. `ftl_tier_2` für
-Wormhole-Lock, der bereits in `Wormhole.requiredTechSlug` als Stub steht).
-
-| Slug | Base-Duration | Max-Level | Prereqs | Cost (L1) |
-|------|---------------|-----------|---------|-----------|
-| `mining_efficiency_1` | 300s | 3 | — | 100 IRON_ORE + 50 COAL |
-| `ftl_tier_1` | 600s | 1 | — | 200 IRON_BAR + 100 SILICON |
-
-Wirkung der Nodes ist out-of-scope von T-025 — Foundation prüft nur, dass
-Forschung mechanisch läuft. Effekt-Hooks (Mining-Boost, Wormhole-Unlock) folgen
-mit T-127 / T-026.
+7 Nodes mit linearer Chain Standard-Antriebe + FTL:
+`propulsion_hydrogen → propulsion_ion → propulsion_fusion → propulsion_antimatter`,
+parallel `ftl_hyperdrive → ftl_warp → ftl_jumpdrive` (FTL braucht
+`propulsion_fusion` als Prereq). `ftl_hyperdrive` L1 schaltet Inter-System-
+Travel frei (siehe fleets.md). `ftl_warp` ist Wormhole-Tech-Slug für T-026b.
 
 ## Domain-Exceptions
 
