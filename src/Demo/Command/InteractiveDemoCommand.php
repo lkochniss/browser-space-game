@@ -649,6 +649,10 @@ class InteractiveDemoCommand extends Command
         if ($enumValue === false) {
             $enumValue = $type;
         }
+        $this->lastActionParams = [
+            'planet_id' => (string) $planet->getId(),
+            'building_type' => (string) $enumValue,
+        ];
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::from((string) $enumValue)));
         $io->success(sprintf('Build started: %s on %s', $enumValue, $planet->getId()));
 
@@ -682,6 +686,12 @@ class InteractiveDemoCommand extends Command
             return true;
         }
 
+        $this->lastActionParams = [
+            'planet_id' => (string) $planet->getId(),
+            'building_id' => (string) $building->getId(),
+            'building_type' => $building->getType()->value,
+            'from_level' => $building->getLevel(),
+        ];
         $this->bus->dispatch(new UpgradeBuildingCommand($planet->getId(), $building->getId()));
         $io->success(sprintf('Upgrade started: %s', $building->getType()->value));
 
@@ -717,6 +727,10 @@ class InteractiveDemoCommand extends Command
         if ($enumValue === false) {
             $enumValue = $label;
         }
+        $this->lastActionParams = [
+            'planet_id' => (string) $planet->getId(),
+            'ship_type' => (string) $enumValue,
+        ];
         $ship = $this->bus->dispatch(new BuildShipCommand($planet->getId(), ShipType::from((string) $enumValue)));
         $io->success(sprintf('Building Ship %s (%s) — finishedAt %s', $ship->getId(), $enumValue, $ship->getFinishedAt()?->format('H:i:s') ?? '—'));
 
@@ -751,6 +765,10 @@ class InteractiveDemoCommand extends Command
         if ($enumValue === false) {
             $enumValue = $label;
         }
+        $this->lastActionParams = [
+            'planet_id' => (string) $planet->getId(),
+            'probe_type' => (string) $enumValue,
+        ];
         $probe = $this->bus->dispatch(new BuildProbeCommand($planet->getId(), ProbeType::from((string) $enumValue)));
         $io->success(sprintf('Building Probe %s (%s)', $probe->getId(), $enumValue));
 
@@ -783,6 +801,11 @@ class InteractiveDemoCommand extends Command
         $shipIds = [new \App\Ship\ValueObject\ShipId($selected)];
 
         $fleet = $this->bus->dispatch(new CreateFleetCommand($player->getId(), $shipIds));
+        $this->lastActionParams = [
+            'fleet_id' => (string) $fleet->getId(),
+            'ship_ids' => array_map(fn ($id) => (string) $id, $shipIds),
+            'origin_planet_id' => (string) $fleet->getOriginPlanet()?->getId(),
+        ];
         $io->success(sprintf('Fleet %s created at %s', $fleet->getId(), $fleet->getOriginPlanet()?->getId()));
 
         return true;
@@ -802,6 +825,10 @@ class InteractiveDemoCommand extends Command
             $choices[$p->getId()->__toString()] = sprintf('%s (%s)', $p->getId(), $sys?->getName() ?? '?');
         }
         $targetId = $io->choice('Target Planet', $choices);
+        $this->lastActionParams = [
+            'fleet_id' => (string) $fleet->getId(),
+            'target_planet_id' => $targetId,
+        ];
         $this->bus->dispatch(new MoveFleetCommand($fleet->getId(), new \App\Planet\ValueObject\PlanetId($targetId)));
         $io->success(sprintf('Fleet %s moving — arrives %s', $fleet->getId(), $fleet->getArrivedAt()?->format('Y-m-d H:i:s')));
 
@@ -814,6 +841,7 @@ class InteractiveDemoCommand extends Command
         if ($fleet === null) {
             return true;
         }
+        $this->lastActionParams = ['fleet_id' => (string) $fleet->getId()];
         $this->bus->dispatch(new DisbandFleetCommand($fleet->getId()));
         $io->success('Fleet disbanded.');
 
@@ -828,6 +856,10 @@ class InteractiveDemoCommand extends Command
         }
         $resourceVal = $io->choice('Resource', array_map(fn ($c) => $c->value, ResourceType::cases()));
         $amount = (int) $io->ask('Amount', '100');
+        $this->lastActionParams = [
+            'ship_id' => (string) $ship->getId(),
+            'resources' => [$resourceVal => $amount],
+        ];
         $this->bus->dispatch(new LoadCargoCommand(
             shipId: $ship->getId(),
             resources: [$resourceVal => $amount],
@@ -851,6 +883,10 @@ class InteractiveDemoCommand extends Command
         }
         $resourceVal = $io->choice('Resource', array_keys($contents));
         $amount = (int) $io->ask('Amount', (string) $contents[$resourceVal]);
+        $this->lastActionParams = [
+            'ship_id' => (string) $ship->getId(),
+            'resources' => [$resourceVal => $amount],
+        ];
         $this->bus->dispatch(new UnloadCargoCommand(
             shipId: $ship->getId(),
             resources: [$resourceVal => $amount],
@@ -897,6 +933,11 @@ class InteractiveDemoCommand extends Command
         }
         $resVal = $io->choice('Resource to extract', $resourceChoices);
 
+        $this->lastActionParams = [
+            'ship_id' => (string) $salvageShip->getId(),
+            'poi_id' => $poiIdStr,
+            'resource_type' => $resVal,
+        ];
         $this->bus->dispatch(new StartSalvageCommand(
             shipId: $salvageShip->getId(),
             poiId: new \App\POI\ValueObject\PoiId($poiIdStr),
@@ -913,6 +954,7 @@ class InteractiveDemoCommand extends Command
         if ($salvageShip === null) {
             return true;
         }
+        $this->lastActionParams = ['ship_id' => (string) $salvageShip->getId()];
         $this->bus->dispatch(new StopSalvageCommand($salvageShip->getId()));
         $io->success('Salvage stopped.');
 
@@ -957,6 +999,10 @@ class InteractiveDemoCommand extends Command
         }
         $targetIdStr = $io->choice('Target Planet', $targetChoices);
 
+        $this->lastActionParams = [
+            'ship_id' => $shipIdStr,
+            'target_planet_id' => $targetIdStr,
+        ];
         $this->bus->dispatch(new ColonizePlanetCommand(
             shipId: new \App\Ship\ValueObject\ShipId($shipIdStr),
             targetPlanetId: new \App\Planet\ValueObject\PlanetId($targetIdStr),
@@ -1090,6 +1136,8 @@ class InteractiveDemoCommand extends Command
     private function resetSession(SymfonyStyle $io, Player $player): bool
     {
         if (!$io->confirm('Wirklich alles löschen und frischen Player anlegen?', false)) {
+            $this->lastActionParams = ['confirmed' => false];
+
             return true;
         }
         $backup = $this->logger->backupOnReset();
@@ -1105,6 +1153,10 @@ class InteractiveDemoCommand extends Command
         // T-169: signalisiere Main-Loop, dass der referenzierte $player ungültig
         // ist und durch den frisch erzeugten ersetzt werden muss.
         $this->pendingPlayerSwap = $newPlayer;
+        $this->lastActionParams = [
+            'confirmed' => true,
+            'new_player_id' => (string) $newPlayer->getId(),
+        ];
 
         $io->success(sprintf('Demo state reset. Neuer Player %s.', $newPlayer->getId()));
 

@@ -94,7 +94,7 @@
 | 082c-demo-goals.md | Feature | Done | 5 fixe Demo-Goals (Hub L2, Mines, Recycling, Debris, 2. Planet) als On-Demand-Check |
 | 082d-demo-action-log.md | Feature | Done | DemoActionLogger + StateSnapshotter + Export-Menu (JSONL, vollständige Snapshots, Backup-on-Reset) |
 | 082e-demo-start-resource-buff.md | Feature | Done | Start-Buff: 3000 IRON_ORE + 800 COAL + 400 CU + 300 SI + 200 IRON_BAR + 1500 W/F/O |
-| 082f-demo-action-log-details.md | Bug | Open | Log zeigt nur params=[] für Build/Research; per Action sinnvolle Params setzen |
+| 082f-demo-action-log-details.md | Bug | Done | Action-Log liefert pro Action konkrete Params (building_type, ship_type, fleet_id, etc.) |
 | 097a-renewable-production-buildings.md | Feature | Done | 3 Tier-0 Producer (WATER_RECLAIMER, AGRI_DOME, ATMOSPHERIC_PROCESSOR) + Processor; Pop-Survival selbsttragend |
 | 084-galactic-council.md | Feature | Draft | Endgame-Influence-Voting auf Crusade-Targets / Galaxy-Boni |
 | 088-combat-munition.md | Feature | Draft | BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE Verbrauch im Battle |
