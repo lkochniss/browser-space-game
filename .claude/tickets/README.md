@@ -111,7 +111,7 @@
 | 087-fog-of-war.md | Feature | Draft | Player-spezifische Discovery-Levels (UNKNOWN/METADATA/SCANNED) |
 | 093-alliance-raumstation.md | Feature | Draft | Allianz-Raumstation pro System (Repair/Trade/Defense-Hub) |
 | 094-build-queue.md | Feature | Done | Parallel-Slot-Model (max 3); Cancel/Refund/Hub-Bonus/Forschungs-Slots deferred |
-| 094b-build-queue-cancel-refund.md | Feature | Draft | CancelBuildCommand + 50% Refund (Folge zu T-094) |
+| 094b-build-queue-cancel-refund.md | Feature | Done | CancelBuildCommand: Initial=Delete, Upgrade=Level-1; 50% Resource + 100% Pop Refund |
 | 094c-build-queue-slot-extensions.md | Feature | Draft | Slot-Cap dynamisch via Hub-Upgrade + Logistics-Forschung (Folge zu T-094) |
 | 095-auto-production-routing.md | Feature | Draft | Threshold-getriggerte Auto-Trade-Routes — Folge T-110 |
 | 096-player-history-stats.md | Feature | Draft | Persistent Player-Stats (Battles/Resources/Buildings) |

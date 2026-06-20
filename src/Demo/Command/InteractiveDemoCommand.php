@@ -214,6 +214,7 @@ class InteractiveDemoCommand extends Command
                     'Export Log' => $this->exportLog($io),
                     'Build Building' => $this->buildBuilding($io, $player),
                     'Upgrade Building' => $this->upgradeBuilding($io, $player),
+                    'Cancel Build' => $this->cancelBuild($io, $player),
                     'Build Ship' => $this->buildShip($io, $player),
                     'Build Probe' => $this->buildProbe($io, $player),
                     'Create Fleet' => $this->createFleet($io, $player),
@@ -287,6 +288,7 @@ class InteractiveDemoCommand extends Command
             'Export Log',
             'Build Building',
             'Upgrade Building',
+            'Cancel Build',
             'Build Ship',
             'Build Probe',
             'Create Fleet',
@@ -664,6 +666,52 @@ class InteractiveDemoCommand extends Command
         ];
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::from((string) $enumValue)));
         $io->success(sprintf('Build started: %s on %s', $enumValue, $planet->getId()));
+
+        return true;
+    }
+
+    private function cancelBuild(SymfonyStyle $io, Player $player): bool
+    {
+        $planet = $this->choosePlayerPlanet($io, $player);
+        if ($planet === null) {
+            return true;
+        }
+
+        $now = $this->clock->now();
+        $unfinished = [];
+        foreach ($planet->getBuildings() as $b) {
+            if (!$b->isReady($now)) {
+                $unfinished[] = $b;
+            }
+        }
+        if ($unfinished === []) {
+            $io->note('Keine laufenden Bauten/Upgrades auf diesem Planeten.');
+
+            return true;
+        }
+
+        $choices = [];
+        foreach ($unfinished as $i => $b) {
+            $kind = $b->getLevel() === 1 ? 'Build' : sprintf('Upgrade L%d→L%d', $b->getLevel() - 1, $b->getLevel());
+            $choices[$i] = sprintf('%s %s (id=%s)', $b->getType()->value, $kind, $b->getId());
+        }
+        $idx = $io->choice('Bau zum Canceln', $choices);
+        $idxNum = array_search($idx, $choices, true);
+        $building = $unfinished[$idxNum] ?? null;
+        if ($building === null) {
+            $io->note('Invalid selection.');
+
+            return true;
+        }
+
+        $this->lastActionParams = [
+            'planet_id' => (string) $planet->getId(),
+            'building_id' => (string) $building->getId(),
+            'building_type' => $building->getType()->value,
+            'level_at_cancel' => $building->getLevel(),
+        ];
+        $this->bus->dispatch(new \App\Building\Command\CancelBuildCommand($planet->getId(), $building->getId()));
+        $io->success(sprintf('Cancel: %s — 50%% Refund + Pop frei.', $building->getType()->value));
 
         return true;
     }

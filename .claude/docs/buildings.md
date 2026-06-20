@@ -162,6 +162,18 @@ alle Slot-Size 1.
 Spieler-Strategie: mit knappem Cap zwingt zu Spezialisierung (reine Production-Welt
 ohne Mines, oder Mining-Hub ohne Strategic Buildings).
 
+## Cancel + Refund (T-094b)
+
+`CancelBuildCommand(planetId, buildingId)` bricht laufenden Build/Upgrade ab.
+
+| Fall | Effekt |
+|------|--------|
+| Initial-Build (Level 1, in Bau) | Building wird gelöscht; 50% Resource-Refund (floor); 100% Pop released |
+| Upgrade (Level N+1, in Bau) | Level → N, finishedAt=null (sofort wieder ready); 50% Upgrade-Cost-Refund; 100% Upgrade-Pop released |
+| Bereits ready | `BuildingNotInProgressException` |
+
+Refund-Rate ist hardcoded 50% — zukünftig via Logistics-Forschung anhebbar (T-094c-Folge).
+
 ## Bau-Queue (T-094 Foundation)
 
 Pro Planet max **3 parallele** unfertige Build/Upgrade-Jobs. `Planet::countActiveBuildJobs($now)`
@@ -171,7 +183,7 @@ zählt Buildings mit `!isReady($now)`. `BuildBuildingCommandService` und
 Bau-Queue (parallel, max 3) und Slot-Cap (total, je nach PlanetSize) sind komplementär.
 
 Slot-Cap-Konstante: `BuildBuildingCommandService::MAX_CONCURRENT_BUILDS = 3`.
-Folge: Hub-Upgrade-Bonus (+1 Slot pro Lvl-5), Logistics-Forschung, Cancel-Refund —
+Folge: Hub-Upgrade-Bonus (+1 Slot pro Lvl-5), Logistics-Forschung —
 alles in T-094-Folge-Tickets.
 
 ## Bauzeit-Boost (T-064)
