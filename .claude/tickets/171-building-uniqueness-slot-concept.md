@@ -1,7 +1,7 @@
 # T-171: Building-Uniqueness + Planet-Slot-Konzept
 
 **Type:** Feature
-**Status:** Draft (Design-Discussion — Decisions vor Implementation klären)
+**Status:** Done (Foundation implementiert; Folge: Cancel/Demolish/Slot-Bonus)
 **Effort:** M (~3h, abhängig von Decisions)
 **Depends on:** T-009 (Building-Cost), T-094 (Bau-Queue Foundation), T-170 (Tech-Tree)
 **Blocks:** Tier-2/3-Building-Erweiterungen (T-067, T-097, T-100, T-107) profitieren von einem Slot-Konzept

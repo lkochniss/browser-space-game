@@ -407,6 +407,8 @@ class InteractiveDemoCommand extends Command
             // T-094: Bau-Queue Auslastung
             $active = $planet->countActiveBuildJobs($this->clock->now());
             $io->text(sprintf('  Build-Queue: %d/%d', $active, \App\Building\Service\BuildBuildingCommandService::MAX_CONCURRENT_BUILDS));
+            // T-171: Slot-Auslastung
+            $io->text(sprintf('  Building-Slots: %d/%d', $planet->getBuildingSlotsUsed(), $planet->getBuildingSlotCap()));
         }
 
         // Ships across all planets
@@ -639,8 +641,15 @@ class InteractiveDemoCommand extends Command
                     $unlock['slug'],
                     $unlock['level'],
                 );
+            } elseif ($bt->isUnique() && $planet->hasBuildingOfType($bt)) {
+                // T-171: Unique bereits gebaut → Hint auf Upgrade
+                $choices[$bt->value] = sprintf(
+                    '✓ %s (unique, gebaut — verwende Upgrade)',
+                    $bt->value,
+                );
             } else {
-                $choices[$bt->value] = sprintf('%s (%s)', $bt->value, $costStr);
+                $sizeNote = $bt->getSlotSize() > 1 ? sprintf(', %d slots', $bt->getSlotSize()) : '';
+                $choices[$bt->value] = sprintf('%s (%s%s)', $bt->value, $costStr, $sizeNote);
             }
         }
         $type = $io->choice('Building Type', $choices);

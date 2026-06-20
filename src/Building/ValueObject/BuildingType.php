@@ -57,6 +57,46 @@ enum BuildingType: string
     }
 
     /**
+     * T-171: Strikt-unique Buildings — max 1 Instanz pro Planet, Folge-Build wirft
+     * `BuildingAlreadyExistsException`. Spieler nutzt Upgrade um Level zu steigern.
+     *
+     * Strategic + Lifelines sind unique; Mines/Storage/Producer/Smelter sind Multi.
+     */
+    public function isUnique(): bool
+    {
+        return match ($this) {
+            self::HUB,
+            self::RESEARCH_LAB,
+            self::SHIPYARD,
+            self::PROBE_LAB,
+            self::RECYCLING_PLANT,
+            self::TELESCOPE => true,
+            default => false,
+        };
+    }
+
+    /**
+     * T-171: Slot-Size pro Building. Planet hat Slot-Cap (PlanetSize-abhängig);
+     * Summe der gebauten + in-Bau-Building-Sizes muss ≤ Cap sein.
+     *
+     * - Standard (Mines, Storage, Producer, Smelter): 1
+     * - Major Strategic (HUB, PROBE_LAB, RECYCLING_PLANT, TELESCOPE): 2
+     * - Heavy-Industry (RESEARCH_LAB, SHIPYARD): 3
+     */
+    public function getSlotSize(): int
+    {
+        return match ($this) {
+            self::RESEARCH_LAB,
+            self::SHIPYARD => 3,
+            self::HUB,
+            self::PROBE_LAB,
+            self::RECYCLING_PLANT,
+            self::TELESCOPE => 2,
+            default => 1,
+        };
+    }
+
+    /**
      * Storage capacity contribution per Building-Level for a given resource (T-061).
      *
      * - Mining-Mines bringen kleinen Buffer für ihre eigene Resource

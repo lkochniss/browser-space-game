@@ -6,9 +6,11 @@ namespace App\Building\Service;
 
 use App\Building\Exception\BuildingLockedException;
 use App\Building\Exception\BuildQueueFullException;
+use App\Building\Exception\BuildingAlreadyExistsException;
 use App\Building\Exception\InsufficientPopulationException;
 use App\Building\Exception\InsufficientResourcesException;
 use App\Building\Exception\PlanetNotFoundException;
+use App\Building\Exception\PlanetSlotsFullException;
 use App\Building\Model\Building;
 use App\Building\ValueObject\BuildingCost;
 use App\Building\ValueObject\BuildingType;
@@ -67,6 +69,19 @@ readonly class BuildBuildingCommandService
         }
 
         $this->checkUnlock($planet, $type);
+
+        // T-171 Uniqueness-Check
+        if ($type->isUnique() && $planet->hasBuildingOfType($type)) {
+            throw new BuildingAlreadyExistsException($type);
+        }
+
+        // T-171 Slot-Cap-Check
+        $needed = $type->getSlotSize();
+        $used = $planet->getBuildingSlotsUsed();
+        $cap = $planet->getBuildingSlotCap();
+        if ($used + $needed > $cap) {
+            throw new PlanetSlotsFullException($used, $cap, $needed);
+        }
 
         $now = $this->clock->now();
         $active = $planet->countActiveBuildJobs($now);

@@ -129,11 +129,46 @@ Production/Refinement clampen Output am Cap. Volles Lager → Produktion pausier
 
 Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->now()` über TickEngine. Siehe auch tick.md für globale Tick-Services (FleetArrival, Salvage, TelescopeDiscovery).
 
+## Building-Uniqueness + Slot-Cap (T-171)
+
+### Strikt-unique (max 1 pro Planet, Folge-Build = `BuildingAlreadyExistsException`)
+
+| Building | Slot-Size | Grund |
+|----------|-----------|-------|
+| `HUB` | 2 | Pop-Cap-Building, Multi sinnlos |
+| `RESEARCH_LAB` | 3 | Forschungs-Quelle; Multi-Lab via T-025b über mehrere Planeten |
+| `SHIPYARD` | 3 | Schiffbau-Gate, heavy industry |
+| `PROBE_LAB` | 2 | Sondenbau-Gate |
+| `RECYCLING_PLANT` | 2 | Strategic |
+| `TELESCOPE` | 2 | Discovery-Source |
+
+### Non-unique (Multi-Instance erlaubt)
+
+Mines (alle 7), Storage-Buildings (alle 6), Renewable-Producer (3), IRON_SMELTER —
+alle Slot-Size 1.
+
+### Slot-Cap pro PlanetSize
+
+| Size | Slots |
+|------|-------|
+| TINY | 8 |
+| SMALL | 12 |
+| MEDIUM | 18 |
+| LARGE | 28 |
+| HUGE | 40 |
+
+`Planet::getBuildingSlotsUsed()` summiert `getSlotSize()` aller Buildings (in-Bau + ready).
+`BuildBuildingCommandService` validiert: `used + needed > cap` → `PlanetSlotsFullException`.
+Spieler-Strategie: mit knappem Cap zwingt zu Spezialisierung (reine Production-Welt
+ohne Mines, oder Mining-Hub ohne Strategic Buildings).
+
 ## Bau-Queue (T-094 Foundation)
 
 Pro Planet max **3 parallele** unfertige Build/Upgrade-Jobs. `Planet::countActiveBuildJobs($now)`
 zählt Buildings mit `!isReady($now)`. `BuildBuildingCommandService` und
 `UpgradeBuildingCommandService` werfen `BuildQueueFullException` bei Überschreitung.
+
+Bau-Queue (parallel, max 3) und Slot-Cap (total, je nach PlanetSize) sind komplementär.
 
 Slot-Cap-Konstante: `BuildBuildingCommandService::MAX_CONCURRENT_BUILDS = 3`.
 Folge: Hub-Upgrade-Bonus (+1 Slot pro Lvl-5), Logistics-Forschung, Cancel-Refund —

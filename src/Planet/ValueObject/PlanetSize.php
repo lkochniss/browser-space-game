@@ -22,4 +22,20 @@ enum PlanetSize: string
             self::HUGE => 2.0,
         };
     }
+
+    /**
+     * T-171: Building-Slot-Cap pro Planet-Size. Summe aller Building-getSlotSize()
+     * darf nicht über diesem Wert liegen. Spieler entscheidet Spezialisierung
+     * (z.B. reine Aggrarwelt mit vielen Producer-Slots, keine Mines).
+     */
+    public function getBuildingSlotCap(): int
+    {
+        return match ($this) {
+            self::TINY => 8,
+            self::SMALL => 12,
+            self::MEDIUM => 18,
+            self::LARGE => 28,
+            self::HUGE => 40,
+        };
+    }
 }

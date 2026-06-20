@@ -309,6 +309,43 @@ class Planet
     }
 
     /**
+     * T-171: belegte Building-Slots auf diesem Planeten (Σ getSlotSize() aller
+     * existierenden Buildings — egal ob ready oder in Bau).
+     */
+    public function getBuildingSlotsUsed(): int
+    {
+        $sum = 0;
+        foreach ($this->buildings as $b) {
+            $sum += $b->getType()->getSlotSize();
+        }
+
+        return $sum;
+    }
+
+    public function getBuildingSlotCap(): int
+    {
+        return $this->size->getBuildingSlotCap();
+    }
+
+    /**
+     * T-171: prüft ob auf dem Planeten bereits eine Instanz dieses unique-Building-Type
+     * existiert. Nicht-unique Buildings: stets false.
+     */
+    public function hasBuildingOfType(BuildingType $type): bool
+    {
+        if (!$type->isUnique()) {
+            return false;
+        }
+        foreach ($this->buildings as $b) {
+            if ($b->getType() === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * T-094 Bau-Queue: Anzahl gerade laufender Bau-/Upgrade-Jobs.
      * Definition: Building.finishedAt > $now (= !isReady). Ein neu gebautes ODER
      * gerade upgradetes Building zählt als aktiver Job.
