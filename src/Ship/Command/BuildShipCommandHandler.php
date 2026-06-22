@@ -16,6 +16,6 @@ class BuildShipCommandHandler implements CommandHandlerInterface
 
     public function __invoke(BuildShipCommand $command): Ship
     {
-        return $this->service->__invoke($command->planetId, $command->type);
+        return $this->service->__invoke($command->planetId, $command->type, $command->propulsion);
     }
 }

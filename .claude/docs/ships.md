@@ -16,11 +16,39 @@ Bauzeit +Cargo via `ShipCostConfig`.
 
 ## Bauprozess (T-012)
 
-`BuildShipCommand(planetId, shipType)` → `BuildShipCommandService`:
+`BuildShipCommand(planetId, shipType, propulsion=HYDROGEN)` → `BuildShipCommandService`:
 - Voraussetzung: `Planet::hasShipyard($now)` (T-011)
+- T-026c: Propulsion-Research-Gate — Player muss
+  `propulsion->getRequiredResearchSlug()` auf Lvl 1+ haben (HYDROGEN ohne Gate)
 - Resource + Pop-Cost via `ShipCostConfig::getResourceCost/getPopulationCost`
 - `finishedAt = now + duration`; Ship docked auf Planet
 - Schiff isReady analog Building (T-062)
+
+## Propulsion (T-026c)
+
+Jedes Ship hat einen `PropulsionType`. Default = HYDROGEN (Foundation-Antrieb,
+keine Forschung nötig). Andere Antriebe erfordern die entsprechende T-026
+Forschung beim Build:
+
+| PropulsionType | Speed-Multi (×ShipType.getSpeed) | Max-System-Range | Required Research |
+|----------------|----------------------------------|------------------|-------------------|
+| `HYDROGEN`     | 1.0× | 0 (kein FTL) | — (Foundation) |
+| `ION`          | 1.3× | 0 | `propulsion_ion` |
+| `FUSION`       | 1.7× | 0 | `propulsion_fusion` |
+| `ANTIMATTER`   | 2.2× | 0 | `propulsion_antimatter` |
+| `HYPERDRIVE`   | 1.5× | 1 (FTL) | `ftl_hyperdrive` |
+| `WARP`         | 2.0× | 3 (FTL) | `ftl_warp` |
+| `JUMPDRIVE`    | 2.5× | 10 (FTL) | `ftl_jumpdrive` |
+
+`Ship::getEffectiveSpeed()` = `type.getSpeed() × propulsion.getSpeedMultiplier()`.
+`Fleet::getMinSpeed()` nutzt das (T-017 langsamstes-Schiff-Pattern).
+
+`PropulsionType::getMaxSystemRange()` ist heute **informativ** — Inter-System-
+Travel-Gate läuft weiter über die Player-Forschung `ftl_hyperdrive` Lvl 1+ in
+`MoveFleetCommandService`. Per-Move-Range-Enforcement (Schiff kann nur X
+Systeme weit jumpen) folgt mit T-026d.
+
+**Out-of-Scope:** Fuel-Verbrauch (T-066), Refit auf bestehenden Schiffen.
 
 ## Life-Support (T-012)
 
@@ -76,11 +104,12 @@ Aktiv-Salvage Polymorph (T-021):
 | `SalvageTargetNotInSystemException` | Ship ist nicht im POI-System |
 | `CargoCapacityExceededException` | Load > free units |
 | `ShipNotFoundException` / `ShipNotReadyException` / `ShipNotDockedException` | Ship-State |
+| `PropulsionResearchNotMetException` | Build mit Antriebs-Typ, dessen Required-Research dem Player fehlt (T-026c) |
 
 ## Files
 
-- `src/Ship/Model/Ship.php` (Entity, finishedAt, supplies, cargo, salvage-state)
-- `src/Ship/ValueObject/{ShipId,ShipType,CargoManifest}.php`
+- `src/Ship/Model/Ship.php` (Entity, finishedAt, supplies, cargo, salvage-state, propulsion)
+- `src/Ship/ValueObject/{ShipId,ShipType,CargoManifest,PropulsionType}.php`
 - `src/Ship/Service/ShipCostConfig.php` (Cost/Cargo/Duration je Type)
 - `src/Ship/Service/{Build,LoadCargo,UnloadCargo,StartSalvage,StopSalvage}CommandService.php`
 - `src/Ship/Service/SalvageProcessor.php` (global, vom Tick-Loop gerufen)

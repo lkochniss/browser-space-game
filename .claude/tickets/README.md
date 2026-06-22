@@ -35,7 +35,7 @@
 | 025c-multi-lab-opt-in-with-cost.md | Feature | Done | Opt-In Multi-Lab beim StartResearch: Geometric-Decay-Bonus + Flat/Quadratic-Cost-Penalty; JSON-Persistence frozen-at-start |
 | 026-antriebstechnologie-tree.md | Feature | Done | 7 Antriebs-Nodes + Inter-System-Travel-Lock (ftl_hyperdrive); PropulsionType/Fuel via Folge |
 | 026b-wormhole-tech-validation.md | Feature | Superseded | Durch T-017b absorbiert (Fallback-Semantik statt Hard-Block, User-Decision) |
-| 026c-propulsion-type-field.md | Feature | Draft | Ship.propulsion + Speed/Range Mapping (Folge zu T-026) |
+| 026c-propulsion-type-field.md | Feature | Done | Ship.propulsion (7 types) + research-gate beim Build + Speed-Multiplier-Stack mit ShipType |
 | 027-planetologie-research.md | Feature | Open | Planetologie-Forschung (Sondendetails + Terraform-Gate) |
 | 028-techdebt-wrong-namespaces.md | TechDebt | Done | `use ValueObject\PlanetId` etc. — falsche Imports (gefixt) |
 | 029-techdebt-buildingid-namespace.md | TechDebt | Done | BuildingId/BuildingType-Namespace gefixt (lagen schon im richtigen Folder) |

@@ -9,11 +9,14 @@ use App\Planet\Model\Planet;
 use App\Planet\Repository\PlanetRepository;
 use App\Planet\ValueObject\PlanetId;
 use App\Resource\ValueObject\ResourceType;
+use App\Research\Repository\PlayerResearchRepository;
 use App\Ship\Exception\InsufficientPopulationException;
 use App\Ship\Exception\InsufficientResourcesException;
 use App\Ship\Exception\MissingShipyardException;
 use App\Ship\Exception\PlanetNotFoundException;
+use App\Ship\Exception\PropulsionResearchNotMetException;
 use App\Ship\Model\Ship;
+use App\Ship\ValueObject\PropulsionType;
 use App\Ship\ValueObject\ShipId;
 use App\Ship\ValueObject\ShipType;
 use DateInterval;
@@ -25,6 +28,10 @@ use Doctrine\ORM\EntityManagerInterface;
  *
  * Voraussetzung: Planet hat fertige SHIPYARD (T-011) auf Level >= 1.
  * Wallclock-Bauzeit analog T-062.
+ *
+ * T-026c: Zusätzlich validiert Player-Forschung für den gewählten Antriebs-
+ * Typ (HYDROGEN ist Foundation, andere brauchen entsprechende Antriebs-
+ * Forschung).
  */
 readonly class BuildShipCommandService
 {
@@ -33,11 +40,15 @@ readonly class BuildShipCommandService
         private PlanetRepository $planetRepository,
         private ShipCostConfig $costConfig,
         private ClockInterface $clock,
+        private PlayerResearchRepository $playerResearchRepository,
     ) {
     }
 
-    public function __invoke(PlanetId $planetId, ShipType $type = ShipType::GENERIC): Ship
-    {
+    public function __invoke(
+        PlanetId $planetId,
+        ShipType $type = ShipType::GENERIC,
+        PropulsionType $propulsion = PropulsionType::HYDROGEN,
+    ): Ship {
         $planet = $this->planetRepository->find($planetId);
         if ($planet === null) {
             throw new PlanetNotFoundException($planetId);
@@ -47,6 +58,20 @@ readonly class BuildShipCommandService
 
         if (!$planet->hasShipyard($now)) {
             throw new MissingShipyardException($planetId);
+        }
+
+        // T-026c: Antriebs-Research-Gate (HYDROGEN = null, kein Gate)
+        $requiredSlug = $propulsion->getRequiredResearchSlug();
+        if ($requiredSlug !== null) {
+            $owner = $planet->getPlayer();
+            $level = $owner === null
+                ? 0
+                : ($this->playerResearchRepository
+                    ->findOneByPlayerAndSlug($owner, $requiredSlug)
+                    ?->getLevel() ?? 0);
+            if ($level < 1) {
+                throw new PropulsionResearchNotMetException($propulsion, $requiredSlug);
+            }
         }
 
         $resourceCost = $this->costConfig->getResourceCost($type);
@@ -63,6 +88,7 @@ readonly class BuildShipCommandService
             type: $type,
             populationAssigned: $popCost,
             cargoCapacity: $this->costConfig->getCargoCapacity($type),
+            propulsion: $propulsion,
         );
         $ship->setPlanet($planet);
 

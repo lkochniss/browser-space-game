@@ -11,6 +11,7 @@ use App\Planet\Model\Planet;
 use App\Resource\ValueObject\ResourceType;
 use App\Ship\Repository\ShipRepository;
 use App\Ship\ValueObject\CargoManifest;
+use App\Ship\ValueObject\PropulsionType;
 use App\Ship\ValueObject\ShipId;
 use App\Ship\ValueObject\ShipType;
 use DateTimeImmutable;
@@ -106,8 +107,30 @@ class Ship
          */
         #[ORM\Column(name: 'cargo_capacity', type: 'integer')]
         private int $cargoCapacity = 0,
+
+        /**
+         * T-026c: Antriebs-Typ pro Schiff. HYDROGEN ist Foundation-Default
+         * (kein Research nötig); andere brauchen entsprechende Forschung beim
+         * Build via `PropulsionType::getRequiredResearchSlug()`.
+         */
+        #[ORM\Column(name: 'propulsion', type: 'string', length: 16, enumType: PropulsionType::class)]
+        private PropulsionType $propulsion = PropulsionType::HYDROGEN,
     ) {
         $this->cargo = CargoManifest::empty();
+    }
+
+    public function getPropulsion(): PropulsionType
+    {
+        return $this->propulsion;
+    }
+
+    /**
+     * T-026c: Effektive Speed = ShipType.getSpeed × Propulsion.getSpeedMultiplier.
+     * Wird in `Fleet::getMinSpeed()` für die Fleet-Travel-Berechnung genutzt.
+     */
+    public function getEffectiveSpeed(): float
+    {
+        return $this->type->getSpeed() * $this->propulsion->getSpeedMultiplier();
     }
 
     public const DEFAULT_SUPPLY_CAPACITY = 30;

@@ -169,13 +169,16 @@ class Fleet
 
     /**
      * Langsamstes Schiff bestimmt die Fleet-Speed (T-017 User-Decision).
+     * T-026c: nutzt jetzt `Ship::getEffectiveSpeed()` (= ShipType × Propulsion-
+     * Multiplier), nicht mehr nur ShipType.getSpeed.
+     *
      * Liefert 1.0 als Default für leere Fleets (sollte nie aufgerufen werden).
      */
     public function getMinSpeed(): float
     {
         $minSpeed = null;
         foreach ($this->ships as $ship) {
-            $speed = $ship->getType()->getSpeed();
+            $speed = $ship->getEffectiveSpeed();
             if ($minSpeed === null || $speed < $minSpeed) {
                 $minSpeed = $speed;
             }

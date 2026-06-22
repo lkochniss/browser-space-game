@@ -7,6 +7,7 @@ namespace App\Ship\Command;
 use App\Common\Interface\CommandInterface;
 use App\Planet\ValueObject\PlanetId;
 use App\Ship\Model\Ship;
+use App\Ship\ValueObject\PropulsionType;
 use App\Ship\ValueObject\ShipType;
 
 /**
@@ -17,6 +18,7 @@ class BuildShipCommand implements CommandInterface
     public function __construct(
         public PlanetId $planetId,
         public ShipType $type = ShipType::GENERIC,
+        public PropulsionType $propulsion = PropulsionType::HYDROGEN,
     ) {
     }
 }

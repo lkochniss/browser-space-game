@@ -13,13 +13,16 @@ use App\Player\Model\Player;
 use App\Player\ValueObject\PlayerId;
 use App\Resource\Model\Resource;
 use App\Resource\ValueObject\ResourceType;
+use App\Research\Model\PlayerResearch;
 use App\Ship\Command\BuildShipCommand;
 use App\Ship\Exception\InsufficientPopulationException;
 use App\Ship\Exception\InsufficientResourcesException;
 use App\Ship\Exception\MissingShipyardException;
 use App\Ship\Exception\PlanetNotFoundException;
+use App\Ship\Exception\PropulsionResearchNotMetException;
 use App\Ship\Model\Ship;
 use App\Ship\Repository\ShipRepository;
+use App\Ship\ValueObject\PropulsionType;
 use App\Ship\ValueObject\ShipType;
 use App\Tests\Integration\IntegrationTestCase;
 
@@ -132,6 +135,45 @@ final class BuildShipCommandTest extends IntegrationTestCase
 
         $repo = self::getContainer()->get(ShipRepository::class);
         self::assertCount(0, $repo->findByPlanet($reloaded));
+    }
+
+    public function test_ship_defaults_to_hydrogen_propulsion(): void
+    {
+        $planet = $this->seedPlanet(ironBar: 200, popTotal: 50, shipyardLevel: 1);
+        $ship = $this->bus->dispatch(new BuildShipCommand($planet->getId()));
+
+        self::assertSame(PropulsionType::HYDROGEN, $ship->getPropulsion());
+    }
+
+    public function test_propulsion_ion_requires_research(): void
+    {
+        // T-026c: Player ohne propulsion_ion-Research kann kein ION-Schiff bauen
+        $planet = $this->seedPlanet(ironBar: 200, popTotal: 50, shipyardLevel: 1);
+
+        $this->expectException(PropulsionResearchNotMetException::class);
+        $this->bus->dispatch(new BuildShipCommand(
+            $planet->getId(),
+            ShipType::GENERIC,
+            PropulsionType::ION,
+        ));
+    }
+
+    public function test_propulsion_ion_builds_when_research_granted(): void
+    {
+        $planet = $this->seedPlanet(ironBar: 200, popTotal: 50, shipyardLevel: 1);
+        $player = $planet->getPlayer();
+        $this->em->persist(PlayerResearch::generate($player, 'propulsion_ion', 1));
+        $this->em->flush();
+
+        $ship = $this->bus->dispatch(new BuildShipCommand(
+            $planet->getId(),
+            ShipType::GENERIC,
+            PropulsionType::ION,
+        ));
+
+        self::assertSame(PropulsionType::ION, $ship->getPropulsion());
+        // Effective Speed = ShipType.GENERIC (1.0) × ION (1.3) = 1.3
+        self::assertEqualsWithDelta(1.3, $ship->getEffectiveSpeed(), 0.0001);
     }
 
     private function seedPlanet(int $ironBar, int $popTotal, int $shipyardLevel): Planet
