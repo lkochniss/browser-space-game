@@ -48,6 +48,9 @@ enum BuildingType: string
     case AGRI_DOME = 'agri_dome';
     case ATMOSPHERIC_PROCESSOR = 'atmospheric_processor';
 
+    // T-064b: Lokales Bauzeit-Boost-Building. Unique pro Planet, Tier-1.
+    case CONSTRUCTION_HUB = 'construction_hub';
+
     public function getPopulationCapBonusPerLevel(): int
     {
         return match ($this) {
@@ -70,7 +73,8 @@ enum BuildingType: string
             self::SHIPYARD,
             self::PROBE_LAB,
             self::RECYCLING_PLANT,
-            self::TELESCOPE => true,
+            self::TELESCOPE,
+            self::CONSTRUCTION_HUB => true,
             default => false,
         };
     }
@@ -91,7 +95,8 @@ enum BuildingType: string
             self::HUB,
             self::PROBE_LAB,
             self::RECYCLING_PLANT,
-            self::TELESCOPE => 2,
+            self::TELESCOPE,
+            self::CONSTRUCTION_HUB => 2,
             default => 1,
         };
     }
@@ -135,6 +140,7 @@ enum BuildingType: string
             self::WATER_RECLAIMER => [],
             self::AGRI_DOME => [],
             self::ATMOSPHERIC_PROCESSOR => [],
+            self::CONSTRUCTION_HUB => [],
         };
 
         return $contributions[$resource->value] ?? 0;

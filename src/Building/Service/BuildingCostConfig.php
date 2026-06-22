@@ -156,6 +156,15 @@ class BuildingCostConfig
                 resources: [ResourceType::IRON_ORE->value => 100],
                 populationCost: 5,
             ),
+
+            // T-064b: Construction-Hub. Strikt-unique, Tier-1 via metallurgy.
+            BuildingType::CONSTRUCTION_HUB->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 200,
+                    ResourceType::SILICON->value => 100,
+                ],
+                populationCost: 10,
+            ),
         ];
     }
 

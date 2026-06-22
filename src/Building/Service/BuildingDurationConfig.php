@@ -53,6 +53,9 @@ class BuildingDurationConfig
         BuildingType::WATER_RECLAIMER->value => 900,
         BuildingType::AGRI_DOME->value => 900,
         BuildingType::ATMOSPHERIC_PROCESSOR->value => 900,
+
+        // T-064b: Construction-Hub (30min Strategic-Tier)
+        BuildingType::CONSTRUCTION_HUB->value => 1800,
     ];
 
     /**

@@ -287,6 +287,26 @@ class Planet
     }
 
     /**
+     * T-064b: Lokaler Bauzeit-Boost durch fertiges CONSTRUCTION_HUB auf diesem
+     * Planeten (unique → max 1 Instanz). Pro Level ×1.10 — multiplikativ mit
+     * T-064 Forschung + T-063 Planet-Type-Bonus. Kein Hub → 1.0.
+     */
+    public function getConstructionHubSpeedMultiplier(?DateTimeImmutable $now = null): float
+    {
+        foreach ($this->buildings as $building) {
+            if ($building->getType() !== BuildingType::CONSTRUCTION_HUB) {
+                continue;
+            }
+            if (!$building->isReady($now)) {
+                continue;
+            }
+            return pow(1.10, $building->getLevel());
+        }
+
+        return 1.0;
+    }
+
+    /**
      * T-018: Höchstes Level eines fertigen TELESCOPE auf diesem Planeten (0 wenn keiner).
      * TelescopeDiscoveryProcessor summiert über alle Planeten des Players.
      */

@@ -102,6 +102,8 @@ readonly class BuildBuildingCommandService
         $speedMulti = $planet->getEffectiveConstructionSpeedMultiplier($type);
         // T-064: Forschungs-Bonus stackt multiplikativ
         $speedMulti *= $this->constructionSpeedResearch->getMultiplier($planet->getPlayer());
+        // T-064b: Lokales Construction-Hub-Building stackt multiplikativ
+        $speedMulti *= $planet->getConstructionHubSpeedMultiplier($now);
         $duration = (int) max(1, round($rawDuration / $speedMulti));
 
         $building = Building::createNewBuilding($type);

@@ -49,6 +49,9 @@ class BuildingUnlockConfig
 
             // recycling unlocks
             BuildingType::RECYCLING_PLANT->value => ['slug' => 'recycling', 'level' => 1],
+
+            // T-064b: construction_hub via metallurgy (analog smelter)
+            BuildingType::CONSTRUCTION_HUB->value => ['slug' => 'metallurgy', 'level' => 1],
         ];
     }
 

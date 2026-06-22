@@ -57,6 +57,8 @@ readonly class UpgradeBuildingCommandService
         $speedMulti = $planet->getEffectiveConstructionSpeedMultiplier($building->getType());
         // T-064: Forschungs-Bonus stackt multiplikativ
         $speedMulti *= $this->constructionSpeedResearch->getMultiplier($planet->getPlayer());
+        // T-064b: Lokales Construction-Hub-Building stackt multiplikativ
+        $speedMulti *= $planet->getConstructionHubSpeedMultiplier($now);
         $duration = (int) max(1, round($rawDuration / $speedMulti));
 
         $this->checkResources($planet, $cost);

@@ -197,6 +197,14 @@ Forschungs-Multiplier (multiplikativ über Nodes UND Levels). Aktuelle Quellen:
 
 Build- und Upgrade-Service multiplizieren mit `Planet::getEffectiveConstructionSpeedMultiplier($type)` (T-063 Planet-Type-Bonus). **Decision: nicht retroaktiv** — wirkt nur auf neu gestartete Bauten.
 
+**Lokales Construction-Hub-Building (T-064b):** strikt-unique pro Planet, Slot-Size 2,
+gated by `metallurgy` L1. `Planet::getConstructionHubSpeedMultiplier($now) = 1.10^level`
+(kein Hub = 1.0). Stackt multiplikativ mit T-064-Forschung + T-063-Planet-Type-Bonus.
+Build- und Upgrade-Service multiplizieren alle drei zusammen.
+
+Player kann so eine **Industrie-Welt** spezialisieren: Construction-Hub L5 = ×1.61
+nur auf diesem Planeten, kombiniert mit Forschung × Planet-Type-Bonus.
+
 ## Geplant
 - **High-Tier Cost-Migration:** Buildings mit IRON_BAR statt IRON_ORE als Cost
 - **T-025/T-026** Forschungs-Gating für höhere Building-Levels

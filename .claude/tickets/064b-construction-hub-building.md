@@ -1,7 +1,7 @@
 # T-064b: Construction-Hub Building (lokaler Bauzeit-Boost)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done
 **Effort:** S (~1.5h)
 **Depends on:** T-064 (Forschungs-Bauzeit-Boost)
 **Blocks:** —

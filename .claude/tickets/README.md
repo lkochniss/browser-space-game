@@ -75,7 +75,7 @@
 | 062-realtime-construction.md | Feature | Done | Wall-Clock Bauzeit + isReady-Gates + ConstructionCompletionProcessor |
 | 063-planet-bonus-system.md | Feature | Done | Planet-Type-Boni (Mining-Multi pro Resource je Type) |
 | 064-construction-speed-boost.md | Feature | Done | construction_speed_1 (3 Levels) reduziert Bauzeit multiplikativ; Stack mit T-063 Planet-Type |
-| 064b-construction-hub-building.md | Feature | Draft | Lokales Construction-Hub-Building (Folge zu T-064; +Bauzeit pro Hub-Level) |
+| 064b-construction-hub-building.md | Feature | Done | CONSTRUCTION_HUB Building (unique, slot-size 2); ×1.10/Level lokaler Speed-Multi, stackt mit T-063 + T-064 |
 | 065-energy-system.md | Feature | Draft | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Draft | H2 + Promethium als FUEL-Resources für Schiffe |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Draft | Steel/Chip/Composite/Hull/Shield Tier-2-Outputs |
