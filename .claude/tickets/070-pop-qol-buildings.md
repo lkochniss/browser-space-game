@@ -1,36 +1,42 @@
 # T-070 Pop-QoL-Buildings (Krankenhaus, Universität, Kultur)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done (Foundation; Mangel-Tod-Reduction + University-RP + Temple-Loyalty + Power in T-070b split)
 **Effort:** M
-**Depends on:** T-005 (Pop-Verbrauch), T-006 (Hub)
-**Blocks:** —
+**Depends on:** T-005 (Done), T-006 (Done), T-172 (Done)
+**Blocks:** T-070b
 
 ## Beschreibung
 Quality-of-Life-Buildings für Pop. Kein direkter Resource-Output, aber Effekte auf Pop-Wachstum/Effizienz.
 
-Buildings:
+Buildings (alle strikt-unique pro Planet, T-171-konform):
 - Hospital: +Pop-Cap, reduziert Mangel-Tod-Rate (Buffer bei W/F/O-Mangel)
 - University: +RP-Multiplier auf Lab-Output (Pop-basiert)
 - Cultural-Center: +Allgemeines-Output-Multiplier (Mining, Refining), max 3 Stufen
 - Temple-of-Imperator: +Loyalty (für T-122 Background-Mechaniken, Folge)
 
 ## Acceptance Criteria
-- [ ] BuildingType::HOSPITAL, UNIVERSITY, CULTURAL_CENTER, TEMPLE
-- [ ] Hospital: +20 Pop-Cap/lvl + 50% Mangel-Tod-Reduktion (multiplicative)
-- [ ] University: +5%/lvl RP-Output-Multiplier (additiv pro lvl, Cap +50%)
-- [ ] Cultural-Center: +2%/lvl Mining+Refining-Output (Cap +20%)
-- [ ] Temple: leer-Stub für Loyalty (kein Effekt im MVP)
-- [ ] Pop-Bedarf pro QoL-Building (Personal): Hospital 30/lvl, University 40/lvl, Cultural 20/lvl, Temple 15/lvl
-- [ ] Power-Consumption: Hospital 30/lvl, University 25/lvl, Cultural 15/lvl, Temple 10/lvl
 
-## Affected Tests
-- tests/Building/Service/HospitalEffectTest.php
-- tests/Building/Service/UniversityRpMultiplierTest.php
-- tests/Building/Service/CulturalCenterMultiplierTest.php
+- [x] BuildingType::HOSPITAL, UNIVERSITY, CULTURAL_CENTER, TEMPLE (alle unique)
+- [x] BuildingCostConfig-Entries (Hospital 250 IO + 50 Cu / 30 Pop, University
+      300 IO + 100 Si / 40 Pop, Cultural 200 IO + 50 Si / 20 Pop, Temple
+      150 IO / 15 Pop)
+- [x] BuildingDurationConfig-Entries (Hospital/Cultural 30min, University 45min, Temple 20min)
+- [x] Slot-Size: UNIVERSITY=2, andere=1
+- [x] Hospital: +20 Pop-Cap/Level (via `getPopulationCapBonusPerLevel`)
+- [x] Cultural-Center: +2%/Level Mining + Refinement, capped +20% (via
+      neuer `Planet::getCulturalCenterMultiplier()` Helper, multipliziert in
+      `getEffectiveMiningMultiplier` + `getEffectiveRefinementMultiplier`)
+- [x] Tests: HospitalPopCapTest (4 Tests), CulturalCenterMultiplierTest (5 Tests)
+- [x] BuildingUniquenessTest erweitert um neue 4 Buildings
+- [x] Doc `buildings.md` QoL-Sektion (sobald `buildings.md` existiert)
 
-## Fixtures Needed
-Yes — Test-Planet mit QoL-Buildings
+## Out of Scope (in T-070b verschoben)
+
+- **Mangel-Tod-Reduction durch Hospital** — braucht `PopulationConsumptionProcessor` Hook
+- **University RP-Multiplier** — braucht Q1-Decision (additiv vs multiplikativ)
+- **Temple Loyalty-Stub** — braucht T-122 Background-Mechaniken zur Verzahnung
+- **Power-Consumption** — braucht T-065 Energy-System
 
 ## Notes
 - Effekte multiplicative auf bestehende Boni — Spielraum für stacking

@@ -174,6 +174,33 @@ class BuildingCostConfig
                 ],
                 populationCost: 10,
             ),
+
+            // T-070: Pop-QoL-Buildings (alle strikt-unique pro Planet)
+            BuildingType::HOSPITAL->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 250,
+                    ResourceType::COPPER_ORE->value => 50,
+                ],
+                populationCost: 30,
+            ),
+            BuildingType::UNIVERSITY->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 300,
+                    ResourceType::SILICON->value => 100,
+                ],
+                populationCost: 40,
+            ),
+            BuildingType::CULTURAL_CENTER->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 200,
+                    ResourceType::SILICON->value => 50,
+                ],
+                populationCost: 20,
+            ),
+            BuildingType::TEMPLE->value => new BuildingCost(
+                resources: [ResourceType::IRON_ORE->value => 150],
+                populationCost: 15,
+            ),
         ];
     }
 

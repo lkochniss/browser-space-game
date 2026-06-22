@@ -137,11 +137,16 @@ Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->no
 | Building | Slot-Size | Grund |
 |----------|-----------|-------|
 | `HQ` (T-172) | 3 | Zentrale Verwaltung, multi sinnlos |
-| `RESEARCH_LAB` | 3 | Forschungs-Quelle; Multi-Lab via T-025b über mehrere Planeten |
+| `RESEARCH_LAB` | 3 | Forschungs-Quelle; Multi-Lab via T-025c über mehrere Planeten |
 | `SHIPYARD` | 3 | Schiffbau-Gate, heavy industry |
 | `PROBE_LAB` | 2 | Sondenbau-Gate |
 | `RECYCLING_PLANT` | 2 | Strategic |
 | `TELESCOPE` | 2 | Discovery-Source |
+| `CONSTRUCTION_YARD` (T-064b) | 2 | Lokaler Bauzeit-Boost ×1.10/Lvl |
+| `HOSPITAL` (T-070) | 1 | +20 Pop-Cap/Lvl; T-070b: Mangel-Tod-Reduction |
+| `UNIVERSITY` (T-070) | 2 | T-070b: +5% RP-Output/Lvl |
+| `CULTURAL_CENTER` (T-070) | 1 | +2%/Lvl Mining + Refinement (capped +20%) |
+| `TEMPLE` (T-070) | 1 | T-070b/T-122: Loyalty-Hook |
 
 ### Non-unique (Multi-Instance erlaubt)
 

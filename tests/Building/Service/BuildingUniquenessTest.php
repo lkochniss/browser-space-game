@@ -99,9 +99,12 @@ final class BuildingUniquenessTest extends IntegrationTestCase
     public function test_unique_strategic_buildings_are_unique(): void
     {
         // T-172: HQ ist unique (HUB nicht mehr).
+        // T-070: QoL-Buildings (HOSPITAL, UNIVERSITY, CULTURAL_CENTER, TEMPLE) sind unique.
         foreach ([BuildingType::HQ, BuildingType::RESEARCH_LAB, BuildingType::SHIPYARD,
                   BuildingType::PROBE_LAB, BuildingType::RECYCLING_PLANT, BuildingType::TELESCOPE,
-                  BuildingType::CONSTRUCTION_YARD] as $bt) {
+                  BuildingType::CONSTRUCTION_YARD,
+                  BuildingType::HOSPITAL, BuildingType::UNIVERSITY,
+                  BuildingType::CULTURAL_CENTER, BuildingType::TEMPLE] as $bt) {
             self::assertTrue($bt->isUnique(), $bt->value . ' soll unique sein');
         }
         foreach ([BuildingType::HUB, BuildingType::IRON_MINE, BuildingType::COAL_MINE,

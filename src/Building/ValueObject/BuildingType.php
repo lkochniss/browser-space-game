@@ -58,6 +58,17 @@ enum BuildingType: string
     // T-064b → T-172 rename: Lokaler Bauzeit-Boost. Unique pro Planet, Tier-1.
     case CONSTRUCTION_YARD = 'construction_yard';
 
+    // T-070 Pop-QoL-Buildings: Quality-of-Life-Strukturen für Pop. Alle
+    // strikt-unique pro Planet, Slot-1 (außer UNIVERSITY = Slot-2).
+    //  - HOSPITAL: +20 Pop-Cap/Lvl (T-070 Foundation); +Mangel-Tod-Reduction (T-070b)
+    //  - UNIVERSITY: +5% RP-Output/Lvl (T-070b — Hook in StartResearchCommandService)
+    //  - CULTURAL_CENTER: +2% Mining + Refinement/Lvl (T-070 Foundation)
+    //  - TEMPLE: Loyalty-Stub (T-122 Background-Bonuses); kein Effekt im Foundation
+    case HOSPITAL = 'hospital';
+    case UNIVERSITY = 'university';
+    case CULTURAL_CENTER = 'cultural_center';
+    case TEMPLE = 'temple';
+
     public function getPopulationCapBonusPerLevel(): int
     {
         return match ($this) {
@@ -65,6 +76,8 @@ enum BuildingType: string
             // HUB ist Wohnsiedlung (+100/Level, multi-stackable).
             self::HQ => 25,
             self::HUB => 100,
+            // T-070: Hospital erweitert Pop-Cap moderat (+20/Lvl, unique).
+            self::HOSPITAL => 20,
             default => 0,
         };
     }
@@ -85,7 +98,12 @@ enum BuildingType: string
             self::PROBE_LAB,
             self::RECYCLING_PLANT,
             self::TELESCOPE,
-            self::CONSTRUCTION_YARD => true,
+            self::CONSTRUCTION_YARD,
+            // T-070: QoL-Buildings sind unique pro Planet
+            self::HOSPITAL,
+            self::UNIVERSITY,
+            self::CULTURAL_CENTER,
+            self::TEMPLE => true,
             default => false,
         };
     }
@@ -107,7 +125,10 @@ enum BuildingType: string
             self::PROBE_LAB,
             self::RECYCLING_PLANT,
             self::TELESCOPE,
-            self::CONSTRUCTION_YARD => 2,
+            self::CONSTRUCTION_YARD,
+            // T-070: UNIVERSITY ist Schwer-Forschungs-Komplex (Slot 2);
+            // HOSPITAL/CULTURAL_CENTER/TEMPLE bleiben Slot-1.
+            self::UNIVERSITY => 2,
             default => 1,
         };
     }
@@ -156,6 +177,11 @@ enum BuildingType: string
             self::AGRI_DOME => [],
             self::ATMOSPHERIC_PROCESSOR => [],
             self::CONSTRUCTION_YARD => [],
+            // T-070: QoL-Buildings haben kein Storage-Beitrag
+            self::HOSPITAL => [],
+            self::UNIVERSITY => [],
+            self::CULTURAL_CENTER => [],
+            self::TEMPLE => [],
         };
 
         return $contributions[$resource->value] ?? 0;

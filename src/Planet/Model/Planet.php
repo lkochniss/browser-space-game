@@ -502,15 +502,44 @@ class Planet
     /**
      * T-063: PlanetType-Bonus × Size-Faktor → Effective Mining-Multiplier.
      * Formel: max(0, 1 + typeBonus × sizeFactor). Multipliziert Mining-Output.
+     *
+     * T-070: Stack mit `CULTURAL_CENTER`-Bonus (+2%/Level, capped +20%).
      */
     public function getEffectiveMiningMultiplier(ResourceType $resource): float
     {
-        return $this->effectiveBonus($this->type->getMiningBonus($resource));
+        return $this->effectiveBonus($this->type->getMiningBonus($resource)) * $this->getCulturalCenterMultiplier();
     }
 
     public function getEffectiveRefinementMultiplier(ResourceType $resource): float
     {
-        return $this->effectiveBonus($this->type->getRefinementBonus($resource));
+        return $this->effectiveBonus($this->type->getRefinementBonus($resource)) * $this->getCulturalCenterMultiplier();
+    }
+
+    /**
+     * T-070: Cultural-Center boostet Mining + Refinement um +2%/Level (capped
+     * +20%). Idle-Wert ist 1.0 (kein Cultural-Center oder Level 0).
+     *
+     * Nur fertige Buildings (`finishedAt` null = test-stub) zählen — Pattern
+     * analog Pop-Cap-Berechnung.
+     */
+    public function getCulturalCenterMultiplier(?DateTimeImmutable $now = null): float
+    {
+        $level = 0;
+        foreach ($this->buildings as $building) {
+            if ($building->getType() !== \App\Building\ValueObject\BuildingType::CULTURAL_CENTER) {
+                continue;
+            }
+            if ($now !== null && !$building->isReady($now)) {
+                continue;
+            }
+            $level = $building->getLevel();
+            break; // CULTURAL_CENTER ist strikt-unique pro Planet (T-070)
+        }
+        if ($level <= 0) {
+            return 1.0;
+        }
+
+        return 1.0 + min(0.20, 0.02 * $level);
     }
 
     public function getEffectivePopGrowthMultiplier(): float

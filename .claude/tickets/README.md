@@ -81,7 +81,8 @@
 | 067-erzeugnis-tree-erweiterung.md | Feature | Draft | Steel/Chip/Composite/Hull/Shield Tier-2-Outputs |
 | 068-defense-buildings.md | Feature | Draft | Shield/Turret/Sensor/AA für Planet-Defense |
 | 069-research-lab-tier.md | Feature | Done | ResearchNode.requiredLabLevel + Tier-Gate-Validation; Tier-1/2/3-Mapping; LabLevelTooLowException |
-| 070-pop-qol-buildings.md | Feature | Draft | Hospital/University/Cultural-Center/Temple |
+| 070-pop-qol-buildings.md | Feature | Done | 4 QoL-Foundation: Hospital +20 Pop/Lvl + Cultural-Center +2%/Lvl Mining/Refinement; Effekte in T-070b |
+| 070b-pop-qol-effects-extension.md | Feature | Draft | Hospital-Mangel-Tod + University-RP-Multi + Temple-Loyalty + Power-Consumption (Folge zu T-070) |
 | 071-power-plants.md | Feature | Draft | Solar/Fusion/Antimaterie-Reactor (3 Tiers) |
 | 072-erzeugnis-production-buildings.md | Feature | Draft | Steel-Smelter/Chip-Fab/Composite-Plant/Hull-Foundry/Shield-Assembler |
 | 073-npc-faction-foundation.md | Feature | Done | Faction-Domain + lazy Reputation + 4 Seeds (Pirate/Renegade/Xenos/MerchantGuild); Migration + 4 Test-Suiten |
