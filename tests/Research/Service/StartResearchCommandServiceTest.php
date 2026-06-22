@@ -14,6 +14,7 @@ use App\Player\Model\Player;
 use App\Player\ValueObject\PlayerId;
 use App\Research\Exception\AlreadyResearchingException;
 use App\Research\Exception\InsufficientResearchResourcesException;
+use App\Research\Exception\InvalidLabSelectionException;
 use App\Research\Exception\MaxLevelReachedException;
 use App\Research\Exception\ResearchLabMissingException;
 use App\Research\Exception\ResearchNodeNotFoundException;
@@ -90,39 +91,104 @@ final class StartResearchCommandServiceTest extends IntegrationTestCase
         $service->__invoke($player->getId(), 'basic_mining');
     }
 
-    public function test_multi_lab_aggregates_with_diminishing_returns(): void
+    public function test_list_ready_labs_returns_all_lab_planets(): void
     {
-        // T-025b: 3 Labs L1 → effective 1+0.5+0.25 = 1.75
-        $player = $this->seedPlayerWithLab(labLevel: 0);
-        $planet = $player->getPlanets()->first();
-        for ($i = 0; $i < 3; $i++) {
-            $b = new Building(BuildingId::generate(), BuildingType::RESEARCH_LAB, 1);
-            $b->setFinishedAt(new DateTimeImmutable('-1 minute'));
-            $planet->addBuilding($b);
-        }
-        $this->em->flush();
+        // T-025c: Service exponiert listReadyLabs für Demo-CLI/UI.
+        $player = $this->seedPlayerWithLab(labLevel: 2);
+        $labs = $this->makeStartService()->listReadyLabs($player, new DateTimeImmutable());
 
-        $effective = $this->makeStartService()->getEffectiveLabLevel($player, new DateTimeImmutable());
-
-        self::assertEqualsWithDelta(1.75, $effective, 0.01);
+        self::assertCount(1, $labs);
+        self::assertSame(2, $labs[0]['labLevel']);
     }
 
-    public function test_single_lab_l3_beats_three_l1_labs(): void
+    public function test_multi_lab_opt_in_persists_primary_and_boosters(): void
     {
+        $player = $this->seedPlayerWithLabAndExtraPlanet(primaryLvl: 3, boosterLvl: 2);
+
+        $planets = iterator_to_array($player->getPlanets());
+        $primary = $planets[0];
+        $booster = $planets[1];
+
+        $active = $this->makeStartService()->__invoke(
+            $player->getId(),
+            'basic_mining',
+            $primary->getId(),
+            [$booster->getId()],
+        );
+
+        self::assertSame((string) $primary->getId(), $active->getPrimaryPlanetId());
+        self::assertSame([(string) $booster->getId()], $active->getBoosterPlanetIds());
+    }
+
+    public function test_multi_lab_speeds_up_duration_and_costs_more(): void
+    {
+        // Single L3 vs L3 + Booster L3 → effective 4.5 → schneller + 10% Aufschlag
         $playerSingle = $this->seedPlayerWithLab(labLevel: 3);
-        $effSingle = $this->makeStartService()->getEffectiveLabLevel($playerSingle, new DateTimeImmutable());
+        $singleActive = $this->makeStartService()->__invoke($playerSingle->getId(), 'basic_mining');
+        $singleDuration = $singleActive->getFinishedAt()->getTimestamp() - $singleActive->getStartedAt()->getTimestamp();
 
-        $playerMulti = $this->seedPlayerWithLab(labLevel: 0);
-        $planet = $playerMulti->getPlanets()->first();
-        for ($i = 0; $i < 3; $i++) {
-            $b = new Building(BuildingId::generate(), BuildingType::RESEARCH_LAB, 1);
-            $b->setFinishedAt(new DateTimeImmutable('-1 minute'));
-            $planet->addBuilding($b);
-        }
-        $this->em->flush();
-        $effMulti = $this->makeStartService()->getEffectiveLabLevel($playerMulti, new DateTimeImmutable());
+        $playerMulti = $this->seedPlayerWithLabAndExtraPlanet(primaryLvl: 3, boosterLvl: 3, ironAmount: 1000);
+        $planets = iterator_to_array($playerMulti->getPlanets());
+        $activeMulti = $this->makeStartService()->__invoke(
+            $playerMulti->getId(),
+            'basic_mining',
+            $planets[0]->getId(),
+            [$planets[1]->getId()],
+        );
+        $multiDuration = $activeMulti->getFinishedAt()->getTimestamp() - $activeMulti->getStartedAt()->getTimestamp();
 
-        self::assertGreaterThan($effMulti, $effSingle, 'Single L3 (3.0) > 3×L1 (1.75)');
+        self::assertLessThan($singleDuration, $multiDuration, 'Multi-Lab → schneller');
+    }
+
+    public function test_booster_not_owned_throws(): void
+    {
+        $player = $this->seedPlayerWithLab(labLevel: 2);
+        $foreignId = PlanetId::generate();
+
+        $this->expectException(InvalidLabSelectionException::class);
+        $primary = $player->getPlanets()->first();
+        $this->makeStartService()->__invoke($player->getId(), 'basic_mining', $primary->getId(), [$foreignId]);
+    }
+
+    public function test_booster_without_ready_lab_throws(): void
+    {
+        // 2. Planet ohne Lab → InvalidLabSelectionException
+        $player = $this->seedPlayerWithLabAndExtraPlanet(primaryLvl: 2, boosterLvl: 0);
+        $planets = iterator_to_array($player->getPlanets());
+
+        $this->expectException(InvalidLabSelectionException::class);
+        $this->makeStartService()->__invoke(
+            $player->getId(),
+            'basic_mining',
+            $planets[0]->getId(),
+            [$planets[1]->getId()],
+        );
+    }
+
+    public function test_primary_in_booster_list_throws(): void
+    {
+        $player = $this->seedPlayerWithLab(labLevel: 2);
+        $primary = $player->getPlanets()->first();
+
+        $this->expectException(InvalidLabSelectionException::class);
+        $this->makeStartService()->__invoke(
+            $player->getId(),
+            'basic_mining',
+            $primary->getId(),
+            [$primary->getId()],
+        );
+    }
+
+    public function test_auto_picks_strongest_lab_when_no_primary_given(): void
+    {
+        // 2 Planeten, einer mit L3, einer mit L1 → Auto-Pick = L3-Planet
+        $player = $this->seedPlayerWithLabAndExtraPlanet(primaryLvl: 1, boosterLvl: 3);
+        $planets = iterator_to_array($player->getPlanets());
+        // primary = planets[0] (L1), booster = planets[1] (L3) — Auto-Pick wählt L3
+        $active = $this->makeStartService()->__invoke($player->getId(), 'basic_mining');
+
+        self::assertSame((string) $planets[1]->getId(), $active->getPrimaryPlanetId());
+        self::assertSame([], $active->getBoosterPlanetIds());
     }
 
     public function test_lab_higher_level_reduces_duration(): void
@@ -180,6 +246,43 @@ final class StartResearchCommandServiceTest extends IntegrationTestCase
         $mine = new Building(BuildingId::generate(), BuildingType::IRON_MINE, 1);
         $mine->setFinishedAt($now);
         $planet->addBuilding($mine);
+
+        $this->em->persist($player);
+        $this->em->flush();
+
+        return $player;
+    }
+
+    /**
+     * Seed Player mit 2 Planeten: Primary mit Lab/IRON_MINE + Booster optional mit Lab.
+     */
+    private function seedPlayerWithLabAndExtraPlanet(int $primaryLvl, int $boosterLvl, int $ironAmount = 1000): Player
+    {
+        $player = new Player(PlayerId::generate());
+        $primary = Planet::generatePlanet(PlanetId::generate());
+        $player->claimPlanet($primary);
+        $primary->addResource(Resource::generateWithAmount(ResourceType::IRON_ORE, $ironAmount));
+        $primary->addResource(Resource::generateWithAmount(ResourceType::COAL, 500));
+        $primary->addResource(Resource::generateWithAmount(ResourceType::SILICON, 200));
+        $primary->addResource(Resource::generateWithAmount(ResourceType::IRON_BAR, 300));
+
+        $now = new DateTimeImmutable('-1 minute');
+        if ($primaryLvl > 0) {
+            $primaryLab = new Building(BuildingId::generate(), BuildingType::RESEARCH_LAB, $primaryLvl);
+            $primaryLab->setFinishedAt($now);
+            $primary->addBuilding($primaryLab);
+        }
+        $mine = new Building(BuildingId::generate(), BuildingType::IRON_MINE, 1);
+        $mine->setFinishedAt($now);
+        $primary->addBuilding($mine);
+
+        $booster = Planet::generatePlanet(PlanetId::generate());
+        $player->claimPlanet($booster);
+        if ($boosterLvl > 0) {
+            $boosterLab = new Building(BuildingId::generate(), BuildingType::RESEARCH_LAB, $boosterLvl);
+            $boosterLab->setFinishedAt($now);
+            $booster->addBuilding($boosterLab);
+        }
 
         $this->em->persist($player);
         $this->em->flush();

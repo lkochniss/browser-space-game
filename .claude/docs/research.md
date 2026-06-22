@@ -10,13 +10,18 @@ T-025 ist Foundation: Domain + Stub-Nodes + Demo-Action. Echte Tech-Trees mit
 Wirkung folgen via Branch-Tickets (T-026 Antrieb, T-027 Planetologie, T-064
 Bauzeit-Boost, T-127 Mining-Branch …).
 
-## Decisions (2026-06-19)
+## Decisions (2026-06-19, ergänzt 2026-06-22 T-025c)
 
 1. **Wallclock, kein RP-Pool** — `finished_at = now + duration`; Tick-Resolver
    prüft `finished_at <= now` analog FleetArrivalService.
 2. **1 Forschung gleichzeitig** — UNIQUE(player_id) auf `active_research`-Tabelle.
 3. **Lab-Gate** — mindestens 1 fertiger RESEARCH_LAB irgendwo beim Player.
-4. **Nur höchstes Lab-Level zählt** (Foundation). Multi-Lab-Stacking → T-025b.
+4. **Multi-Lab Opt-In (T-025c)** — Player wählt explizit Primary-Lab + N Booster
+   (vorher T-025b Auto-Aggregator, jetzt entfernt). Booster kostet Resources,
+   Single-Lab bleibt der Default und kostet wie früher.
+5. **Frozen-at-Start (T-025c D4)** — Effective-Lab + finished_at + Booster-IDs
+   werden bei StartResearch eingefroren. Lab-Upgrade/-Verlust während laufender
+   Forschung wird ignoriert.
 
 ## Wallclock-Formel
 
@@ -34,13 +39,77 @@ effectiveDuration = node.baseDurationSeconds × 2^(targetLevel-1) ÷ pow(1.18, m
 
 Resource-Cost skaliert ebenfalls `2^(targetLevel-1)` — analog Building-Upgrades.
 
+## Multi-Lab Opt-In (T-025c)
+
+Multi-Lab ist eine **bewusste Entscheidung pro Forschung mit Kosten**. Player wählt
+beim Start einen **Primary-Lab-Planet** (Anchor) und optional N **Booster-Lab-
+Planeten** aus eigenen Planeten. Beide Mechaniken sind unabhängig: schwächere
+Booster sind günstig zu addieren? Nein — Mismatch-Penalty bestraft Schwach-Boost.
+
+### Effective-Lab-Formel (D1, Geometric-Decay 0.5)
+
+```
+sorted = boosterLvls sorted desc
+effective = primaryLvl + sum_i(sorted[i] × 0.5^(i+1))
+```
+
+Beispiele:
+- `primary=10, boosters=[]` → 10.0 (Single-Lab, kein Booster-Bonus)
+- `primary=10, boosters=[10]` → 15.0
+- `primary=10, boosters=[10, 8, 1]` → 17.125
+- `primary=1, boosters=[1, 1, 1]` → 1.875 (konvergiert gegen 2)
+
+`ResearchTree::computeEffectiveLabLevel(int, list<int>): float` ist pure Function.
+
+### Cost-Formel (D2, Pauschal + Mismatch-Penalty)
+
+```
+baseScaled       = node.resourceCostBase × 2^(targetLevel - 1)
+N                = count(boosterLvls)
+mismatchPenalty  = sum( max(0, primary - booster)² )    // asymmetrisch
+costMultiplier   = 1 + 0.10×N + 0.02×mismatchPenalty
+finalCost        = baseScaled × costMultiplier
+```
+
+Verhalten (Base 1000, Primary L10):
+- `+L10 Booster` → ×1.10 = 1100 (lohnt klar)
+- `+L5 Booster`  → ×1.60 = 1600 (grenzwertig)
+- `+L1 Booster`  → ×2.72 = 2720 (klar unrentable)
+- `+L10+L8`      → ×1.28 = 1280
+- Booster > Primary → keine Penalty (gap = `max(0, ...)`)
+
+Konstanten `ResearchDurationConfig::FLAT_BOOSTER_COST` + `MISMATCH_PENALTY` als
+Tuning-Knobs.
+
+### Persistence (D3, JSON)
+
+`active_research.primary_planet_id` (string, nullable für legacy) +
+`active_research.booster_planet_ids` (json array of UUID-Strings). Frozen bei
+StartResearch — Lab-Upgrade/-Verlust während laufender Forschung wird ignoriert.
+
+### Demo-CLI Flow (D5)
+
+1. **Primary Research-Lab** — single-choice aus allen Player-Lab-Planeten
+2. **Booster-Labs** — multi-select (Komma-getrennt) aus verbleibenden Lab-Planeten
+3. **Node-Auswahl** — Live-Preview von effectiveLab + finalCost + Duration pro Node
+4. Confirm → `StartResearchCommand(playerId, slug, primary, [boosters])`
+
+Wenn nur ein Lab-Planet existiert: Step 2 entfällt (auto-empty).
+
+### Default-Verhalten (kein Primary übergeben)
+
+Wenn `StartResearchCommand` ohne `primaryLabPlanetId` aufgerufen wird, wählt der
+Service automatisch den Planeten mit dem höchsten Ready-Lab als Primary (kein
+Booster). Das macht den klassischen `new StartResearchCommand($playerId, 'slug')`
+weiterhin gültig — Test- und API-Friction minimiert.
+
 ## Domain-Modell
 
 | Entity | Felder | Zweck |
 |--------|--------|-------|
 | `ResearchNode` (VO) | slug, name, description, baseDurationSeconds, maxLevel, prerequisites: list<{slug,level}>, resourceCostBase: array<resVal,int> | Deklarative Tree-Definition |
 | `PlayerResearch` | id, player_id, node_slug, level — UNIQUE(player_id, node_slug) | Persistierter Forschungsstand |
-| `ActiveResearch` | id, player_id (UNIQUE), node_slug, target_level, started_at, finished_at | Aktuell laufende Forschung |
+| `ActiveResearch` | id, player_id (UNIQUE), node_slug, target_level, started_at, finished_at, primary_planet_id, booster_planet_ids (JSON) | Aktuell laufende Forschung; Multi-Lab-Konstellation frozen at start (T-025c) |
 
 ## Services
 
@@ -122,6 +191,7 @@ Travel frei (siehe fleets.md). `ftl_warp` ist Wormhole-Tech-Slug für T-026b.
 | `MaxLevelReachedException` | targetLevel > node.maxLevel |
 | `PrerequisiteNotMetException` | Prereq-Slug nicht auf required Level |
 | `InsufficientResearchResourcesException` | Resources über alle Player-Planeten reichen nicht |
+| `InvalidLabSelectionException` (T-025c) | Primary/Booster gehört nicht Player, kein ready Lab, Overlap oder Duplikat |
 
 Alle extenden `\DomainException`. Validation vor Mutation — kein State-Change bei Failure.
 
@@ -163,7 +233,7 @@ Player-Planeten (T-025b stackt später).
 
 ## Geplant
 
-- **T-025b** Multi-Lab-Boost — mehrere Labs auf mehreren Planeten stacken Speed
+- **T-025b superseded durch T-025c** Multi-Lab Opt-In + Cost (Done)
 - **T-026** Antrieb-Tree (echte FTL-Nodes inkl. ftl_tier_2 Unlock)
 - **T-027** Planetologie-Forschung (Probe-Boost)
 - **T-064** Bauzeit-Boost (Decisions vorab dokumentiert)

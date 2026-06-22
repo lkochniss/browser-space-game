@@ -10,33 +10,41 @@ use App\Research\Model\ResearchNode;
  * T-025 Wallclock-Forschungs-Dauer.
  *
  * Formel:
- *   effectiveDuration = baseDuration × levelMultiplier(targetLevel) ÷ labSpeedMultiplier(maxLabLevel)
+ *   effectiveDuration = baseDuration × levelMultiplier(targetLevel) ÷ labSpeedMultiplier(effectiveLab)
  *
  * - levelMultiplier:  2^(targetLevel - 1)  → L1 = 1×, L2 = 2×, L3 = 4×, ... (analog Buildings)
- * - labSpeedMultiplier: stetig steigend mit Lab-Level via geometric series:
+ * - labSpeedMultiplier: stetig steigend mit Lab-Level via Exponentialfunktion:
  *      L1 = 1.00× (no boost)
  *      L2 = 1.18× (-15%)
  *      L3 = 1.39× (-28%)
  *      L4 = 1.64× (-39%)
  *      L5 = 1.93× (-48%)
  *      ...
- *      formelhaft: pow(1.18, level - 1)
+ *      formelhaft: pow(1.18, effectiveLab - 1)  (akzeptiert float)
  *
- * Cost (Resource-Cost) skaliert ebenfalls 2^(targetLevel - 1) analog Buildings.
+ * T-025c Opt-In-Multi-Lab-Cost (ersetzt T-025b Auto-Aggregator):
  *
- * T-025b: Multi-Lab-Stacking via `effectiveLabLevel` (float). Aggregator
- *   sortiert alle Lab-Levels desc und summiert mit geometrischer Decay:
- *     effective = L_max × 1.0 + L_2 × 0.5 + L_3 × 0.25 + L_4 × 0.125 + ...
- *   Beispiele:
- *     [3]               → 3.0
- *     [2, 2]            → 2.0 + 1.0 = 3.0
- *     [3, 1, 1]         → 3.0 + 0.5 + 0.25 = 3.75
- *     [1, 1, 1, 1, 1]   → 1.0 + 0.5 + 0.25 + 0.125 + 0.0625 = 1.9375
+ *   baseScaled       = node.resourceCostBase × 2^(targetLevel - 1)
+ *   N                = count(boosterLvls)
+ *   mismatchPenalty  = sum( max(0, primaryLvl - boosterLvl)² )  // asymmetrisch
+ *   costMultiplier   = 1 + (FLAT_BOOSTER_COST × N) + (MISMATCH_PENALTY × mismatchPenalty)
+ *   finalCost        = baseScaled × costMultiplier
  *
- * T-064: Forschungs-Buff für Bauzeit (separate Wirkung).
+ * Effekt:
+ *   - jeder Booster kostet 10% Aufschlag (flat)
+ *   - schwächere Booster relativ zum Primary kosten quadratisch mehr
+ *   - stärkere Booster (über Primary) kosten nur den 10%-Flat (kein Penalty)
+ *
+ * Konstanten in `FLAT_BOOSTER_COST` + `MISMATCH_PENALTY` als Tuning-Knobs.
  */
 class ResearchDurationConfig
 {
+    /** T-025c D2 — flacher Aufschlag pro Booster-Lab. */
+    public const FLAT_BOOSTER_COST = 0.10;
+
+    /** T-025c D2 — quadratische Mismatch-Penalty pro Level-Lücke (Primary − Booster). */
+    public const MISMATCH_PENALTY = 0.02;
+
     public function durationSeconds(ResearchNode $node, int $targetLevel, float $effectiveLabLevel): int
     {
         if ($effectiveLabLevel < 1.0) {
@@ -50,14 +58,31 @@ class ResearchDurationConfig
     }
 
     /**
+     * T-025c (D2) — Resource-Cost mit Multi-Lab-Aufschlag.
+     *
+     * @param list<int> $boosterLvls
+     *
      * @return array<string, int>
      */
-    public function resourceCost(ResearchNode $node, int $targetLevel): array
-    {
-        $multiplier = 2 ** ($targetLevel - 1);
+    public function resourceCost(
+        ResearchNode $node,
+        int $targetLevel,
+        int $primaryLvl = 1,
+        array $boosterLvls = [],
+    ): array {
+        $levelMultiplier = 2 ** ($targetLevel - 1);
+
+        $n = count($boosterLvls);
+        $mismatchPenalty = 0;
+        foreach ($boosterLvls as $boosterLvl) {
+            $gap = max(0, $primaryLvl - $boosterLvl);
+            $mismatchPenalty += $gap * $gap;
+        }
+        $costMultiplier = 1.0 + (self::FLAT_BOOSTER_COST * $n) + (self::MISMATCH_PENALTY * $mismatchPenalty);
+
         $scaled = [];
         foreach ($node->resourceCostBase as $resourceVal => $amount) {
-            $scaled[$resourceVal] = (int) ceil($amount * $multiplier);
+            $scaled[$resourceVal] = (int) ceil($amount * $levelMultiplier * $costMultiplier);
         }
 
         return $scaled;

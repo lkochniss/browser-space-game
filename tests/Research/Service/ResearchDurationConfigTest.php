@@ -75,6 +75,7 @@ final class ResearchDurationConfigTest extends TestCase
 
     public function test_resource_cost_skaliert_2_pow(): void
     {
+        // T-025c: Default-Aufruf ohne Booster behält 2^level-Skalierung.
         $config = new ResearchDurationConfig();
         $node = new ResearchNode('test', 'Test', '', 300, 5, [], ['iron_ore' => 100, 'coal' => 50]);
 

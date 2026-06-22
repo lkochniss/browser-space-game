@@ -1,7 +1,7 @@
 # T-025c: Multi-Lab Opt-In + Kosten-Trade-off
 
 **Type:** Feature
-**Status:** Open
+**Status:** Done
 **Effort:** M (~3-4h)
 **Depends on:** T-025 (Forschungs-Foundation), T-025b (Auto-Aggregator → wird ersetzt)
 **Blocks:** —

@@ -294,4 +294,35 @@ class ResearchTree
     {
         return array_values($this->nodes);
     }
+
+    /**
+     * T-025c Geometric-Decay-Aggregator (D1).
+     *
+     * Bewusste Opt-In-Mechanik: Primary-Lab ist Anchor (1.0), Booster geben mit
+     * absteigender Decay 0.5^(i+1) Bonus. Höchster Booster-Level zuerst sortiert
+     * (max Bonus für Player) — danach 0.25×, 0.125× ...
+     *
+     *   effectiveLab = primaryLvl + sum_i(sorted_desc[i] × 0.5^(i+1))
+     *
+     * Beispiele:
+     *   primary=10, boosters=[10]               → 10 + 10×0.5 = 15.0
+     *   primary=10, boosters=[10, 8, 1]         → 10 + 5 + 2 + 0.125 = 17.125
+     *   primary=1,  boosters=[1, 1, 1]          → 1 + 0.5 + 0.25 + 0.125 = 1.875
+     *   primary=L, boosters=[]                  → L (kein Multi-Lab-Bonus)
+     *
+     * Pure-Function, testbar ohne Player-/EM-Setup.
+     *
+     * @param list<int> $boosterLvls
+     */
+    public function computeEffectiveLabLevel(int $primaryLvl, array $boosterLvls): float
+    {
+        $sorted = $boosterLvls;
+        rsort($sorted);
+        $effective = (float) $primaryLvl;
+        foreach ($sorted as $idx => $level) {
+            $effective += $level * (0.5 ** ($idx + 1));
+        }
+
+        return $effective;
+    }
 }

@@ -16,6 +16,11 @@ class StartResearchCommandHandler implements CommandHandlerInterface
 
     public function __invoke(StartResearchCommand $command): ActiveResearch
     {
-        return $this->service->__invoke($command->playerId, $command->nodeSlug);
+        return $this->service->__invoke(
+            $command->playerId,
+            $command->nodeSlug,
+            $command->primaryLabPlanetId,
+            $command->boosterLabPlanetIds,
+        );
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Research\Model;
 
 use App\Common\Doctrine\Type\ResearchIdType;
+use App\Planet\ValueObject\PlanetId;
 use App\Player\Model\Player;
 use App\Research\Repository\ActiveResearchRepository;
 use App\Research\ValueObject\ResearchId;
@@ -18,12 +19,21 @@ use Doctrine\ORM\Mapping as ORM;
  * Bei Tick-Resolve: wenn `finished_at <= now`, wird PlayerResearch.level++ und
  * die ActiveResearch entfernt. Decision: bei Reset ohne Forschung-Cancel-
  * Erstattung (Kosten weg) — Cancel-Mechanik kommt später bei Bedarf.
+ *
+ * T-025c: speichert Primary-Lab-Planet + Booster-Lab-Planeten zur Forschung.
+ * Frozen-at-Start (D4): Lab-Levels werden NICHT mehr live aggregiert; bei
+ * StartResearch wird `effectiveLab` berechnet und in `finished_at` fixiert.
+ * Read-Side (Status-Anzeige) kann via `boosterPlanetIds` die Konstellation
+ * rekonstruieren.
  */
 #[ORM\Entity(repositoryClass: ActiveResearchRepository::class)]
 #[ORM\Table(name: 'active_research')]
 #[ORM\UniqueConstraint(name: 'uniq_player', columns: ['player_id'])]
 class ActiveResearch
 {
+    /**
+     * @param list<string> $boosterPlanetIds Liste der Booster-Planet-IDs als UUID-Strings
+     */
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(type: ResearchIdType::NAME)]
@@ -44,17 +54,37 @@ class ActiveResearch
 
         #[ORM\Column(name: 'finished_at', type: 'datetime_immutable')]
         private DateTimeImmutable $finishedAt,
+
+        #[ORM\Column(name: 'primary_planet_id', type: 'string', length: 36, nullable: true)]
+        private ?string $primaryPlanetId = null,
+
+        #[ORM\Column(name: 'booster_planet_ids', type: 'json')]
+        private array $boosterPlanetIds = [],
     ) {
     }
 
+    /**
+     * @param list<PlanetId> $boosterPlanetIds
+     */
     public static function generate(
         Player $player,
         string $nodeSlug,
         int $targetLevel,
         DateTimeImmutable $startedAt,
         DateTimeImmutable $finishedAt,
+        ?PlanetId $primaryPlanetId = null,
+        array $boosterPlanetIds = [],
     ): self {
-        return new self(ResearchId::generate(), $player, $nodeSlug, $targetLevel, $startedAt, $finishedAt);
+        return new self(
+            ResearchId::generate(),
+            $player,
+            $nodeSlug,
+            $targetLevel,
+            $startedAt,
+            $finishedAt,
+            $primaryPlanetId !== null ? (string) $primaryPlanetId : null,
+            array_map(static fn (PlanetId $id): string => (string) $id, $boosterPlanetIds),
+        );
     }
 
     public function getId(): ResearchId
@@ -85,6 +115,19 @@ class ActiveResearch
     public function getFinishedAt(): DateTimeImmutable
     {
         return $this->finishedAt;
+    }
+
+    public function getPrimaryPlanetId(): ?string
+    {
+        return $this->primaryPlanetId;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function getBoosterPlanetIds(): array
+    {
+        return array_values($this->boosterPlanetIds);
     }
 
     public function isFinished(DateTimeImmutable $now): bool

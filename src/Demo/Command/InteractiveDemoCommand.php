@@ -1142,17 +1142,102 @@ class InteractiveDemoCommand extends Command
             $io->newLine();
         }
 
-        // T-025b Multi-Lab-Aggregat
-        $effectiveLab = $this->startResearchService->getEffectiveLabLevel($player, $now);
-        if ($effectiveLab < 1.0) {
+        // T-025c Multi-Lab Opt-In — Player wählt Primary + Booster
+        $labs = $this->startResearchService->listReadyLabs($player, $now);
+        if ($labs === []) {
             $io->note('Kein fertiges RESEARCH_LAB — bauen, dann zurückkommen.');
 
             return true;
         }
-        $io->text(sprintf('Effective Research-Lab-Level (Multi-Lab-Aggregat): <info>%.2f</info>', $effectiveLab));
+
+        // Schritt 1: Primary-Lab
+        $primaryChoices = [];
+        foreach ($labs as $entry) {
+            $key = (string) $entry['planet']->getId();
+            $primaryChoices[$key] = sprintf(
+                '%s [%s] (Lab L%d)',
+                substr((string) $entry['planet']->getId(), 0, 8),
+                $entry['planet']->getType()->value,
+                $entry['labLevel'],
+            );
+        }
+        $primaryKey = $io->choice('Primary Research-Lab', $primaryChoices, array_key_first($primaryChoices));
+        $primaryKeyResolved = array_search($primaryKey, $primaryChoices, true);
+        if ($primaryKeyResolved !== false) {
+            $primaryKey = $primaryKeyResolved;
+        }
+        $primaryEntry = null;
+        foreach ($labs as $entry) {
+            if ((string) $entry['planet']->getId() === $primaryKey) {
+                $primaryEntry = $entry;
+                break;
+            }
+        }
+        if ($primaryEntry === null) {
+            $io->error('Primary-Lab-Auswahl konnte nicht aufgelöst werden.');
+
+            return true;
+        }
+        $primaryPlanetId = $primaryEntry['planet']->getId();
+        $primaryLvl = $primaryEntry['labLevel'];
+
+        // Schritt 2: Booster-Labs (nur wenn weitere Labs verfügbar)
+        $boosterIds = [];
+        $boosterLvls = [];
+        $remainingLabs = array_filter(
+            $labs,
+            fn (array $entry): bool => (string) $entry['planet']->getId() !== $primaryKey,
+        );
+        if ($remainingLabs !== []) {
+            $boosterChoices = [];
+            foreach ($remainingLabs as $entry) {
+                $key = (string) $entry['planet']->getId();
+                $boosterChoices[$key] = sprintf(
+                '%s [%s] (Lab L%d)',
+                substr((string) $entry['planet']->getId(), 0, 8),
+                $entry['planet']->getType()->value,
+                $entry['labLevel'],
+            );
+            }
+            $question = new \Symfony\Component\Console\Question\ChoiceQuestion(
+                'Booster-Labs (Komma-getrennt, leer = keine)',
+                $boosterChoices,
+                '',
+            );
+            $question->setMultiselect(true);
+            $question->setValidator(static fn ($v) => $v ?? '');
+            $selected = $io->askQuestion($question);
+            if (is_array($selected)) {
+                foreach ($selected as $sel) {
+                    if ($sel === '' || $sel === null) {
+                        continue;
+                    }
+                    $matchedKey = array_search($sel, $boosterChoices, true);
+                    if ($matchedKey === false) {
+                        continue;
+                    }
+                    $boosterKey = (string) $matchedKey;
+                    foreach ($remainingLabs as $entry) {
+                        if ((string) $entry['planet']->getId() === $boosterKey) {
+                            $boosterIds[] = $entry['planet']->getId();
+                            $boosterLvls[] = $entry['labLevel'];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        $effectiveLab = $this->researchTree->computeEffectiveLabLevel($primaryLvl, $boosterLvls);
+        $io->text(sprintf(
+            'Primary L%d + %d Booster → effective Lab-Level <info>%.3f</info>',
+            $primaryLvl,
+            count($boosterLvls),
+            $effectiveLab,
+        ));
         $io->newLine();
 
-        // Choice der verfügbaren Nodes mit Cost + Duration-Preview
+        // Schritt 3: Node-Auswahl mit Cost-Preview
         $choices = [];
         foreach ($this->researchTree->all() as $node) {
             $current = $this->playerResearchRepository->findOneByPlayerAndSlug($player, $node->slug);
@@ -1163,7 +1248,7 @@ class InteractiveDemoCommand extends Command
                 continue;
             }
             $targetLevel = $currentLevel + 1;
-            $cost = $this->researchDurationConfig->resourceCost($node, $targetLevel);
+            $cost = $this->researchDurationConfig->resourceCost($node, $targetLevel, $primaryLvl, $boosterLvls);
             $duration = $this->researchDurationConfig->durationSeconds($node, $targetLevel, $effectiveLab);
             $costParts = [];
             foreach ($cost as $resVal => $amount) {
@@ -1173,7 +1258,7 @@ class InteractiveDemoCommand extends Command
             $choices[$node->slug] = sprintf('%s L%d (%s)', $node->slug, $targetLevel, implode(', ', $costParts));
         }
         if ($choices === []) {
-            $io->note('Keine Nodes im Tree (sollte nicht passieren — T-025 hat 2 Stub-Nodes).');
+            $io->note('Keine Nodes im Tree verfügbar.');
 
             return true;
         }
@@ -1184,9 +1269,18 @@ class InteractiveDemoCommand extends Command
             $slug = $label;
         }
 
-        $this->lastActionParams = ['node_slug' => $slug];
+        $this->lastActionParams = [
+            'node_slug' => $slug,
+            'primary_planet_id' => (string) $primaryPlanetId,
+            'booster_planet_ids' => array_map(static fn ($id) => (string) $id, $boosterIds),
+        ];
 
-        $this->bus->dispatch(new StartResearchCommand($player->getId(), (string) $slug));
+        $this->bus->dispatch(new StartResearchCommand(
+            $player->getId(),
+            (string) $slug,
+            $primaryPlanetId,
+            $boosterIds,
+        ));
         $io->success(sprintf('Forschung gestartet: %s', $slug));
 
         return true;
