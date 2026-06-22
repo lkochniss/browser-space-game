@@ -189,5 +189,5 @@
 | 178-ship-cargo-universal.md | Feature | Blocked | Ship-Cargo-Universal: alle Schiffe haben Cargo-Volume; blocked by T-177 |
 | 179-pop-as-storage-item.md | Feature | Blocked | Pop wird Storage-Item mit hohem Size-Multi; T-004/T-005 refactored; blocked by T-178 |
 | 180-resource-volume-config.md | Feature | Done | ResourceVolumeConfig (m³/Unit für 14 ResourceTypes + Pop=10); Foundation für T-177ff Generic-Storage |
-| 181-resource-volume-debug-command.md | Feature | Draft | Low-Prio Debug-Command `app:debug:resource-volume` für Multi-Tabelle-Inspection |
+| 181-resource-volume-debug-command.md | Feature | Done | `app:debug:resource-volume` Symfony-Command — Volume-Tabelle sortiert + Beispiel-Profile |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |
