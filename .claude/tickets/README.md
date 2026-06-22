@@ -182,7 +182,7 @@
 | 171-building-uniqueness-slot-concept.md | Feature | Done | 6 Strategic-Unique + Slot-Size pro Building (1-3) + Slot-Cap pro PlanetSize (8-40) |
 | 172-hq-vs-hub-refactor.md | Feature | Done | HQ (unique, slot-3, +25 Pop, Storage, Slot-Bonus capped); HUB (multi, slot-1, +100 Pop); CONSTRUCTION_YARD rename |
 | 173-hq-building-level-cap.md | Feature | Draft | HQ-Level cappt Building-Level + steile HQ-Cost-Curve + lokaler Build-Speed-Bonus |
-| 174-deprecate-station-build.md | TechDebt | Draft | Station-Build-Path entfernen (Lost-Tech-Lore); Stations nur via Claim/Capture |
+| 174-deprecate-station-build.md | TechDebt | Done | Station-Build soft-deprecated: wirft `StationConstructionDeprecatedException`; 6 orphan POI-Exceptions entfernt; Hard-Remove erst nach T-175 |
 | 175-pirate-station-spawn.md | Feature | Draft | Galaxy-Bootstrap-Spawn von Pirate-owned + ABANDONED Stations (Lost-Tech-Lore) |
 | 176-pirate-station-takeover.md | Feature | Draft | Pirate-Takeover ABANDONED → Pirate + Combat-Capture-Mechanik (zweistufig) |
 | 177-generic-storage-refactor.md | Feature | Ready | Storage-Refactor Planet: Single generic Volume-Bucket (T-061 superseded); T-180 Foundation done |

@@ -1,7 +1,7 @@
 # T-174: Deprecate Station-Build-Command (Lost-Tech-Lore)
 
 **Type:** TechDebt (Feature-Refactor)
-**Status:** Draft
+**Status:** Done (Soft-Deprecate-Variante; Hard-Remove erst nach T-175)
 **Effort:** S (~1-1.5h)
 **Depends on:** T-175 (Pirate-Owned-Station-Spawn — sonst gibt es keine Stations im Universum)
 **Blocks:** —
@@ -19,15 +19,17 @@ existierenden Stations.
 
 ## Acceptance Criteria
 
-- [ ] `BuildSpaceStationCommand` + Handler entfernen (oder deprecated mit
-      Domain-Exception "Station construction tech is lost")
-- [ ] Demo-CLI-Action für Station-Build entfernen (`app:demo:run` Choice-Menü)
-- [ ] T-023-bezogene Build-Tests entfernen / als Skip markieren
-- [ ] Shipyard-L3-Gate für Build-Path entfernen (Gate bleibt nur für
-      Claim-Validation via T-023b)
-- [ ] Doc `poi.md` updaten: Stations sind Galaxy-Fixed, kein Build-Path
-- [ ] Doc `decisions.md` Eintrag: "Stations sind Lost-Tech; Build deprecated"
-- [ ] README-Update T-023 mit "Build-Path deprecated via T-174"
+- [x] `BuildSpaceStationCommandService` wirft `StationConstructionDeprecatedException` —
+      Command/Handler/Service-Stubs bleiben (Hard-Remove erst nach T-175)
+- [x] Demo-CLI hatte nie eine Station-Build-Action — nichts zu entfernen
+- [x] `BuildSpaceStationCommandTest` reduziert auf einen Deprecation-Test
+- [x] Shipyard-L3-Gate aus Service entfernt (gesamter Validation-Path tot)
+- [x] 6 orphan POI-Exceptions entfernt: `InsufficientPopulation`,
+      `InsufficientResources`, `MissingShipyardInSystem`, `PlayerNotFound`,
+      `SolarSystemNotFound`, `StationAlreadyExistsInSystem`
+- [x] Doc `poi.md` updated (T-023-Sektion mit Deprecation-Notiz)
+- [x] Doc `decisions.md` Eintrag "Stations sind Lost-Tech; Build deprecated"
+- [x] README-Update T-174 Status Done
 
 ## Out of Scope
 

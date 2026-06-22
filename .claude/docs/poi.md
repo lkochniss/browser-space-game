@@ -59,8 +59,19 @@ nicht mehr nur `AsteroidField`.
 
 - `status: ACTIVE | ABANDONED` (T-023b later)
 - Owner-Player + eigene Pop + Storage + Cargo
-- Max 1/System, gated by Shipyard-L3
-- Bau via separater Command-Pfad (nicht Building-Pfad)
+- Max 1/System
+
+### Build-Path soft-deprecated (T-174, Lost-Tech-Lore)
+
+`BuildSpaceStationCommand` wirft nur noch `StationConstructionDeprecatedException`.
+Stations sind nicht baubar — die Tech ist im Universum verschollen. Quellen:
+
+- **Galaxy-Bootstrap-Spawn** (T-175, Draft): pirate-owned + ABANDONED Spawns
+- **Claim-ABANDONED** (T-023b, Draft): Player nimmt ABANDONED über
+- **Combat-Capture** (T-176, Draft): Player kämpft Pirate-owned ab
+
+Command/Handler/Service-Klassen bleiben als Stub bestehen bis T-175 deployt ist;
+danach kann der ganze Build-Path hart entfernt werden.
 
 ## Files
 
