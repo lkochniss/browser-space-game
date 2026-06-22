@@ -109,6 +109,34 @@ cap = ResourceCategory.baseCap + Σ(building.type.getStorageContribution(resourc
 
 Heute relevante Storage-Buildings: IRON_STORAGE, COAL_STORAGE, IRON_BAR_STORAGE, WATER_TANK, FOOD_SILO, OXYGEN_STORAGE. 5 weitere (Copper/Si/Al/Ti/U) folgen mit POIs T-019/T-020.
 
+## Volume-System (T-180 Foundation)
+
+Foundation für Generic-Storage (T-177ff): jede ResourceType + Pop hat ein
+**Volume in m³** pro Einheit. Macht Storage planet-übergreifend in einer Einheit
+berechenbar statt pro-Resource separat.
+
+`ResourceVolumeConfig::getMultiForResource(ResourceType): float` liefert m³/Unit;
+`ResourceVolumeConfig::getPopMulti(): float` = 10.0 (Pop-Lebensraum-Volume).
+
+Auszug Multiplier-Tabelle (m³/Unit):
+
+| Resource | m³/Unit |
+|----------|---------|
+| WATER (Reference) | 1.0 |
+| FOOD | 1.2 |
+| OXYGEN | 0.3 (komprimiert) |
+| IRON_ORE / COPPER_ORE / ALUMINUM_ORE / TITANIUM_ORE | 2.0 |
+| COAL / SILICON | 1.8 |
+| URANIUM_ORE | 2.5 (Bleicontainer) |
+| IRON_BAR | 1.5 (kompakter als Erz) |
+| DEBRIS_* | 1.0 |
+
+Pop-Multi: **10.0 m³** pro Person.
+
+Fail-fast bei neuen ResourceTypes ohne Multi via `UnknownResourceVolumeException`.
+
+T-177/T-178/T-179 nutzen diese Werte für generic Volume-Buckets pro Planet/Station.
+
 ## Files
 
 - `src/Resource/ValueObject/ResourceType.php` (Enum + getCategory)

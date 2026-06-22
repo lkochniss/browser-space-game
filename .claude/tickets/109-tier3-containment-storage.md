@@ -1,9 +1,9 @@
 # T-109 Tier-3 Containment-Storage (Antimatter / AI-Core / Bound-Resources)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Blocked (by T-177 — Storage-Buildings-Konzept wird refactored)
 **Effort:** S (TBD)
-**Depends on:** T-061 (Storage-System), T-115 (Tier-3-Resources), T-092 (Rare-Resources)
+**Depends on:** T-115 (Tier-3-Resources), T-092 (Rare-Resources), T-177 (Generic-Storage-Refactor — superseded T-061)
 **Blocks:** —
 
 ## Beschreibung

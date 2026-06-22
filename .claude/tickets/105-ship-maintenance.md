@@ -1,9 +1,9 @@
 # T-105 Schiff-Maintenance (Treibstoff + Crew-Versorgung)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Blocked (by T-178 + T-066 — Ship-Cargo statt eigener Fuel/Supply-Fields)
 **Effort:** M
-**Depends on:** T-066 (Treibstoff), T-102 (Schiff-Klassen), T-005 (Pop-Verbrauch)
+**Depends on:** T-066 (Treibstoff), T-102 (Schiff-Klassen), T-005 (Pop-Verbrauch), T-178 (Ship-Cargo-Universal), T-179 (Pop-Storage)
 **Blocks:** —
 
 ## Beschreibung

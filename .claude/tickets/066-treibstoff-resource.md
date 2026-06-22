@@ -1,7 +1,7 @@
 # T-066 Treibstoff-Resource (Promethium / H2)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Blocked (by T-177)
 **Effort:** M
 **Depends on:** T-002 (Endliche Rohstoffe), T-003 (Erzeugnis Iron-Bar)
 **Blocks:** T-105 (Schiff-Maintenance), T-012+ (Schiff-Bau)
@@ -34,3 +34,18 @@ Yes — Promethium-Deposits in Test-Planets, H2-Refinery + Promethium-Mine als B
 ## Notes
 - Antimaterie kommt erst mit T-115 Tier-3 Resources
 - Treibstoff-Verbrauch eigentlich erst in T-105 implementiert; hier nur Resource + Production-Path
+
+## Resolved Decisions
+
+- **ResourceCategory::FUEL** verworfen → `isFuel()`-Flag-Pattern (Q1=b).
+  H2 bleibt REFINED, Promethium bleibt FINITE. Fuel ist Verwendungs-
+  Property, keine Herkunfts-Kategorie.
+- **Storage-Q (geplant Q2) obsolet** durch Storage-Vision-Pivot:
+  Generic-Volume-Storage-Refactor in T-177/T-178/T-179/T-180. Fuel-Resources
+  nutzen generic Planet-Storage + Ship-Cargo wie alle anderen Items.
+
+## Dependency-Update
+
+- **Depends on:** T-002, T-003, T-180 (Volume-Config — Foundation für
+  Storage-Verhalten), T-177 (Generic-Planet-Storage)
+- **Blocks unverändert:** T-105 (Schiff-Maintenance), T-012+ (Schiff-Bau)

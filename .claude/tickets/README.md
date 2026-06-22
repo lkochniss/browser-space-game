@@ -77,7 +77,7 @@
 | 064-construction-speed-boost.md | Feature | Done | construction_speed_1 (3 Levels) reduziert Bauzeit multiplikativ; Stack mit T-063 Planet-Type |
 | 064b-construction-hub-building.md | Feature | Done | CONSTRUCTION_HUB Building (unique, slot-size 2); ×1.10/Level lokaler Speed-Multi, stackt mit T-063 + T-064 |
 | 065-energy-system.md | Feature | Draft | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
-| 066-treibstoff-resource.md | Feature | Draft | H2 + Promethium als FUEL-Resources für Schiffe |
+| 066-treibstoff-resource.md | Feature | Blocked | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Draft | Steel/Chip/Composite/Hull/Shield Tier-2-Outputs |
 | 068-defense-buildings.md | Feature | Draft | Shield/Turret/Sensor/AA für Planet-Defense |
 | 069-research-lab-tier.md | Feature | Draft | Lab-Tier mit RP-Output + Tech-Tier-Lock |
@@ -119,18 +119,18 @@
 | 097-pop-tier-buildings.md | Feature | Draft | GENEBANK/CLONING_VAT/CIVIC_CENTER/AGRI_DOME/WATER_RECLAIMER/ATMOSPHERIC_PROCESSOR |
 | 098-specialist-tracks.md | Feature | Draft | 5 Specialist-Tracks PERMANENT (+30%/-10% + Branch-Lock) |
 | 099-threat-skalierung.md | Feature | Draft | PlayerScore → PvE-Encounter-Difficulty-Adaptiv |
-| 100-trade-hub-buildings.md | Feature | Draft | MARKETPLACE/SPACEPORT/CUSTOMS_HOUSE/WAREHOUSE/BAZAAR |
+| 100-trade-hub-buildings.md | Feature | Blocked | MARKETPLACE/SPACEPORT/CUSTOMS_HOUSE/WAREHOUSE/BAZAAR; blocked by T-177 |
 | 101-planet-cap-per-player.md | Feature | Draft | Max 5 Planeten/Player (erweiterbar via Forschung bis 10) |
 | 102-ship-classes-foundation.md | Feature | Draft | 5 Combat × 3 Mk + 4 Spezial-Klassen, hohe Cost, Captain-Required |
 | 103-battle-resolution-engine.md | Feature | Draft | Round-based Auto-Resolution + Tactic-Counter (RPS-light) |
 | 104a-crew-foundation.md | Feature | Draft | Akademie + Officer-Quarters + Captain-Crew-Type |
 | 104b-captain-skill-trees.md | Feature | Draft | Beam-Master/Missile-Spec/Shield-Tactician/Fleet-Commander |
 | 104c-other-crew-roles.md | Feature | Draft | Forscher/Engineer/Diplomat (Lab-Boost/Maintenance/Reputation) |
-| 105-ship-maintenance.md | Feature | Draft | Treibstoff + Crew-Versorgung; Stranding bei Mangel; KEIN Hull-Wear |
+| 105-ship-maintenance.md | Feature | Blocked | Treibstoff + Crew-Versorgung; Stranding bei Mangel; blocked by T-178 |
 | 106-diplomatic-buildings.md | Feature | Draft | EMBASSY/COMM_ARRAY/CULTURAL_MISSION/INTELLIGENCE_HQ/TRANSLATOR_BUREAU |
 | 107-manufacturing-buildings.md | Feature | Draft | Bündel: ~20 Manufacturing-Buildings (Munition/Civilian/Bio/Tier-3-Combat/Tier-3-Resources) |
 | 108-specialty-mining-buildings.md | Feature | Draft | ASTEROID_DRONE/DEEP_DRILL/ATMOSPHERIC_HARVESTER/ICE_DRILLER/VOLCANIC_TAPPER/LUNAR_PROCESSOR |
-| 109-tier3-containment-storage.md | Feature | Draft | ANTIMATTER_CONTAINMENT/AI_CORE_VAULT/ADAMANTIUM_DEPOT/VOID_CONTAINER/ARTIFACT_VAULT |
+| 109-tier3-containment-storage.md | Feature | Blocked | ANTIMATTER_CONTAINMENT/AI_CORE_VAULT/ADAMANTIUM_DEPOT/VOID_CONTAINER/ARTIFACT_VAULT; blocked by T-177 |
 | 110-trade-routes.md | Feature | Draft | Auto-Transport eigene Planeten — Schiff-bound Routes |
 | 111-auction-house.md | Feature | Draft | Galaxy-weit Auction + Lieferzeit via Transportschiff |
 | 112-hybrid-pricing.md | Feature | Draft | Need-Based-Pricing + Statische Handelsposten (Inventory-bound, nicht-übernehmbar) |
@@ -185,4 +185,9 @@
 | 174-deprecate-station-build.md | TechDebt | Draft | Station-Build-Path entfernen (Lost-Tech-Lore); Stations nur via Claim/Capture |
 | 175-pirate-station-spawn.md | Feature | Draft | Galaxy-Bootstrap-Spawn von Pirate-owned + ABANDONED Stations (Lost-Tech-Lore) |
 | 176-pirate-station-takeover.md | Feature | Draft | Pirate-Takeover ABANDONED → Pirate + Combat-Capture-Mechanik (zweistufig) |
+| 177-generic-storage-refactor.md | Feature | Blocked | Storage-Refactor Planet: Single generic Volume-Bucket (T-061 superseded); blocked by T-180 |
+| 178-ship-cargo-universal.md | Feature | Blocked | Ship-Cargo-Universal: alle Schiffe haben Cargo-Volume; blocked by T-177 |
+| 179-pop-as-storage-item.md | Feature | Blocked | Pop wird Storage-Item mit hohem Size-Multi; T-004/T-005 refactored; blocked by T-178 |
+| 180-resource-volume-config.md | Feature | Done | ResourceVolumeConfig (m³/Unit für 14 ResourceTypes + Pop=10); Foundation für T-177ff Generic-Storage |
+| 181-resource-volume-debug-command.md | Feature | Draft | Low-Prio Debug-Command `app:debug:resource-volume` für Multi-Tabelle-Inspection |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |
