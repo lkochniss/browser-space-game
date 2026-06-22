@@ -39,8 +39,13 @@ Bauzeit +Cargo via `ShipCostConfig`.
 **T-015b Station-Cargo (Foundation):**
 - Ship hat `station: ?SpaceStation`-Field (XOR mit `planet`); via `setStation()` umgeschaltet
 - `LoadCargo` / `UnloadCargo` branchen je nach Dock-Target
-- Pop-Transfer Station ↔ Ship: SKIP (Foundation; Station-Pop = T-023b-Domain)
 - Owner-Restriction: nicht enforced auf Foundation; T-093 Allianz-Stationen ergänzt das
+
+**T-015c Station-Pop-Transfer:**
+- LoadCargo: zieht `popCount` aus `station.populationOnStation`, lädt ins Ship-Cargo
+- UnloadCargo: pusht Ship-Cargo-Pop nach `station.populationOnStation`
+- Cap-Check für Station-Pop-Max: defer (T-023b Station-Maintenance liefert das)
+- Insufficient-Pop-Check bei Load (Station-Pop muss reichen)
 
 ## Salvage (T-016)
 

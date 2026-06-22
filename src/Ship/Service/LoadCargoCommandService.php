@@ -66,11 +66,8 @@ readonly class LoadCargoCommandService
         }
 
         if ($station !== null) {
-            // T-015b: Source = Station-Storage. Pop-Transfer nicht unterstützt
-            // (Foundation; Station-Pop ist eigenes Konzept → T-023b).
-            if ($popCount > 0) {
-                throw new InsufficientPopulationException($popCount, 0);
-            }
+            // T-015b/T-015c: Source = Station. Resources via station.storage,
+            // Pop via station.populationOnStation.
             $stationStorage = $station->getStorage();
             foreach ($resources as $resourceTypeValue => $amount) {
                 if ($amount <= 0) {
@@ -82,6 +79,13 @@ readonly class LoadCargoCommandService
                     throw new InsufficientResourcesException($type, $amount, $available);
                 }
             }
+            // T-015c Pop-Check: Station-Pop muss reichen
+            if ($popCount > 0) {
+                $stationPop = $station->getPopulationOnStation();
+                if ($stationPop < $popCount) {
+                    throw new InsufficientPopulationException($popCount, $stationPop);
+                }
+            }
             foreach ($resources as $resourceTypeValue => $amount) {
                 if ($amount <= 0) {
                     continue;
@@ -89,6 +93,10 @@ readonly class LoadCargoCommandService
                 $type = ResourceType::from($resourceTypeValue);
                 $stationStorage->unloadResource($type, $amount);
                 $ship->loadResourceCargo($type, $amount);
+            }
+            if ($popCount > 0) {
+                $station->setPopulationOnStation($station->getPopulationOnStation() - $popCount);
+                $ship->loadPopCargo($popCount);
             }
             $this->em->flush();
 

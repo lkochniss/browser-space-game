@@ -74,10 +74,8 @@ readonly class UnloadCargoCommandService
         }
 
         if ($station !== null) {
-            // T-015b: Target = Station-Storage. Pop-Transfer skip (Station-Pop = T-023b).
-            if ($popCount > 0) {
-                throw new InsufficientCargoException($shipId, 'pop', $popCount, 0);
-            }
+            // T-015b/T-015c: Target = Station. Resources in station.storage,
+            // Pop in station.populationOnStation (Cap-Check = T-023b Folge).
             $stationStorage = $station->getStorage();
             $needed = array_sum($resources);
             if ($needed > $station->getStorageFreeUnits()) {
@@ -94,6 +92,10 @@ readonly class UnloadCargoCommandService
                 $type = ResourceType::from($resourceTypeValue);
                 $stationStorage->loadResource($type, $amount);
                 $ship->unloadResourceCargo($type, $amount);
+            }
+            if ($popCount > 0) {
+                $station->setPopulationOnStation($station->getPopulationOnStation() + $popCount);
+                $ship->unloadPopCargo($popCount);
             }
             $this->em->flush();
 

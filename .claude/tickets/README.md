@@ -18,7 +18,7 @@
 | 014-kolonisationsschiff.md | Feature | Done | COLONY_SHIP + ColonizePlanetCommand mit Pop-Transfer + ShipCostConfig-Refactor |
 | 015-transportschiff.md | Feature | Done | 3 Transport-Klassen + CargoManifest Embeddable + Load/Unload/DockCommands |
 | 015b-station-cargo-transfer.md | Feature | Done | Ship.station-Field + LoadCargo/UnloadCargo branch für Station-Storage; Pop-Transfer skip |
-| 015c-station-pop-transfer.md | Feature | Draft | Pop-Transfer Ship ↔ Station (Foundation-Folge zu T-015b) |
+| 015c-station-pop-transfer.md | Feature | Done | Pop-Transfer Ship ↔ Station via station.populationOnStation; Cap-Check defer T-023b |
 | 016-bergungsschiff.md | Feature | Done | ShipType::SALVAGE + Echtzeit-Salvage (50 Units/min) für AsteroidField + Field-Cleanup |
 | 017-flotte-movement.md | Feature | Done | Persistent-Fleet + Wallclock-Movement (Slowest-Ship-Speed) + FleetArrivalService; Magic-Dock-Cleanup |
 | 017b-fleet-movement-modifiers.md | Feature | Done | Wormhole-Travel ×0.2 wenn Pair zw. Systemen + Player hat Wormhole-Tech; Fallback ohne Tech = normal |

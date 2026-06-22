@@ -30,3 +30,30 @@ No
 - Live-computed wie Storage-Cap, kein DB-Feld
 - Throttle wirkt auf alle Mines/Refineries gleichmäßig (kein per-Building-Priorisierung im MVP)
 - Folge-Ticket: Power-Priorisierung (welches Building zuerst abgeschaltet) optional
+
+## Resolved Decisions
+
+- **Power-Producer (Default-Bootstrap):** HUB (neu, multi-instance via T-172)
+  liefert `50 + 25/level` per Instance. Multi-Stack belohnt Pop-Wachstum.
+  Power-Plants (T-071) bleiben dedizierte Hauptquelle für Late-Game.
+- **Throttle-Mechanik bei Mangel:** Hard-Linear-Ratio (alle Production-
+  Buildings drosseln proportional mit `produced/consumed`). Kein Per-Building-
+  Priority im MVP.
+- **Power-Consumer-Scope:** Alle Buildings konsumieren (auch Renewable +
+  HQ — Lore: Lights, Pumps, Admin). Magnitude differenziert:
+  - HQ + HUB + Renewable (Water-Reclaimer/Agri-Dome/Atmospheric-Processor)
+    + Storage: klein (1-3×level)
+  - Production (Mines, Refineries): mittel (5-15×level wie ursprüngliche AC)
+  - Strategic-Unique (Shipyard, Research-Lab, Probe-Lab, Construction-Yard):
+    hoch (25-40×level — Late-Game-Bottleneck-Faktor)
+- **HQ-Verbrauch:** `3×level` (klein, aber nicht 0 — konsistent mit
+  "alle konsumieren").
+
+## Adjusted Acceptance Criteria (Override)
+
+- [x] (Spezifiziert) `BuildingType::getPowerConsumption(int $level): int`
+      für ALLE Types definieren (nicht nur Mine/Refinery/Storage)
+- [x] (Spezifiziert) `BuildingType::getPowerProduction(int $level): int`
+      nur HUB (50 + 25/level); rest = 0 bis T-071
+- [x] (Renamed) Original-AC "Hub liefert 100 + 50/level (Hub-Reaktor)"
+      ersetzt durch: HUB liefert 50 + 25/level per Instance

@@ -88,6 +88,47 @@ final class StationCargoTransferTest extends IntegrationTestCase
         ));
     }
 
+    public function test_t015c_load_pop_from_station(): void
+    {
+        // Station hat 50 Pop, Ship lädt 20 ab → Station 30, Ship-Cargo +20 Pop.
+        [$ship, $station] = $this->seedShipDockedAtStation(stationPop: 50);
+
+        $this->bus->dispatch(new LoadCargoCommand(
+            shipId: $ship->getId(),
+            popCount: 20,
+        ));
+
+        self::assertSame(20, $ship->getCargo()->getPopCount());
+        self::assertSame(30, $station->getPopulationOnStation());
+    }
+
+    public function test_t015c_load_more_pop_than_station_has_throws(): void
+    {
+        [$ship] = $this->seedShipDockedAtStation(stationPop: 5);
+
+        $this->expectException(\App\Ship\Exception\InsufficientPopulationException::class);
+        $this->bus->dispatch(new LoadCargoCommand(
+            shipId: $ship->getId(),
+            popCount: 20,
+        ));
+    }
+
+    public function test_t015c_unload_pop_to_station(): void
+    {
+        // Ship hat 30 Pop im Cargo, Unload 25 → Station +25 Pop.
+        [$ship, $station] = $this->seedShipDockedAtStation(stationPop: 10);
+        $ship->loadPopCargo(30);
+        $this->em->flush();
+
+        $this->bus->dispatch(new UnloadCargoCommand(
+            shipId: $ship->getId(),
+            popCount: 25,
+        ));
+
+        self::assertSame(5, $ship->getCargo()->getPopCount());
+        self::assertSame(35, $station->getPopulationOnStation());
+    }
+
     public function test_undocked_ship_cannot_load(): void
     {
         $ship = $this->seedUndockedShip();
@@ -106,6 +147,7 @@ final class StationCargoTransferTest extends IntegrationTestCase
         int $stationIronBar = 0,
         int $shipIronBar = 0,
         int $stationCapacity = 100000,
+        int $stationPop = 0,
     ): array {
         $player = new Player(PlayerId::generate());
         $planet = Planet::generatePlanet(PlanetId::generate());
@@ -118,7 +160,7 @@ final class StationCargoTransferTest extends IntegrationTestCase
             solarSystem: $system,
             owner: $player,
             name: 'Test-Station',
-            populationOnStation: 0,
+            populationOnStation: $stationPop,
             storageCapacity: $stationCapacity,
         );
         if ($stationIronBar > 0) {

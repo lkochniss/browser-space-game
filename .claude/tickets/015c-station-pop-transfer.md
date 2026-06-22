@@ -1,7 +1,7 @@
 # T-015c: Station-Pop-Transfer (Cargo-Pop ↔ Station-Pop)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done
 **Effort:** S (~1.5h)
 **Depends on:** T-015b (Station-Cargo-Transfer), T-023b (Station-Maintenance — Draft)
 **Blocks:** —
