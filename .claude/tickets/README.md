@@ -80,7 +80,7 @@
 | 066-treibstoff-resource.md | Feature | Blocked | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Draft | Steel/Chip/Composite/Hull/Shield Tier-2-Outputs |
 | 068-defense-buildings.md | Feature | Draft | Shield/Turret/Sensor/AA für Planet-Defense |
-| 069-research-lab-tier.md | Feature | Draft | Lab-Tier mit RP-Output + Tech-Tier-Lock |
+| 069-research-lab-tier.md | Feature | Done | ResearchNode.requiredLabLevel + Tier-Gate-Validation; Tier-1/2/3-Mapping; LabLevelTooLowException |
 | 070-pop-qol-buildings.md | Feature | Draft | Hospital/University/Cultural-Center/Temple |
 | 071-power-plants.md | Feature | Draft | Solar/Fusion/Antimaterie-Reactor (3 Tiers) |
 | 072-erzeugnis-production-buildings.md | Feature | Draft | Steel-Smelter/Chip-Fab/Composite-Plant/Hull-Foundry/Shield-Assembler |

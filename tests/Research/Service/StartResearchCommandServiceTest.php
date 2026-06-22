@@ -15,9 +15,11 @@ use App\Player\ValueObject\PlayerId;
 use App\Research\Exception\AlreadyResearchingException;
 use App\Research\Exception\InsufficientResearchResourcesException;
 use App\Research\Exception\InvalidLabSelectionException;
+use App\Research\Exception\LabLevelTooLowException;
 use App\Research\Exception\MaxLevelReachedException;
 use App\Research\Exception\ResearchLabMissingException;
 use App\Research\Exception\ResearchNodeNotFoundException;
+use App\Research\Model\PlayerResearch;
 use App\Research\Service\ResearchCompletionService;
 use App\Research\Service\StartResearchCommandService;
 use App\Resource\Model\Resource;
@@ -251,6 +253,94 @@ final class StartResearchCommandServiceTest extends IntegrationTestCase
         $this->em->flush();
 
         return $player;
+    }
+
+    public function test_tier_2_node_rejected_with_lab_l1(): void
+    {
+        // T-069: propulsion_ion ist Tier-2 (requiredLabLevel=2). Lab L1 reicht nicht.
+        $player = $this->seedPlayerWithLab(labLevel: 1);
+        // Prereq erfüllen
+        $this->grantResearch($player, 'shipbuilding', 1);
+        $this->grantResearch($player, 'propulsion_hydrogen', 1);
+        $this->addShipyard($player, level: 1);
+        $this->addExtraResources($player);
+
+        $this->expectException(LabLevelTooLowException::class);
+        $this->makeStartService()->__invoke($player->getId(), 'propulsion_ion');
+    }
+
+    public function test_tier_2_node_accepted_with_lab_l2(): void
+    {
+        $player = $this->seedPlayerWithLab(labLevel: 2);
+        $this->grantResearch($player, 'shipbuilding', 1);
+        $this->grantResearch($player, 'propulsion_hydrogen', 1);
+        $this->addShipyard($player, level: 1);
+        $this->addExtraResources($player);
+
+        $active = $this->makeStartService()->__invoke($player->getId(), 'propulsion_ion');
+
+        self::assertSame('propulsion_ion', $active->getNodeSlug());
+    }
+
+    public function test_tier_3_node_rejected_with_lab_l2(): void
+    {
+        // T-069: propulsion_antimatter ist Tier-3 (requiredLabLevel=3). Lab L2 reicht nicht.
+        $player = $this->seedPlayerWithLab(labLevel: 2);
+        $this->grantResearch($player, 'shipbuilding', 1);
+        $this->grantResearch($player, 'propulsion_hydrogen', 1);
+        $this->grantResearch($player, 'propulsion_ion', 1);
+        $this->grantResearch($player, 'propulsion_fusion', 1);
+        $this->addShipyard($player, level: 1);
+        $this->addExtraResources($player);
+
+        $this->expectException(LabLevelTooLowException::class);
+        $this->makeStartService()->__invoke($player->getId(), 'propulsion_antimatter');
+    }
+
+    public function test_booster_lifts_effective_lab_above_required(): void
+    {
+        // T-025c × T-069: Primary L2 + Booster L2 → effective 3.0 → reicht für Tier-3
+        $player = $this->seedPlayerWithLabAndExtraPlanet(primaryLvl: 2, boosterLvl: 2);
+        $this->grantResearch($player, 'shipbuilding', 1);
+        $this->grantResearch($player, 'propulsion_hydrogen', 1);
+        $this->grantResearch($player, 'propulsion_ion', 1);
+        $this->grantResearch($player, 'propulsion_fusion', 1);
+        $this->addShipyard($player, level: 1);
+        $this->addExtraResources($player);
+
+        $planets = iterator_to_array($player->getPlanets());
+        $active = $this->makeStartService()->__invoke(
+            $player->getId(),
+            'propulsion_antimatter',
+            $planets[0]->getId(),
+            [$planets[1]->getId()],
+        );
+
+        self::assertSame('propulsion_antimatter', $active->getNodeSlug());
+    }
+
+    private function grantResearch(Player $player, string $slug, int $level): void
+    {
+        $this->em->persist(PlayerResearch::generate($player, $slug, $level));
+        $this->em->flush();
+    }
+
+    private function addShipyard(Player $player, int $level): void
+    {
+        $planet = $player->getPlanets()->first();
+        $shipyard = new Building(BuildingId::generate(), BuildingType::SHIPYARD, $level);
+        $shipyard->setFinishedAt(new DateTimeImmutable('-1 minute'));
+        $planet->addBuilding($shipyard);
+        $this->em->flush();
+    }
+
+    private function addExtraResources(Player $player): void
+    {
+        $planet = $player->getPlanets()->first();
+        $planet->addResource(Resource::generateWithAmount(ResourceType::COPPER_ORE, 5000));
+        $planet->addResource(Resource::generateWithAmount(ResourceType::TITANIUM_ORE, 5000));
+        $planet->addResource(Resource::generateWithAmount(ResourceType::URANIUM_ORE, 5000));
+        $this->em->flush();
     }
 
     /**

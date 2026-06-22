@@ -14,6 +14,10 @@ use App\Research\Model\Prerequisite\ResearchPrerequisite;
  * `resourceCostBase` ist Map<ResourceType-value, int> für Level 1; höhere Levels
  * skalieren via `ResearchDurationConfig::resourceCost(targetLevel)` analog
  * Building-Cost-Pattern.
+ *
+ * T-069: `requiredLabLevel` definiert das minimum effective Lab-Level (Primary
+ * + Booster-Beitrag, T-025c) das Player haben muss um diesen Node zu starten.
+ * Tier-Gating-Pattern: Tier-1 = L1, Tier-2 = L2, Tier-3 (Endgame) = L3.
  */
 readonly class ResearchNode
 {
@@ -29,6 +33,7 @@ readonly class ResearchNode
         public int $maxLevel,
         public array $prerequisites = [],
         public array $resourceCostBase = [],
+        public int $requiredLabLevel = 1,
     ) {
     }
 }

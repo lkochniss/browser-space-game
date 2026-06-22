@@ -53,4 +53,25 @@ final class ResearchTreeTest extends TestCase
         $this->expectException(ResearchNodeNotFoundException::class);
         (new ResearchTree())->get('does_not_exist');
     }
+
+    public function test_required_lab_level_tier_mapping(): void
+    {
+        // T-069: Tier-1 = L1, Tier-2 = L2, Tier-3 = L3
+        $tree = new ResearchTree();
+
+        // Tier-1 (Foundation)
+        self::assertSame(1, $tree->get('basic_mining')->requiredLabLevel);
+        self::assertSame(1, $tree->get('metallurgy')->requiredLabLevel);
+        self::assertSame(1, $tree->get('propulsion_hydrogen')->requiredLabLevel);
+
+        // Tier-2 (Mid-Game)
+        self::assertSame(2, $tree->get('propulsion_ion')->requiredLabLevel);
+        self::assertSame(2, $tree->get('propulsion_fusion')->requiredLabLevel);
+        self::assertSame(2, $tree->get('ftl_hyperdrive')->requiredLabLevel);
+
+        // Tier-3 (Endgame)
+        self::assertSame(3, $tree->get('propulsion_antimatter')->requiredLabLevel);
+        self::assertSame(3, $tree->get('ftl_warp')->requiredLabLevel);
+        self::assertSame(3, $tree->get('ftl_jumpdrive')->requiredLabLevel);
+    }
 }

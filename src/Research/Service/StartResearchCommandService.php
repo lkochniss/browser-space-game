@@ -15,6 +15,7 @@ use App\Player\ValueObject\PlayerId;
 use App\Research\Exception\AlreadyResearchingException;
 use App\Research\Exception\InsufficientResearchResourcesException;
 use App\Research\Exception\InvalidLabSelectionException;
+use App\Research\Exception\LabLevelTooLowException;
 use App\Research\Exception\MaxLevelReachedException;
 use App\Research\Exception\PrerequisiteNotMetException;
 use App\Research\Exception\ResearchLabMissingException;
@@ -119,6 +120,11 @@ readonly class StartResearchCommandService implements PlayerResearchLookup
         $primaryLvl = $this->labLevel($primaryPlanet, $now);
         $boosterLvls = array_map(fn (Planet $p): int => $this->labLevel($p, $now), $boosterPlanets);
         $effectiveLab = $this->tree->computeEffectiveLabLevel($primaryLvl, $boosterLvls);
+
+        // T-069: Lab-Tier-Gate — effective Lab muss requiredLabLevel erreichen
+        if ($effectiveLab < (float) $node->requiredLabLevel) {
+            throw new LabLevelTooLowException($nodeSlug, $node->requiredLabLevel, $effectiveLab);
+        }
 
         $cost = $this->durationConfig->resourceCost($node, $targetLevel, $primaryLvl, $boosterLvls);
 

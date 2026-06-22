@@ -18,6 +18,15 @@ use App\Resource\ValueObject\ResourceType;
  * Foundation-Stub-Nodes (mining_efficiency_1, ftl_tier_1) bleiben für
  * existing Tests + spätere Branch-Erweiterung (T-026). T-170 ergänzt 6
  * Tier-1-Nodes mit Building-Prereqs die echte Buildings unlocken.
+ *
+ * T-069 Lab-Tier-Gating:
+ *   - Tier-1 (Foundation): requiredLabLevel = 1
+ *   - Tier-2 (Mid-Game): requiredLabLevel = 2
+ *   - Tier-3 (Endgame): requiredLabLevel = 3
+ *
+ * Effective Lab-Level (T-025c) = Primary-Lab.Level + sum(Booster-Decay).
+ * `StartResearchCommandService` wirft `LabLevelTooLowException` wenn der
+ * berechnete Wert unter `node.requiredLabLevel` liegt.
  */
 class ResearchTree
 {
@@ -193,6 +202,7 @@ class ResearchTree
                 ResourceType::IRON_BAR->value => 120,
                 ResourceType::COPPER_ORE->value => 80,
             ],
+            requiredLabLevel: 2,
         ));
         $this->register(new ResearchNode(
             slug: 'propulsion_fusion',
@@ -207,6 +217,7 @@ class ResearchTree
                 ResourceType::IRON_BAR->value => 200,
                 ResourceType::TITANIUM_ORE->value => 80,
             ],
+            requiredLabLevel: 2,
         ));
         $this->register(new ResearchNode(
             slug: 'propulsion_antimatter',
@@ -221,6 +232,7 @@ class ResearchTree
                 ResourceType::URANIUM_ORE->value => 100,
                 ResourceType::TITANIUM_ORE->value => 200,
             ],
+            requiredLabLevel: 3,
         ));
         $this->register(new ResearchNode(
             slug: 'ftl_hyperdrive',
@@ -235,6 +247,7 @@ class ResearchTree
                 ResourceType::IRON_BAR->value => 300,
                 ResourceType::URANIUM_ORE->value => 80,
             ],
+            requiredLabLevel: 2,
         ));
         $this->register(new ResearchNode(
             slug: 'ftl_warp',
@@ -250,6 +263,7 @@ class ResearchTree
                 ResourceType::URANIUM_ORE->value => 150,
                 ResourceType::TITANIUM_ORE->value => 100,
             ],
+            requiredLabLevel: 3,
         ));
         $this->register(new ResearchNode(
             slug: 'ftl_jumpdrive',
@@ -265,6 +279,7 @@ class ResearchTree
                 ResourceType::URANIUM_ORE->value => 300,
                 ResourceType::TITANIUM_ORE->value => 400,
             ],
+            requiredLabLevel: 3,
         ));
     }
 

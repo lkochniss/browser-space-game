@@ -39,6 +39,25 @@ effectiveDuration = node.baseDurationSeconds × 2^(targetLevel-1) ÷ pow(1.18, m
 
 Resource-Cost skaliert ebenfalls `2^(targetLevel-1)` — analog Building-Upgrades.
 
+## Lab-Tier-Gating (T-069)
+
+Jeder Node hat `requiredLabLevel: int = 1` (Default Tier-1). Effective-Lab
+(Primary-Lab.Level + Multi-Lab-Booster-Decay, T-025c) muss diesen Wert
+erreichen — sonst wirft `StartResearchCommandService` `LabLevelTooLowException`.
+
+| Tier | Required Lab | Beispiele |
+|------|--------------|-----------|
+| 1 | L1 | basic_mining, metallurgy, astronomy, shipbuilding, advanced_mining, recycling, propulsion_hydrogen, construction_speed_1, logistics_1 |
+| 2 | L2 | propulsion_ion, propulsion_fusion, ftl_hyperdrive |
+| 3 | L3 | propulsion_antimatter, ftl_warp, ftl_jumpdrive |
+
+Booster lifting: ein Player mit Primary L2 + Booster L2 (effective 3.0)
+schafft Tier-3, ohne ein einzelnes L3-Lab bauen zu müssen. Tradeoff: Cost
+(T-025c D2).
+
+**Power-Consumption** (T-065-Hook): Lab L3+ wird Reaktor brauchen; aktuell
+Stub-NoOp da T-065 Draft.
+
 ## Multi-Lab Opt-In (T-025c)
 
 Multi-Lab ist eine **bewusste Entscheidung pro Forschung mit Kosten**. Player wählt
@@ -107,7 +126,7 @@ weiterhin gültig — Test- und API-Friction minimiert.
 
 | Entity | Felder | Zweck |
 |--------|--------|-------|
-| `ResearchNode` (VO) | slug, name, description, baseDurationSeconds, maxLevel, prerequisites: list<{slug,level}>, resourceCostBase: array<resVal,int> | Deklarative Tree-Definition |
+| `ResearchNode` (VO) | slug, name, description, baseDurationSeconds, maxLevel, prerequisites: list<{slug,level}>, resourceCostBase: array<resVal,int>, requiredLabLevel (T-069) | Deklarative Tree-Definition |
 | `PlayerResearch` | id, player_id, node_slug, level — UNIQUE(player_id, node_slug) | Persistierter Forschungsstand |
 | `ActiveResearch` | id, player_id (UNIQUE), node_slug, target_level, started_at, finished_at, primary_planet_id, booster_planet_ids (JSON) | Aktuell laufende Forschung; Multi-Lab-Konstellation frozen at start (T-025c) |
 
@@ -192,6 +211,7 @@ Travel frei (siehe fleets.md). `ftl_warp` ist Wormhole-Tech-Slug für T-026b.
 | `PrerequisiteNotMetException` | Prereq-Slug nicht auf required Level |
 | `InsufficientResearchResourcesException` | Resources über alle Player-Planeten reichen nicht |
 | `InvalidLabSelectionException` (T-025c) | Primary/Booster gehört nicht Player, kein ready Lab, Overlap oder Duplikat |
+| `LabLevelTooLowException` (T-069) | Effective Lab-Level (Primary + Booster-Decay) liegt unter `node.requiredLabLevel` |
 
 Alle extenden `\DomainException`. Validation vor Mutation — kein State-Change bei Failure.
 
@@ -237,7 +257,7 @@ Player-Planeten (T-025b stackt später).
 - **T-026** Antrieb-Tree (echte FTL-Nodes inkl. ftl_tier_2 Unlock)
 - **T-027** Planetologie-Forschung (Probe-Boost)
 - **T-064** Bauzeit-Boost (Decisions vorab dokumentiert)
-- **T-069** Lab-Tier-Mechanik (requiredLabLevel-Gates pro Node)
+- **T-069 Done** Lab-Tier-Mechanik (requiredLabLevel-Gates pro Node)
 - **T-098** Specialist-Tracks (Branch-spezifischer Speed-Multiplier)
 - **T-117** Allianz-Forschung (Cross-Player-Donate)
 - **T-126/T-128/T-127/T-129/T-134/T-135/T-136/T-137/T-138** Echte Tech-Branches

@@ -1,9 +1,9 @@
 # T-069 Forschungs-Lab Tier-Mechanik
 
 **Type:** Feature
-**Status:** Draft (rewritten 2026-06-19 nach T-025-Decisions)
+**Status:** Done (Foundation; Power-Hook bleibt T-065-Stub-NoOp)
 **Effort:** M
-**Depends on:** T-025 (Forschungs-Framework, Wallclock-based)
+**Depends on:** T-025 (Done), T-025c (Multi-Lab Effective-Lab, Done)
 **Blocks:** T-117 (Allianz-Forschung)
 
 ## Beschreibung
@@ -20,21 +20,34 @@ Multiplier-Curve). T-069 erweitert um:
 
 ## Acceptance Criteria
 
-- [ ] `ResearchNode::requiredLabLevel: int` field, validated in
-      `StartResearchCommandService`
-- [ ] Lab-Speed-Curve in `BuildingType::RESEARCH_LAB::getResearchSpeedMultiplier($level)`
-      finalisiert
-- [ ] Lab-Pop-Skalierung in BuildingCostConfig (höhere Levels brauchen mehr Pop)
-- [ ] T-065-Hook (Power) — wenn done; sonst stub-NoOp
-- [ ] Tests: Tier-Gate-Validation, Speed-Curve-Steigung, Pop-Skalierung
+- [x] `ResearchNode::requiredLabLevel: int = 1` field
+- [x] `StartResearchCommandService` validiert `effectiveLab >= requiredLabLevel`
+      → `LabLevelTooLowException`
+- [x] Tier-Mapping in ResearchTree:
+      - Tier-1 (Foundation): basic_mining, metallurgy, astronomy, shipbuilding,
+        advanced_mining, recycling, propulsion_hydrogen, construction_speed_1,
+        logistics_1 → L1
+      - Tier-2 (Mid-Game): propulsion_ion, propulsion_fusion, ftl_hyperdrive → L2
+      - Tier-3 (Endgame): propulsion_antimatter, ftl_warp, ftl_jumpdrive → L3
+- [x] Lab-Speed-Curve `pow(1.18, effectiveLab-1)` bereits finalisiert in
+      `ResearchDurationConfig` (T-025) — keine Änderung nötig
+- [x] Lab-Pop-Skalierung läuft bereits via `BuildingCostConfig::getCost(level)`
+      mit `2^level × softCap` Multi — keine Änderung nötig
+- [x] T-065-Hook (Power) — Stub-NoOp doc-Eintrag (T-065 Draft)
+- [x] Tests: 4 Tier-Gate-IT-Tests + 1 ResearchTree-Tier-Mapping-Unit-Test
+- [x] Doc `research.md` Tier-Gating-Sektion
 
 ## Out of Scope
 
-- **Multi-Lab-Stacking** → **T-025b**
+- **Multi-Lab-Stacking** ist T-025c (Done) — Effective-Lab via Primary +
+  Booster-Decay genutzt
 - **RP-Pool-Pattern**: NICHT angedacht (T-025 ist Wallclock-basiert)
+- **Power-Consumption-Wiring** (T-065 Draft) — Hook-Punkt benannt, Implementation
+  bleibt in T-065
+- **Specialist-Track Branch-Boost** (T-098) — eigener Hook in T-098
 
 ## Notes
 
-- Foundation in T-025 reicht für Demo, T-069 macht es Production-grade.
-- Specialist-Track (T-098) gibt Lab-Speed-Multiplier auf bestimmten Branches —
-  separater Hook im T-098-Ticket.
+- Foundation in T-025 + T-025c reicht — T-069 macht das Gating production-grade
+- Booster-Lifting: Player ohne dedicated L3-Lab kann via 2×L2 (effective 3.0)
+  trotzdem Tier-3 erforschen — strategischer Tradeoff via T-025c Cost
