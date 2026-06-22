@@ -34,7 +34,7 @@
 | 025b-multi-lab-research-boost.md | Feature | Done (superseded T-025c) | Auto-Aggregator (geometric decay 0.5); wird durch T-025c-Opt-In-Modell ersetzt |
 | 025c-multi-lab-opt-in-with-cost.md | Feature | Open | Opt-In Multi-Lab beim StartResearch + marginal-Cost-Aufschlag pro Booster |
 | 026-antriebstechnologie-tree.md | Feature | Done | 7 Antriebs-Nodes + Inter-System-Travel-Lock (ftl_hyperdrive); PropulsionType/Fuel via Folge |
-| 026b-wormhole-tech-validation.md | Feature | Draft | Wormhole.requiredTechSlug aktiv validieren (Folge zu T-026) |
+| 026b-wormhole-tech-validation.md | Feature | Superseded | Durch T-017b absorbiert (Fallback-Semantik statt Hard-Block, User-Decision) |
 | 026c-propulsion-type-field.md | Feature | Draft | Ship.propulsion + Speed/Range Mapping (Folge zu T-026) |
 | 027-planetologie-research.md | Feature | Open | Planetologie-Forschung (Sondendetails + Terraform-Gate) |
 | 028-techdebt-wrong-namespaces.md | TechDebt | Done | `use ValueObject\PlanetId` etc. — falsche Imports (gefixt) |
@@ -185,7 +185,7 @@
 | 174-deprecate-station-build.md | TechDebt | Draft | Station-Build-Path entfernen (Lost-Tech-Lore); Stations nur via Claim/Capture |
 | 175-pirate-station-spawn.md | Feature | Draft | Galaxy-Bootstrap-Spawn von Pirate-owned + ABANDONED Stations (Lost-Tech-Lore) |
 | 176-pirate-station-takeover.md | Feature | Draft | Pirate-Takeover ABANDONED → Pirate + Combat-Capture-Mechanik (zweistufig) |
-| 177-generic-storage-refactor.md | Feature | Blocked | Storage-Refactor Planet: Single generic Volume-Bucket (T-061 superseded); blocked by T-180 |
+| 177-generic-storage-refactor.md | Feature | Ready | Storage-Refactor Planet: Single generic Volume-Bucket (T-061 superseded); T-180 Foundation done |
 | 178-ship-cargo-universal.md | Feature | Blocked | Ship-Cargo-Universal: alle Schiffe haben Cargo-Volume; blocked by T-177 |
 | 179-pop-as-storage-item.md | Feature | Blocked | Pop wird Storage-Item mit hohem Size-Multi; T-004/T-005 refactored; blocked by T-178 |
 | 180-resource-volume-config.md | Feature | Done | ResourceVolumeConfig (m³/Unit für 14 ResourceTypes + Pop=10); Foundation für T-177ff Generic-Storage |

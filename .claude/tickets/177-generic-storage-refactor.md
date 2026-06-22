@@ -1,7 +1,7 @@
 # T-177: Generic-Storage-Refactor (Planet)
 
 **Type:** Feature (Refactor)
-**Status:** Blocked (by T-180)
+**Status:** Ready (T-180 Foundation done)
 **Effort:** L (~6-8h, hoch wegen Migration + Test-Refactor)
 **Depends on:** T-180 (Size-Multiplier-Config — Foundation)
 **Blocks:** T-061 (Done-Status muss revidiert werden), T-066 (Fuel-Storage), T-178 (Ship-Cargo), T-179 (Pop-Storage)
