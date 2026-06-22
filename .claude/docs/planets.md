@@ -108,6 +108,29 @@ Heute alle Types 0 (Tuning-Punkt für späteres Balancing).
 - `getEffectivePopGrowthMultiplier()`
 - `getEffectiveConstructionSpeedMultiplier(BuildingType)`
 
+## Planet-Cap pro Player (T-101)
+
+Anti-Steamroller-Mechanik: jeder Player hat ein Maximum an Planeten.
+
+```
+cap = min(HARD_CAP=10, BASE_CAP=5 + logistics_1.level)
+```
+
+| Logistics-Level | Effective Cap |
+|-----------------|---------------|
+| 0 (default)     | 5             |
+| 1               | 6             |
+| 2               | 7             |
+| 3 (current max) | 8             |
+| 4+ (future T-136) | bis zu 10   |
+
+`PlayerPlanetCapCalculator::compute($player)` liefert das aktuelle Cap.
+`ColonizePlanetCommandService` wirft `PlanetCapReachedException` wenn
+`currentUsage >= cap`. Heimat-Planet wird gleich gewertet (kein Sonder-Slot).
+
+**Abandon-Mechanik** (Slot freigeben durch Aufgabe) ist in T-101b ausgelagert
+(Draft mit Open Questions zu Resource-Reset/Cooldown/Heimat-Schutz).
+
 ## Strategic-Building-Helper
 
 Pro Strategic-Building bietet Planet einen Level-Helper, der nur fertige
@@ -129,4 +152,6 @@ Buildings zählt (`isReady($now)`):
 - `src/Planet/ValueObject/PlanetSize.php` (T-008)
 - `src/Planet/Service/ClaimStartPlanetCommandService.php` (Galaxy + Start-Planet)
 - `src/Planet/Service/GeneratePlanetCommandService.php` (heute redundant — Folge-TechDebt)
+- `src/Planet/Service/ColonizePlanetCommandService.php` (T-014 + T-101 Cap)
+- `src/Planet/Service/PlayerPlanetCapCalculator.php` (T-101)
 - `src/Planet/Repository/PlanetRepository.php`

@@ -8,6 +8,7 @@ use App\Common\Interface\ClockInterface;
 use App\Planet\Exception\ColonyShipNotDockedException;
 use App\Planet\Exception\NotAColonyShipException;
 use App\Planet\Exception\PlanetAlreadyClaimedException;
+use App\Planet\Exception\PlanetCapReachedException;
 use App\Planet\Exception\PlanetNotFoundException;
 use App\Planet\Exception\ShipNotFoundException;
 use App\Planet\Exception\ShipNotReadyException;
@@ -26,11 +27,13 @@ use Doctrine\ORM\EntityManagerInterface;
  * - Schiff existiert + ist COLONY_SHIP + isReady (Wallclock fertig)
  * - Heimat-Planet (= ship.planet) existiert + hat Player
  * - Target-Planet existiert + ist NICHT geclaimt
+ * - T-101: Player hat Planet-Cap nicht erreicht
  * - Pop-Transfer: Heimat verliert assigned-Pop (release+kill), Target erhält Start-Pop
  * - Player claimt Target-Planet
  * - Schiff wird gelöscht
  *
- * Out-of-Scope: Erkundungs-Check (T-087), Movement-Time (T-017).
+ * Out-of-Scope: Erkundungs-Check (T-087), Movement-Time (T-017),
+ * Planet-Abandon (T-101b Folge).
  */
 readonly class ColonizePlanetCommandService
 {
@@ -39,6 +42,7 @@ readonly class ColonizePlanetCommandService
         private PlanetRepository $planetRepository,
         private ShipRepository $shipRepository,
         private ClockInterface $clock,
+        private PlayerPlanetCapCalculator $planetCapCalculator,
     ) {
     }
 
@@ -77,6 +81,13 @@ readonly class ColonizePlanetCommandService
 
         if ($targetPlanet->getPlayer() !== null) {
             throw new PlanetAlreadyClaimedException($targetPlanetId);
+        }
+
+        // T-101: Planet-Cap-Check (vor Pop-Transfer + Ship-Remove → State-Sicherheit)
+        $cap = $this->planetCapCalculator->compute($player);
+        $current = $this->planetCapCalculator->currentUsage($player);
+        if ($current >= $cap) {
+            throw new PlanetCapReachedException($current, $cap);
         }
 
         $popTransfer = $ship->getPopulationAssigned();

@@ -130,6 +130,7 @@ class InteractiveDemoCommand extends Command
         private readonly BuildBuildingCommandService $buildService,
         private readonly BuildingUnlockConfig $unlockConfig,
         private readonly \App\Building\Service\BuildQueueCapCalculator $queueCapCalculator,
+        private readonly \App\Planet\Service\PlayerPlanetCapCalculator $planetCapCalculator,
         #[Autowire('%kernel.environment%')]
         private readonly string $kernelEnv,
         #[Autowire('%kernel.project_dir%')]
@@ -377,6 +378,10 @@ class InteractiveDemoCommand extends Command
     private function showStatus(SymfonyStyle $io, Player $player): bool
     {
         $io->section(sprintf('Status — Player %s — Clock: %s', $player->getId(), $this->clock->now()->format('Y-m-d H:i:s')));
+
+        $planetCap = $this->planetCapCalculator->compute($player);
+        $planetUsed = $this->planetCapCalculator->currentUsage($player);
+        $io->text(sprintf('Planets: <info>%d/%d</info>', $planetUsed, $planetCap));
 
         foreach ($player->getPlanets() as $planet) {
             $sys = $planet->getSolarSystem();

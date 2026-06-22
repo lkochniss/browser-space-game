@@ -120,7 +120,8 @@
 | 098-specialist-tracks.md | Feature | Draft | 5 Specialist-Tracks PERMANENT (+30%/-10% + Branch-Lock) |
 | 099-threat-skalierung.md | Feature | Draft | PlayerScore → PvE-Encounter-Difficulty-Adaptiv |
 | 100-trade-hub-buildings.md | Feature | Blocked | MARKETPLACE/SPACEPORT/CUSTOMS_HOUSE/WAREHOUSE/BAZAAR; blocked by T-177 |
-| 101-planet-cap-per-player.md | Feature | Draft | Max 5 Planeten/Player (erweiterbar via Forschung bis 10) |
+| 101-planet-cap-per-player.md | Feature | Done | Planet-Cap Foundation: BASE 5 + logistics_1 Bonus, HARD_CAP 10; Colonize-Cap-Check; Demo-Status N/M |
+| 101b-planet-abandon-mechanic.md | Feature | Draft | Planet-Abandon-Mechanik (Folge zu T-101) — Resources/Buildings reset + Slot frei |
 | 102-ship-classes-foundation.md | Feature | Draft | 5 Combat × 3 Mk + 4 Spezial-Klassen, hohe Cost, Captain-Required |
 | 103-battle-resolution-engine.md | Feature | Draft | Round-based Auto-Resolution + Tactic-Counter (RPS-light) |
 | 104a-crew-foundation.md | Feature | Draft | Akademie + Officer-Quarters + Captain-Crew-Type |

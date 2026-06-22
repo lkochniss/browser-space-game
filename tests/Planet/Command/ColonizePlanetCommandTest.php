@@ -9,6 +9,7 @@ use App\Planet\Command\ColonizePlanetCommand;
 use App\Planet\Exception\ColonyShipNotDockedException;
 use App\Planet\Exception\NotAColonyShipException;
 use App\Planet\Exception\PlanetAlreadyClaimedException;
+use App\Planet\Exception\PlanetCapReachedException;
 use App\Planet\Exception\PlanetNotFoundException;
 use App\Planet\Exception\ShipNotFoundException;
 use App\Planet\Exception\ShipNotReadyException;
@@ -140,6 +141,27 @@ final class ColonizePlanetCommandTest extends IntegrationTestCase
         $this->em->flush();
 
         $this->expectException(ColonyShipNotDockedException::class);
+        $this->bus->dispatch(new ColonizePlanetCommand($ship->getId(), $target->getId()));
+    }
+
+    public function test_throws_when_player_planet_cap_reached(): void
+    {
+        // T-101: Player auf Cap (5 Planeten ohne Logistics-Forschung) → cap-violation
+        [$player, , $target, $ship] = $this->seed(
+            popHomeTotal: 100,
+            popHomeAssigned: 50,
+            shipType: \App\Ship\ValueObject\ShipType::COLONY_SHIP,
+            shipReady: true,
+        );
+        // Player hat schon 1 Planet (Heimat) — claim weitere 4 → 5/5
+        for ($i = 0; $i < 4; $i++) {
+            $extra = Planet::generatePlanet(PlanetId::generate());
+            $player->claimPlanet($extra);
+            $this->em->persist($extra);
+        }
+        $this->em->flush();
+
+        $this->expectException(PlanetCapReachedException::class);
         $this->bus->dispatch(new ColonizePlanetCommand($ship->getId(), $target->getId()));
     }
 
