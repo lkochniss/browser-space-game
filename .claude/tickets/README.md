@@ -179,4 +179,5 @@
 | 168-demo-cli-env-preflight.md | Bug | Done | `app:demo:run` Auto-Re-Exec in demo-Env via Symfony\Process — kein --env=demo mehr nötig |
 | 169-demo-reset-action-bug.md | Bug | Done | Reset-Action zentralisiert via bootstrapFreshPlayer + pendingPlayerSwap; Buff+Galaxy konsistent, Loop schwenkt um |
 | 171-building-uniqueness-slot-concept.md | Feature | Done | 6 Strategic-Unique + Slot-Size pro Building (1-3) + Slot-Cap pro PlanetSize (8-40) |
+| 172-hq-vs-hub-refactor.md | Feature | Draft | HQ neu (unique, zentral) + HUB refactor (multi-instance Wohngebäude); CONSTRUCTION_HUB-Rename mit |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |
