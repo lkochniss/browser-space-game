@@ -114,6 +114,12 @@ readonly class BuildBuildingCommandService
 
         $planet->addBuilding($building, $now);
 
+        // T-096: Lifetime-Counter — zählt Initial-Build pro Player (nicht Upgrades).
+        $owner = $planet->getPlayer();
+        if ($owner !== null) {
+            $owner->recordBuildingBuilt();
+        }
+
         $this->em->flush();
 
         return $building;

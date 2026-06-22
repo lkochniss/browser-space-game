@@ -1,29 +1,41 @@
 # T-096 Player-History / Stats
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done (Foundation; Tick-/Battle-Counters in T-096b split)
 **Effort:** S
-**Depends on:** T-103 (Battle), T-080 (Loot)
-**Blocks:** T-141 (Achievements), T-054 (Leaderboard)
+**Depends on:** T-014 (Done), T-009 (Done), T-012 (Done)
+**Blocks:** T-096b
 
 ## Beschreibung
 Persistente Player-Statistics: total Battles won/lost, total Resources mined, total Buildings built, etc. Foundation für Achievements + Leaderboards.
 
 ## Acceptance Criteria
-- [ ] PlayerStats-Entity (1:1 mit Player, lazy-loaded)
-- [ ] Counter-Felder: battlesWon, battlesLost, resourcesMinedTotal (Map<ResourceType, int>), buildingsBuilt, planetsColonized, shipsBuilt, shipsLost, factionRepLifetime (Map<FactionId, int>)
-- [ ] EventListener: Tick-Processor + Battle-Resolver schreiben in PlayerStats
-- [ ] Idempotent: Bei Re-Tick keine Doppel-Counts (TickProcessor-Hash-Check)
-- [ ] Read-API: PlayerStatsService::getStats(Player): PlayerStatsDto
-- [ ] Lifetime-XP für T-123 (Player-XP) baut hierauf
 
-## Affected Tests
-- tests/Player/Service/PlayerStatsTest.php
-- tests/Player/Service/PlayerStatsIdempotencyTest.php
+- [x] 3 Counter-Felder direkt auf Player (`stats_buildings_built`,
+      `stats_planets_colonized`, `stats_ships_built`) — pragmatisch statt
+      separater PlayerStats-Entity (3 ints, kein Schema-Overhead)
+- [x] `Player::recordBuildingBuilt()`, `recordPlanetColonized()`,
+      `recordShipBuilt()` Methoden (alle post-Success Hooks)
+- [x] Hook in `BuildBuildingCommandService` (Initial-Build, nicht Upgrade)
+- [x] Hook in `ColonizePlanetCommandService` (Erfolg)
+- [x] Hook in `BuildShipCommandService` (Erfolg)
+- [x] Migration `Version20260622000006`
+- [x] Tests: 5 IT-Tests (Default + 3 Hook-Increments + Multi-Stack)
+- [x] Doc `player.md` Stats-Sektion
 
-## Fixtures Needed
-Yes — Player + Stats-Setup
+## Out of Scope (in T-096b verschoben)
+
+- **Resource-Mining-Total** (JSON map ResourceType→int) — braucht Hook in
+  ResourceProductionProcessor mit Idempotency-Diskussion
+- **Battle-Counters** (battlesWon, battlesLost, shipsLost) — braucht T-103
+- **Faction-Rep-Lifetime** (cum-Rep-Gain) — Hook in ReputationService
+- **Refactor zu separater PlayerStats-Entity** — falls Performance/Schema
+  das verlangt; aktuell 3 ints reichen
+- **PlayerStatsDto + getStats() Read-API** — für T-141 Achievements / T-054 Leaderboard
+- **Lifetime-XP-Aggregation** — für T-123
 
 ## Notes
 - Counter werden inkremental geupdated, nicht aggregiert aus Events (Performance)
-- Gut für T-141 Achievements direkt prüfbar via Counter-Schwelle
+- Build-Counter zählt Initial-Builds, nicht Upgrades — Upgrade ist Level-Steigerung,
+  kein neues Building
+- Demo CLI zeigt die Counter heute nicht — kann in Status-Display ergänzt werden

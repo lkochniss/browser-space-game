@@ -117,7 +117,8 @@
 | 094c-build-queue-slot-extensions.md | Feature | Done | HQ-Level +1 Parallel-Slot pro Lvl-5 (Cap 8); Logistics-Forschung in T-094d split |
 | 094d-build-queue-logistics-research.md | Feature | Done | logistics_1 (3 Lvl, +1 Slot/Lvl) + BuildQueueCapCalculator; HQ+Logistics stack, Hard-Cap 8 |
 | 095-auto-production-routing.md | Feature | Draft | Threshold-getriggerte Auto-Trade-Routes — Folge T-110 |
-| 096-player-history-stats.md | Feature | Draft | Persistent Player-Stats (Battles/Resources/Buildings) |
+| 096-player-history-stats.md | Feature | Done | Stats-Foundation: 3 Player-Counter (buildings/planets/ships) + Hooks in 3 Command-Services; Tick-/Battle-Counters in T-096b |
+| 096b-stats-extension.md | Feature | Draft | Resource-Mining-Total + Battle-Counters + FactionRep-Lifetime + XP-Aggregation (Folge zu T-096) |
 | 097-pop-tier-buildings.md | Feature | Draft | GENEBANK/CLONING_VAT/CIVIC_CENTER/AGRI_DOME/WATER_RECLAIMER/ATMOSPHERIC_PROCESSOR |
 | 098-specialist-tracks.md | Feature | Draft | 5 Specialist-Tracks PERMANENT (+30%/-10% + Branch-Lock) |
 | 099-threat-skalierung.md | Feature | Draft | PlayerScore → PvE-Encounter-Difficulty-Adaptiv |

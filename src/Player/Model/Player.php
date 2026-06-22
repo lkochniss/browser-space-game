@@ -43,6 +43,21 @@ class Player
     #[ORM\Column(name: 'background', type: 'string', length: 32, enumType: PlayerBackground::class, nullable: true)]
     private ?PlayerBackground $background = null;
 
+    /**
+     * T-096 Player-History-Stats Foundation. Lifetime-Counters; hochgezählt
+     * über Hooks in den jeweiligen Command-Services nach Erfolg.
+     * Mining-Total + Battle-Counters + factionRepLifetime + XP-Integration
+     * folgen in T-096b.
+     */
+    #[ORM\Column(name: 'stats_buildings_built', type: 'integer', options: ['default' => 0])]
+    private int $statsBuildingsBuilt = 0;
+
+    #[ORM\Column(name: 'stats_planets_colonized', type: 'integer', options: ['default' => 0])]
+    private int $statsPlanetsColonized = 0;
+
+    #[ORM\Column(name: 'stats_ships_built', type: 'integer', options: ['default' => 0])]
+    private int $statsShipsBuilt = 0;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(type: PlayerIdType::NAME)]
@@ -102,5 +117,38 @@ class Player
             throw new BackgroundAlreadySetException($this->background);
         }
         $this->background = $background;
+    }
+
+    public function getStatsBuildingsBuilt(): int
+    {
+        return $this->statsBuildingsBuilt;
+    }
+
+    public function getStatsPlanetsColonized(): int
+    {
+        return $this->statsPlanetsColonized;
+    }
+
+    public function getStatsShipsBuilt(): int
+    {
+        return $this->statsShipsBuilt;
+    }
+
+    /** T-096: Hook für `BuildBuildingCommandService` nach Erfolg. */
+    public function recordBuildingBuilt(): void
+    {
+        ++$this->statsBuildingsBuilt;
+    }
+
+    /** T-096: Hook für `ColonizePlanetCommandService` nach Erfolg. */
+    public function recordPlanetColonized(): void
+    {
+        ++$this->statsPlanetsColonized;
+    }
+
+    /** T-096: Hook für `BuildShipCommandService` nach Erfolg. */
+    public function recordShipBuilt(): void
+    {
+        ++$this->statsShipsBuilt;
     }
 }

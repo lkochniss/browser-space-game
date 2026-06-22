@@ -107,6 +107,9 @@ readonly class ColonizePlanetCommandService
             $player->exitBubble();
         }
 
+        // T-096: Lifetime-Counter
+        $player->recordPlanetColonized();
+
         $this->em->remove($ship);
         $this->em->flush();
 

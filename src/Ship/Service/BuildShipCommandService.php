@@ -95,6 +95,12 @@ readonly class BuildShipCommandService
         $duration = $this->costConfig->getDurationSeconds($type);
         $ship->setFinishedAt($now->add(new DateInterval(sprintf('PT%dS', $duration))));
 
+        // T-096: Lifetime-Counter (Build = neues Schiff; Replace/Upgrade gibt's nicht).
+        $owner = $planet->getPlayer();
+        if ($owner !== null) {
+            $owner->recordShipBuilt();
+        }
+
         $this->em->persist($ship);
         $this->em->flush();
 

@@ -44,6 +44,22 @@ in T-122b. Onboarding-UI in T-046 (Open). Demo-CLI deckt Wahl-Flow interim ab.
 
 Migration `Version20260622000005` fügt das nullable `background`-Feld.
 
+## Player-Stats Foundation (T-096)
+
+3 Lifetime-Counter direkt auf `Player` (pragmatisch — separate Entity wäre
+Overengineering für 3 ints):
+
+| Counter | Hook |
+|---------|------|
+| `statsBuildingsBuilt` | `BuildBuildingCommandService` nach Erfolg (Initial-Build, nicht Upgrade) |
+| `statsPlanetsColonized` | `ColonizePlanetCommandService` nach Erfolg |
+| `statsShipsBuilt` | `BuildShipCommandService` nach Erfolg |
+
+Migration `Version20260622000006`. Tick-basierte Counter (Resource-Mining-Total),
+Battle-Counters, FactionRep-Lifetime und XP-Aggregation folgen in T-096b.
+
+Demo CLI zeigt die Counter heute noch nicht im Status — Polish-Folge möglich.
+
 ## Bootstrap: ClaimStartPlanet (T-007 + T-008 + T-085 + T-018)
 
 `ClaimStartPlanetCommand(playerId, planetId)` → `ClaimStartPlanetCommandService`:
