@@ -92,7 +92,8 @@
 | 078-faction-quest-storylines.md | Feature | Draft | Faction-Story-Quests mit Reputation-Gates (separate von Onboarding/Daily) |
 | 079-spy-heist-infiltration.md | Feature | Draft | Spy-Erweiterung — Heist + Long-Term-Infiltration (PvE-only) |
 | 080-loot-system.md | Feature | Draft | Drop-Tabellen pro Faction, Resource/Tech-Fragment/Blueprint/Cosmetic |
-| 081-heimat-schutz-anti-crush.md | Feature | Draft | Immortal-HomePlanet + Pop-Loss-Cap + Vault + Schild-Cooldown |
+| 081-heimat-schutz-anti-crush.md | Feature | Done | Heimat-Foundation: planets.is_home_planet flag + Auto-Mark beim Start-Claim; Effekte in T-081b |
+| 081b-home-protection-effects.md | Feature | Draft | Vault/Pop-Loss-Cap/Shield-Cooldown/Sensor-Warning (Hooks für T-103 Battle + T-080 Loot + T-068 Defense + T-161 Notif) |
 | 082-interactive-demo-cli.md | Feature | Done | Sandbox-CLI `app:demo:run` mit Choice-Menü für alle Game-Actions + Time-Travel |
 | 082b-demo-cli-ux-polish.md | Feature | Done | Galaxy-Overview + Cost-Preview + Demo-Buff (Hub L1, 300 W/F/O) + Wormhole-Garantie |
 | 082c-demo-goals.md | Feature | Done | 5 fixe Demo-Goals (Hub L2, Mines, Recycling, Debris, 2. Planet) als On-Demand-Check |

@@ -13,6 +13,24 @@ use App\Tests\Integration\IntegrationTestCase;
 
 final class ClaimStartPlanetCommandServiceTest extends IntegrationTestCase
 {
+    public function test_start_planet_is_marked_as_home(): void
+    {
+        // T-081: Start-Planet wird beim Claim automatisch als Heimat markiert
+        $player = $this->claimFreshPlayer();
+        $planet = $player->getPlanets()->first();
+
+        self::assertTrue($planet->isHomePlanet());
+
+        // Andere Galaxy-Planeten bleiben non-home
+        $unowned = array_filter(
+            $this->em->getRepository(\App\Planet\Model\Planet::class)->findAll(),
+            fn ($p) => $p->getPlayer() === null,
+        );
+        foreach ($unowned as $other) {
+            self::assertFalse($other->isHomePlanet());
+        }
+    }
+
     public function test_start_planet_has_iron_ore_resource_at_zero(): void
     {
         $player = $this->claimFreshPlayer();

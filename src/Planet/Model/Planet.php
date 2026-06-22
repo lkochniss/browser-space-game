@@ -62,6 +62,15 @@ class Planet
     #[ORM\JoinColumn(name: 'solar_system_id', referencedColumnName: 'id', nullable: true)]
     private ?SolarSystem $solarSystem = null;
 
+    /**
+     * T-081: Anti-Crush-Foundation. Wird bei `ClaimStartPlanetCommandService`
+     * für den Onboarding-Start-Planet auf `true` gesetzt. Aktiviert in
+     * Folge-Tickets (T-081b/T-103/T-080): Pop-Loss-Cap, Resource-Vault,
+     * Shield-Cooldown, Abandon-Block (T-101b).
+     */
+    #[ORM\Column(name: 'is_home_planet', type: 'boolean', options: ['default' => false])]
+    private bool $isHomePlanet = false;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(type: PlanetIdType::NAME)]
@@ -229,6 +238,21 @@ class Planet
     public function getSize(): PlanetSize
     {
         return $this->size;
+    }
+
+    public function isHomePlanet(): bool
+    {
+        return $this->isHomePlanet;
+    }
+
+    /**
+     * T-081: Markiert diesen Planeten als Heimat-Planet (Anti-Crush-Schutz).
+     * Idempotent. Per-Player-Uniqueness wird in `ClaimStartPlanetCommandService`
+     * sichergestellt — Domain-Methode selbst kennt keinen Player-Scope.
+     */
+    public function markAsHome(): void
+    {
+        $this->isHomePlanet = true;
     }
 
     /**

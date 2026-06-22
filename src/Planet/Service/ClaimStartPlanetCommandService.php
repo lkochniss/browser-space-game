@@ -68,6 +68,7 @@ class ClaimStartPlanetCommandService
 
         // Start-Planet: hard TERRAN + MEDIUM für stabiles Onboarding
         $startPlanet = Planet::generatePlanet($planetId, PlanetType::TERRAN, PlanetSize::MEDIUM);
+        $startPlanet->markAsHome(); // T-081 Heimat-Schutz-Foundation
         $player->claimPlanet($startPlanet);
 
         $this->seedStartPlanet($startPlanet);

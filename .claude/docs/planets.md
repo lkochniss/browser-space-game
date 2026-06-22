@@ -108,6 +108,23 @@ Heute alle Types 0 (Tuning-Punkt für späteres Balancing).
 - `getEffectivePopGrowthMultiplier()`
 - `getEffectiveConstructionSpeedMultiplier(BuildingType)`
 
+## Heimat-Planet (T-081)
+
+`Planet::isHomePlanet` Flag wird beim `ClaimStartPlanetCommandService`
+automatisch für den Start-Planeten auf `true` gesetzt. Foundation-only —
+die Anti-Crush-Effekte (Pop-Loss-Cap, Resource-Vault, Shield-Cooldown,
+Building-Damage-Cap, Sensor-Pre-Attack-Warning) sind in T-081b ausgelagert
+(warten auf T-103 Battle / T-080 Loot / T-068 Defense / T-161 Notif).
+
+Backfill via Migration `Version20260622000004`: pro Player den ersten
+Planeten (`ORDER BY id ASC`) als Heimat markieren.
+
+`Planet::markAsHome()` ist idempotent. Per-Player-Uniqueness (1 Heimat pro
+Player) wird heute auf Application-Layer durchgesetzt; harte DB-Constraint
+folgt mit T-081b, wenn das "Heimat verlegen"-Pattern entschieden ist.
+
+T-101b Abandon-Mechanik liest `isHomePlanet` als Block-Bedingung (Q3).
+
 ## Planet-Cap pro Player (T-101)
 
 Anti-Steamroller-Mechanik: jeder Player hat ein Maximum an Planeten.
