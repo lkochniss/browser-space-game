@@ -11,6 +11,7 @@ use App\Planet\Exception\NotAColonyShipException;
 use App\Planet\Exception\PlanetAlreadyClaimedException;
 use App\Planet\Exception\PlanetCapReachedException;
 use App\Planet\Exception\PlanetNotFoundException;
+use App\Player\ValueObject\PlayerBubbleStatus;
 use App\Planet\Exception\ShipNotFoundException;
 use App\Planet\Exception\ShipNotReadyException;
 use App\Planet\Model\Planet;
@@ -142,6 +143,24 @@ final class ColonizePlanetCommandTest extends IntegrationTestCase
 
         $this->expectException(ColonyShipNotDockedException::class);
         $this->bus->dispatch(new ColonizePlanetCommand($ship->getId(), $target->getId()));
+    }
+
+    public function test_bubble_status_exits_on_second_planet(): void
+    {
+        // T-150: Player startet in BUBBLE; nach 2. Planeten → EXITED
+        [$player, , $target, $ship] = $this->seed(
+            popHomeTotal: 100,
+            popHomeAssigned: 50,
+            shipType: \App\Ship\ValueObject\ShipType::COLONY_SHIP,
+            shipReady: true,
+        );
+        self::assertTrue($player->isInBubble(), 'Player startet in BUBBLE');
+
+        $this->bus->dispatch(new ColonizePlanetCommand($ship->getId(), $target->getId()));
+
+        $this->em->clear();
+        $reloaded = $this->em->find(\App\Player\Model\Player::class, $player->getId());
+        self::assertSame(PlayerBubbleStatus::EXITED, $reloaded->getBubbleStatus());
     }
 
     public function test_throws_when_player_planet_cap_reached(): void

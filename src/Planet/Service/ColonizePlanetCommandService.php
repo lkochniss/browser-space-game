@@ -102,6 +102,11 @@ readonly class ColonizePlanetCommandService
         $player->claimPlanet($targetPlanet);
         $targetPlanet->getPopulation()->grow($popTransfer);
 
+        // T-150: Bubble-Exit-Trigger — ab dem 2. Planeten endet die Tutorial-Phase.
+        if ($player->getPlanets()->count() >= 2) {
+            $player->exitBubble();
+        }
+
         $this->em->remove($ship);
         $this->em->flush();
 

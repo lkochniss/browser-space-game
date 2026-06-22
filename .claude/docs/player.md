@@ -5,11 +5,26 @@
 ```
 Player
  ├ id (PlayerId, UUID)
+ ├ bubbleStatus: PlayerBubbleStatus (T-150, default BUBBLE)
  └ planets: Collection<Planet>   (1:N, Player.claimPlanet)
 ```
 
 Player ist Aggregat-Wurzel für Planeten. Resources/Buildings/Pop hängen am
 Planet, nicht am Player.
+
+## Bubble-Schutz (T-150)
+
+Newbie-Schutz: jeder Player startet in `PlayerBubbleStatus::BUBBLE` und
+verlässt diese Tutorial-Phase automatisch, sobald er den 2. Planeten
+koloniert hat (`ColonizePlanetCommandService::exitBubble()`).
+
+Foundation-Flag: bestehende Services können `$player->isInBubble()` lesen.
+Skip-Effekte (Pirate-Spawn, Auction, Galaxy-Map-Filter, Notifications) und
+Catch-Up-Mining-Multiplier sind in T-150b ausgelagert (warten auf
+T-074/T-075/T-111/T-160/T-161).
+
+Migration `Version20260622000003` setzt bestehende Player mit >= 2 Planeten
+direkt auf EXITED (Backfill).
 
 ## Bootstrap: ClaimStartPlanet (T-007 + T-008 + T-085 + T-018)
 
@@ -31,6 +46,7 @@ Planet, nicht am Player.
 
 - `src/Player/Model/Player.php` (Entity)
 - `src/Player/ValueObject/PlayerId.php`
+- `src/Player/ValueObject/PlayerBubbleStatus.php` (T-150)
 - `src/Player/Repository/PlayerRepository.php`
 - `src/Player/Command/{CreateNewPlayerCommand,...}.php`
 - `src/Player/Service/{CreateNewPlayerService,...}.php`

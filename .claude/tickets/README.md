@@ -166,7 +166,8 @@
 | 141-achievement-system.md | Feature | Draft | 100+ Achievements, NUR Cosmetic (Title/Banner) |
 | 142-login-streak.md | Feature | Draft | 7-Tage-Cycle Login-Belohnung, Cycle wiederholt |
 | 143-cosmetics-inventory-system.md | Feature | Draft | Title/Banner/Frame/Schiff-Skin/Building-Skin Equip-Slots |
-| 150-bubble-protection.md | Feature | Draft | Bubble bis 2. Planet — keine NPC, kein Auction; Catch-Up +50% Mining 14d |
+| 150-bubble-protection.md | Feature | Done | Bubble-Foundation: PlayerBubbleStatus + Auto-Exit nach 2. Planet-Claim; Effekte+CatchUp in T-150b |
+| 150b-bubble-effects-and-catchup.md | Feature | Draft | Bubble-Skip-Effekte in T-074/T-075/T-111/T-160 + Catch-Up-Mining-Multiplier 14d ×1.5 |
 | 151-soft-cap-diminishing-returns.md | Feature | Done | SoftCapConfig (Pop/Building-Lvl/Stockpile) + 3 Hook-Stellen |
 | 152-inactivity-protection.md | Feature | Draft | 7d/30d/90d-Stages + Vacation-Welcome-Pack |
 | 153-alliance-rescue.md | Feature | Draft | Stranded-Rescue + Defense-Reinforcement zwischen Allianz-Members |
