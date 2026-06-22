@@ -402,6 +402,24 @@ class Planet
     }
 
     /**
+     * T-094c: Effektiver Bau-Queue-Slot-Cap inkl. HQ-Bonus.
+     *
+     * Foundation-Cap = `BuildBuildingCommandService::MAX_CONCURRENT_BUILDS` (3).
+     * HQ-Bonus: +1 pro 5 HQ-Level (L5=+1, L10=+2, L15=+3, ...) bis Hard-Cap.
+     *
+     * Hard-Cap = 8 — auch HQ L40+ macht keinen Sinn als Parallel-Slot-Quelle,
+     * Logistics-Forschung (T-094d) wird der nächste Bonus-Pfad.
+     */
+    public function getEffectiveBuildQueueCap(?DateTimeImmutable $now = null): int
+    {
+        $base = 3; // T-094 Foundation
+        $hqLevel = $this->getHqLevel($now);
+        $bonus = intdiv($hqLevel, 5);
+
+        return min(8, $base + $bonus);
+    }
+
+    /**
      * T-094 Bau-Queue: Anzahl gerade laufender Bau-/Upgrade-Jobs.
      * Definition: Building.finishedAt > $now (= !isReady). Ein neu gebautes ODER
      * gerade upgradetes Building zählt als aktiver Job.

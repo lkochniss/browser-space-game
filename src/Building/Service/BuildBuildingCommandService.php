@@ -86,8 +86,9 @@ readonly class BuildBuildingCommandService
         }
 
         $active = $planet->countActiveBuildJobs($now);
-        if ($active >= self::MAX_CONCURRENT_BUILDS) {
-            throw new BuildQueueFullException($active, self::MAX_CONCURRENT_BUILDS);
+        $queueCap = $planet->getEffectiveBuildQueueCap($now);
+        if ($active >= $queueCap) {
+            throw new BuildQueueFullException($active, $queueCap);
         }
 
         $cost = $this->costConfig->getCost($type);

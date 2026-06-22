@@ -1,7 +1,7 @@
 # T-094c: Bau-Queue Slot-Erweiterung via Hub + Forschung
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done (HQ-Bonus implementiert; Logistics-Forschung in T-094d split)
 **Effort:** S (~1.5h)
 **Depends on:** T-094 (Bau-Queue Foundation), T-025 (Forschungs-Framework)
 **Blocks:** —

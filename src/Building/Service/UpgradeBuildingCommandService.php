@@ -46,8 +46,9 @@ readonly class UpgradeBuildingCommandService
 
         $now = $this->clock->now();
         $active = $planet->countActiveBuildJobs($now);
-        if ($active >= BuildBuildingCommandService::MAX_CONCURRENT_BUILDS) {
-            throw new BuildQueueFullException($active, BuildBuildingCommandService::MAX_CONCURRENT_BUILDS);
+        $queueCap = $planet->getEffectiveBuildQueueCap($now);
+        if ($active >= $queueCap) {
+            throw new BuildQueueFullException($active, $queueCap);
         }
 
         $currentLevel = $building->getLevel();

@@ -112,7 +112,8 @@
 | 093-alliance-raumstation.md | Feature | Draft | Allianz-Raumstation pro System (Repair/Trade/Defense-Hub) |
 | 094-build-queue.md | Feature | Done | Parallel-Slot-Model (max 3); Cancel/Refund/Hub-Bonus/Forschungs-Slots deferred |
 | 094b-build-queue-cancel-refund.md | Feature | Done | CancelBuildCommand: Initial=Delete, Upgrade=Level-1; 50% Resource + 100% Pop Refund |
-| 094c-build-queue-slot-extensions.md | Feature | Draft | Slot-Cap dynamisch via Hub-Upgrade + Logistics-Forschung (Folge zu T-094) |
+| 094c-build-queue-slot-extensions.md | Feature | Done | HQ-Level +1 Parallel-Slot pro Lvl-5 (Cap 8); Logistics-Forschung in T-094d split |
+| 094d-build-queue-logistics-research.md | Feature | Draft | Logistics-Forschung als 2. Bonus-Pfad für Parallel-Slot-Cap |
 | 095-auto-production-routing.md | Feature | Draft | Threshold-getriggerte Auto-Trade-Routes — Folge T-110 |
 | 096-player-history-stats.md | Feature | Draft | Persistent Player-Stats (Battles/Resources/Buildings) |
 | 097-pop-tier-buildings.md | Feature | Draft | GENEBANK/CLONING_VAT/CIVIC_CENTER/AGRI_DOME/WATER_RECLAIMER/ATMOSPHERIC_PROCESSOR |

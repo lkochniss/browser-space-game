@@ -177,15 +177,24 @@ Refund-Rate ist hardcoded 50% — zukünftig via Logistics-Forschung anhebbar (T
 
 ## Bau-Queue (T-094 Foundation)
 
-Pro Planet max **3 parallele** unfertige Build/Upgrade-Jobs. `Planet::countActiveBuildJobs($now)`
+Pro Planet **parallele Build/Upgrade-Jobs** mit dynamischem Cap. `Planet::countActiveBuildJobs($now)`
 zählt Buildings mit `!isReady($now)`. `BuildBuildingCommandService` und
 `UpgradeBuildingCommandService` werfen `BuildQueueFullException` bei Überschreitung.
 
-Bau-Queue (parallel, max 3) und Slot-Cap (total, je nach PlanetSize) sind komplementär.
+Bau-Queue (parallel) und Slot-Cap (total, je nach PlanetSize) sind komplementär.
 
-Slot-Cap-Konstante: `BuildBuildingCommandService::MAX_CONCURRENT_BUILDS = 3`.
-Folge: Hub-Upgrade-Bonus (+1 Slot pro Lvl-5), Logistics-Forschung —
-alles in T-094-Folge-Tickets.
+**T-094c HQ-Slot-Bonus:** `Planet::getEffectiveBuildQueueCap($now) = min(8, 3 + HQ-Level/5)`.
+
+| HQ-Level | Effective Cap |
+|----------|---------------|
+| 0–4 | 3 |
+| 5–9 | 4 |
+| 10–14 | 5 |
+| 15–19 | 6 |
+| 20–24 | 7 |
+| 25+ | 8 (hard cap) |
+
+T-094d (Folge-Draft): Logistics-Forschung als 2. Bonus-Pfad.
 
 ## Bauzeit-Boost (T-064)
 
