@@ -83,6 +83,69 @@ final class MoveFleetCommandTest extends IntegrationTestCase
         $this->bus->dispatch(new MoveFleetCommand($fleet->getId(), $target->getId()));
     }
 
+    public function test_t017b_wormhole_pair_speeds_travel_by_5x(): void
+    {
+        [$fleet, $origin, $target] = $this->seedFleetWithWormholeBetween(ShipType::GENERIC);
+        $this->seedResearch($fleet->getPlayer(), 'ftl_hyperdrive', 1);
+        $this->seedResearch($fleet->getPlayer(), 'ftl_warp', 1);
+
+        $this->bus->dispatch(new MoveFleetCommand($fleet->getId(), $target->getId()));
+
+        $this->em->clear();
+        $reloaded = self::getContainer()->get(FleetRepository::class)->find($fleet->getId());
+
+        // 14400s × 0.2 = 2880s
+        $diff = $reloaded->getArrivedAt()->getTimestamp() - $reloaded->getDepartedAt()->getTimestamp();
+        self::assertEqualsWithDelta(2880, $diff, 5, 'Wormhole-Travel = 5× schneller');
+    }
+
+    public function test_t017b_wormhole_without_tech_falls_back_to_normal(): void
+    {
+        [$fleet, , $target] = $this->seedFleetWithWormholeBetween(ShipType::GENERIC);
+        // Nur ftl_hyperdrive, kein ftl_warp → kein Wormhole-Bonus
+        $this->seedResearch($fleet->getPlayer(), 'ftl_hyperdrive', 1);
+
+        $this->bus->dispatch(new MoveFleetCommand($fleet->getId(), $target->getId()));
+
+        $this->em->clear();
+        $reloaded = self::getContainer()->get(FleetRepository::class)->find($fleet->getId());
+
+        // Normal inter-system 14400s — kein Bonus
+        $diff = $reloaded->getArrivedAt()->getTimestamp() - $reloaded->getDepartedAt()->getTimestamp();
+        self::assertEqualsWithDelta(14400, $diff, 5, 'ohne ftl_warp normal travel');
+    }
+
+    /**
+     * @return array{Fleet, Planet, Planet}
+     */
+    private function seedFleetWithWormholeBetween(ShipType $shipType): array
+    {
+        [$fleet, $origin, $target] = $this->seedFleetTwoSystems($shipType);
+        $systemA = $origin->getSolarSystem();
+        $systemB = $target->getSolarSystem();
+
+        $whA = new \App\POI\Model\Wormhole(
+            id: \App\POI\ValueObject\PoiId::generate(),
+            solarSystem: $systemA,
+            name: 'WH-A',
+            requiredTechSlug: 'ftl_warp',
+        );
+        $whB = new \App\POI\Model\Wormhole(
+            id: \App\POI\ValueObject\PoiId::generate(),
+            solarSystem: $systemB,
+            name: 'WH-B',
+            requiredTechSlug: 'ftl_warp',
+        );
+        $whA->pairWith($whB);
+        $systemA->addPoi($whA);
+        $systemB->addPoi($whB);
+        $this->em->persist($whA);
+        $this->em->persist($whB);
+        $this->em->flush();
+
+        return [$fleet, $origin, $target];
+    }
+
     private function seedResearch(\App\Player\Model\Player $player, string $slug, int $level): void
     {
         $entry = \App\Research\Model\PlayerResearch::generate($player, $slug, $level);

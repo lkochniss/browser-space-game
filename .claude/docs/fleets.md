@@ -31,7 +31,22 @@ Globaler Service (kein TickProcessor). Demo-CLI + T-044 Scheduler rufen
 `FleetMovementConfig::computeDuration(originPlanet, targetPlanet, ships)`:
 - Slowest-Ship-Speed = MIN über alle Ship-Type-Speeds (T-017)
 - Distance: aktuell konstant per Inter-System-Hop (Foundation, T-160 macht echte Galaxy-Map)
-- Folge-Modifier (T-017b Draft): Nebel-Detection, Wormhole-Travel-Reduktion, Treibstoff
+
+## Wormhole-Travel-Shortcut (T-017b)
+
+`WormholeRouteDetector::findRoute(originSystem, targetSystem)` prüft, ob ein
+Wormhole-Pair zwischen Origin- und Target-System existiert (Wormhole im Origin,
+Twin im Target).
+
+Wenn gefunden + Player hat `wormhole.requiredTechSlug` (z.B. `ftl_warp`) auf
+Level 1+: Travel-Time × **0.2** (= 5× schneller). MoveFleetCommandService
+multipliziert die Base-Duration nach den anderen Modifikatoren.
+
+Ohne Tech: Fallback auf normale Inter-System-Reise (Wormhole-Pair existiert
+zwar, aber Player kann es nicht nutzen — kein Hard-Block).
+
+**Out of Scope** (Folge-Tickets): Cooldown pro Schiff nach Wormhole-Transit,
+Treibstoff-Multiplier ×5 (T-066), Nebel-Detection-Hook (T-074).
 
 ## Files
 

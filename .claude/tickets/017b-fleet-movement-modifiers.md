@@ -1,7 +1,7 @@
 # T-017b: Fleet-Movement-Modifiers (Nebel + Wormhole)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done (Foundation: Wormhole-Speed-Bonus; Cooldown/Nebel-Detection in Folge-Tickets)
 **Effort:** M (TBD)
 **Depends on:** T-017 (Fleet-Movement Foundation), T-022 (Nebula POI), T-085 (Wormhole POI)
 **Blocks:** —

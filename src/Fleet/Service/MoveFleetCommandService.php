@@ -33,6 +33,9 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 readonly class MoveFleetCommandService
 {
+    /** T-017b: Wormhole-Travel ist 5× schneller als normale Inter-System-Reise. */
+    public const WORMHOLE_SPEED_FACTOR = 0.2;
+
     public function __construct(
         private EntityManagerInterface $em,
         private FleetRepository $fleetRepository,
@@ -40,6 +43,7 @@ readonly class MoveFleetCommandService
         private FleetMovementConfig $movementConfig,
         private ClockInterface $clock,
         private PlayerResearchRepository $playerResearchRepository,
+        private WormholeRouteDetector $wormholeRouteDetector,
     ) {
     }
 
@@ -65,9 +69,9 @@ readonly class MoveFleetCommandService
         }
 
         $sameSystem = $this->isSameSystem($origin, $target);
+        $owner = $fleet->getPlayer();
         if (!$sameSystem) {
             // T-026: Inter-System-Travel braucht FTL (ftl_hyperdrive L1+)
-            $owner = $fleet->getPlayer();
             $ftlLevel = $this->playerResearchRepository
                 ->findOneByPlayerAndSlug($owner, 'ftl_hyperdrive')
                 ?->getLevel() ?? 0;
@@ -76,6 +80,26 @@ readonly class MoveFleetCommandService
             }
         }
         $duration = $this->movementConfig->computeDurationSeconds($sameSystem, $fleet->getMinSpeed());
+
+        // T-017b: Wormhole-Speed-Bonus wenn Pair zwischen Origin/Target-System
+        // existiert + Player hat Wormhole-Tech (z.B. ftl_warp).
+        if (!$sameSystem && $origin !== null) {
+            $originSys = $origin->getSolarSystem();
+            $targetSys = $target->getSolarSystem();
+            if ($originSys !== null && $targetSys !== null) {
+                $wormhole = $this->wormholeRouteDetector->findRoute($originSys, $targetSys);
+                if ($wormhole !== null) {
+                    $requiredSlug = $wormhole->getRequiredTechSlug();
+                    $techOk = $requiredSlug === null
+                        || (($this->playerResearchRepository
+                            ->findOneByPlayerAndSlug($owner, $requiredSlug)
+                            ?->getLevel() ?? 0) >= 1);
+                    if ($techOk) {
+                        $duration = (int) max(1, round($duration * self::WORMHOLE_SPEED_FACTOR));
+                    }
+                }
+            }
+        }
 
         $now = $this->clock->now();
         $arrival = $now->add(new DateInterval(sprintf('PT%dS', $duration)));
