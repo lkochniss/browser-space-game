@@ -185,8 +185,8 @@ Bau-Queue (parallel) und Slot-Cap (total, je nach PlanetSize) sind komplementär
 
 **T-094c HQ-Slot-Bonus:** `Planet::getEffectiveBuildQueueCap($now) = min(8, 3 + HQ-Level/5)`.
 
-| HQ-Level | Effective Cap |
-|----------|---------------|
+| HQ-Level | Planet-Cap (HQ only) |
+|----------|----------------------|
 | 0–4 | 3 |
 | 5–9 | 4 |
 | 10–14 | 5 |
@@ -194,7 +194,12 @@ Bau-Queue (parallel) und Slot-Cap (total, je nach PlanetSize) sind komplementär
 | 20–24 | 7 |
 | 25+ | 8 (hard cap) |
 
-T-094d (Folge-Draft): Logistics-Forschung als 2. Bonus-Pfad.
+**T-094d Logistics-Forschung:** `logistics_1` (3 Levels, +1 Slot pro Level).
+Stack mit HQ-Bonus, gemeinsam Hard-Cap 8.
+
+`BuildQueueCapCalculator::compute($planet, $player, $now)` ist Single-Source-of-Truth
+— Build/Upgrade-Services + Demo-CLI rufen ihn. Beispiel: HQ L10 (+2) + logistics_1 L3
+(+3) = 8 (cap reached).
 
 ## Bauzeit-Boost (T-064)
 

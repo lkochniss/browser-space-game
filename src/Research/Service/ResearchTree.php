@@ -139,6 +139,24 @@ class ResearchTree
             ],
         ));
 
+        // T-094d: Logistics-Forschung erhöht Bau-Queue-Parallel-Slot-Cap.
+        // 3 Levels — jede gibt +1 Slot. Stack mit T-094c HQ-Bonus, gemeinsam Hard-Cap 8.
+        $this->register(new ResearchNode(
+            slug: 'logistics_1',
+            name: 'Logistik-Optimierung',
+            description: 'Erhöht parallele Bau-/Upgrade-Slots auf Planeten (+1 Slot pro Level).',
+            baseDurationSeconds: 600,
+            maxLevel: 3,
+            prerequisites: [
+                new ResearchLevelPrerequisite('metallurgy', 1),
+                new BuildingLevelPrerequisite(BuildingType::IRON_SMELTER, 1),
+            ],
+            resourceCostBase: [
+                ResourceType::IRON_BAR->value => 150,
+                ResourceType::COPPER_ORE->value => 100,
+            ],
+        ));
+
         // T-026 Antriebs-Tree: 4 Standard + 3 FTL.
         // Gating-Chain:
         //   shipbuilding (T-170) → SHIPYARD baubar

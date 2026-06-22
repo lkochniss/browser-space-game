@@ -113,7 +113,7 @@
 | 094-build-queue.md | Feature | Done | Parallel-Slot-Model (max 3); Cancel/Refund/Hub-Bonus/Forschungs-Slots deferred |
 | 094b-build-queue-cancel-refund.md | Feature | Done | CancelBuildCommand: Initial=Delete, Upgrade=Level-1; 50% Resource + 100% Pop Refund |
 | 094c-build-queue-slot-extensions.md | Feature | Done | HQ-Level +1 Parallel-Slot pro Lvl-5 (Cap 8); Logistics-Forschung in T-094d split |
-| 094d-build-queue-logistics-research.md | Feature | Draft | Logistics-Forschung als 2. Bonus-Pfad für Parallel-Slot-Cap |
+| 094d-build-queue-logistics-research.md | Feature | Done | logistics_1 (3 Lvl, +1 Slot/Lvl) + BuildQueueCapCalculator; HQ+Logistics stack, Hard-Cap 8 |
 | 095-auto-production-routing.md | Feature | Draft | Threshold-getriggerte Auto-Trade-Routes — Folge T-110 |
 | 096-player-history-stats.md | Feature | Draft | Persistent Player-Stats (Battles/Resources/Buildings) |
 | 097-pop-tier-buildings.md | Feature | Draft | GENEBANK/CLONING_VAT/CIVIC_CENTER/AGRI_DOME/WATER_RECLAIMER/ATMOSPHERIC_PROCESSOR |
@@ -182,4 +182,7 @@
 | 171-building-uniqueness-slot-concept.md | Feature | Done | 6 Strategic-Unique + Slot-Size pro Building (1-3) + Slot-Cap pro PlanetSize (8-40) |
 | 172-hq-vs-hub-refactor.md | Feature | Done | HQ (unique, slot-3, +25 Pop, Storage, Slot-Bonus capped); HUB (multi, slot-1, +100 Pop); CONSTRUCTION_YARD rename |
 | 173-hq-building-level-cap.md | Feature | Draft | HQ-Level cappt Building-Level + steile HQ-Cost-Curve + lokaler Build-Speed-Bonus |
+| 174-deprecate-station-build.md | TechDebt | Draft | Station-Build-Path entfernen (Lost-Tech-Lore); Stations nur via Claim/Capture |
+| 175-pirate-station-spawn.md | Feature | Draft | Galaxy-Bootstrap-Spawn von Pirate-owned + ABANDONED Stations (Lost-Tech-Lore) |
+| 176-pirate-station-takeover.md | Feature | Draft | Pirate-Takeover ABANDONED → Pirate + Combat-Capture-Mechanik (zweistufig) |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |

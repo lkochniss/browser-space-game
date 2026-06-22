@@ -129,6 +129,7 @@ class InteractiveDemoCommand extends Command
         private readonly ActiveResearchRepository $activeResearchRepository,
         private readonly BuildBuildingCommandService $buildService,
         private readonly BuildingUnlockConfig $unlockConfig,
+        private readonly \App\Building\Service\BuildQueueCapCalculator $queueCapCalculator,
         #[Autowire('%kernel.environment%')]
         private readonly string $kernelEnv,
         #[Autowire('%kernel.project_dir%')]
@@ -409,7 +410,7 @@ class InteractiveDemoCommand extends Command
             // T-094 + T-094c: Bau-Queue Auslastung (Cap dynamisch via HQ-Level)
             $now = $this->clock->now();
             $active = $planet->countActiveBuildJobs($now);
-            $io->text(sprintf('  Build-Queue: %d/%d', $active, $planet->getEffectiveBuildQueueCap($now)));
+            $io->text(sprintf('  Build-Queue: %d/%d', $active, $this->queueCapCalculator->compute($planet, $player, $now)));
             // T-171: Slot-Auslastung
             $io->text(sprintf('  Building-Slots: %d/%d', $planet->getBuildingSlotsUsed(), $planet->getBuildingSlotCap()));
         }

@@ -41,6 +41,7 @@ readonly class BuildBuildingCommandService
         private BuildingUnlockConfig $unlockConfig,
         private PlayerResearchRepository $playerResearchRepository,
         private ConstructionSpeedResearchConfig $constructionSpeedResearch,
+        private BuildQueueCapCalculator $queueCapCalculator,
     ) {
     }
 
@@ -86,7 +87,7 @@ readonly class BuildBuildingCommandService
         }
 
         $active = $planet->countActiveBuildJobs($now);
-        $queueCap = $planet->getEffectiveBuildQueueCap($now);
+        $queueCap = $this->queueCapCalculator->compute($planet, $planet->getPlayer(), $now);
         if ($active >= $queueCap) {
             throw new BuildQueueFullException($active, $queueCap);
         }

@@ -14,6 +14,15 @@ Inventar, ohne Resource-Produktion**. Maintenance ist bewusst erschwert.
 Wenn Maintenance-Kosten nicht gedeckt werden, stirbt die Pop auf der Station,
 Status wechselt zu ABANDONED — andere Player können dann übernehmen.
 
+### Lore-Context (40k-Style)
+
+Stations sind **nicht baubar** — die Technologie ist im Universum verschollen.
+Galaxy-Initial-Spawn (Folge T-175) verteilt existierende Stations, teils
+Pirate-owned. Player können nur über ABANDONED-Claim oder Combat-Capture
+(Folge T-176) übernehmen. Dieses Ticket (T-023b) deckt die Maintenance- und
+ABANDONED-Mechanik ab; Build-Path-Deprecation und Pirate-Spawn-Logik liegen
+in Folge-Tickets T-174/T-175/T-176.
+
 ## Acceptance Criteria
 
 ### Maintenance-Tick
@@ -39,14 +48,16 @@ Status wechselt zu ABANDONED — andere Player können dann übernehmen.
 - [ ] TBD: Player kann via T-015b Cargo-Transfer Resources zur Station bringen
   → Station-Storage wird wieder gefüllt → Maintenance-Tick zieht aus diesem Storage
 
-## Open Questions
+## Resolved Decisions
 
-- Tick-Frequenz: bei Station eigener Cron oder bei jedem Player-Tick mitlaufen?
-- Verbrauch pro Pop: gleich wie Planet-Pop oder abweichend (Station = höher wegen
-  Klima-Schwierigkeit)?
-- Storage-Fill via Cargo-Transfer (T-015b): Schiff dockt an, lädt aus → Station
-  zieht aus Storage. Aber Station kann auch Resources entnehmen für Player-Bedarf?
-- Abandoned-Cleanup: nach X Tagen ABANDONED ohne Übernahme → POI gelöscht?
+- **Tick-Frequenz:** Globaler `StationMaintenanceService` im TickEngine-Run
+  (analog `FleetArrivalService`). Kein eigener Cron, kein Player-Tick.
+- **Verbrauch pro Pop:** ×1.5 Multi vs. Planet-Pop (Klima-Schwierigkeit-
+  Reflektion, passt zu Vision "Maintenance bewusst erschwert").
+- **Storage-Fluss:** Voll-bidirektional — Player kann jederzeit Resources
+  hin- und herbewegen (symmetrisch zu T-015b). Station = flexibles Warehouse.
+- **Abandoned-Cleanup:** Nicht despawnen — ABANDONED-Stations bleiben ewig
+  als POI auf der Map. Pirate-Takeover-Mechanik (T-176) kann sie reaktivieren.
 
 ## Notes
 

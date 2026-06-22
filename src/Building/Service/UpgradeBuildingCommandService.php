@@ -29,6 +29,7 @@ readonly class UpgradeBuildingCommandService
         private BuildingDurationConfig $durationConfig,
         private ClockInterface $clock,
         private ConstructionSpeedResearchConfig $constructionSpeedResearch,
+        private BuildQueueCapCalculator $queueCapCalculator,
     ) {
     }
 
@@ -46,7 +47,7 @@ readonly class UpgradeBuildingCommandService
 
         $now = $this->clock->now();
         $active = $planet->countActiveBuildJobs($now);
-        $queueCap = $planet->getEffectiveBuildQueueCap($now);
+        $queueCap = $this->queueCapCalculator->compute($planet, $planet->getPlayer(), $now);
         if ($active >= $queueCap) {
             throw new BuildQueueFullException($active, $queueCap);
         }
