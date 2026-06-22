@@ -146,7 +146,8 @@
 | 119-mega-dyson-sphere.md | Feature | Draft | Mega-Folge: Dyson-Sphäre Power-Bonus |
 | 120-quest-engine-onboarding.md | Feature | Draft | Quest-Engine-Foundation + 10 Onboarding-Quests |
 | 121-crusade-system.md | Feature | Draft | 6-Wochen-Cycle, World-Boss + Top-3-Title (KEIN Mandate) |
-| 122-player-background.md | Feature | Draft | 5 Backgrounds permanent (+5%/-2% Identity-Bonus) |
+| 122-player-background.md | Feature | Done | Background-Foundation: 5-Enum + nullable Field + permanent Setter + Demo-CLI Action; Effect-Resolver in T-122b |
+| 122b-background-effect-resolver.md | Feature | Draft | 7 Multiplier-Hooks (Mining/Rep/RP/Pop/Ship/Probe/Trade) + Stack-Reihenfolge mit T-098 |
 | 123-player-xp-career.md | Feature | Draft | Level 1-100, asymptotischer XP-Cost, Skill-Slot-Reservation |
 | 124-mega-wormhole-generator.md | Feature | Draft | Mega-Folge: Künstliches Wurmloch zwischen 2 frei-gewählten Systems |
 | 125-mega-stargate.md | Feature | Draft | Mega-Folge: Stargate-Network für Multi-Endpoint-Travel |

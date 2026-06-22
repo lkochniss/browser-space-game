@@ -1,10 +1,10 @@
 # T-122 Player-Background (5 Backgrounds, Onboarding-Choice)
 
 **Type:** Feature
-**Status:** Draft
+**Status:** Done (Foundation; Effect-Resolver + Onboarding-UI in T-122b split)
 **Effort:** M
-**Depends on:** T-046 (Onboarding)
-**Blocks:** —
+**Depends on:** T-073 (Faction, Done)
+**Blocks:** T-122b
 
 ## Beschreibung
 Bei Onboarding wählt Spieler 1 von 5 Backgrounds. Klein-Boni/Mali +5%/-2% für Flavor-Identity. **PERMANENT — keine Re-Spec.**
@@ -17,19 +17,24 @@ Backgrounds (40k-flavored, Imperialer Mensch):
 - **Wanderer** (Frontier-Born): +5% Sonden-Range/Discovery-Speed, -2% Trade-Income
 
 ## Acceptance Criteria
-- [ ] PlayerBackground-Enum (5 Werte)
-- [ ] Player-Entity: `background: ?PlayerBackground` (nullable bis Onboarding)
-- [ ] Onboarding-UI (T-046): Background-Auswahl als Schritt vor Start-Planet-Claim
-- [ ] Effekt-Resolver: applies Multipliers überall
-- [ ] **PERMANENT** — kein Re-Spec-Endpoint
-- [ ] Visible in Public-Profile (T-054)
-- [ ] Cosmetic-Anteil: Background-spezifische Banner-Default-Auswahl, Flavor-Texte in Welcome-Message
 
-## Affected Tests
-- tests/Player/Service/PlayerBackgroundEffectTest.php
+- [x] `PlayerBackground` Enum (5 Werte) mit `getDisplayName()` + `getDescription()`
+- [x] `Player.background: ?PlayerBackground` Field (nullable bis Wahl)
+- [x] `Player::setBackground()` mit Re-Spec-Block (`BackgroundAlreadySetException`)
+- [x] `SetPlayerBackgroundCommand` + Handler + Service mit `PlayerNotFoundException`
+- [x] Migration `Version20260622000005` (players.background nullable)
+- [x] Demo-CLI Action "Set Background" (PERMANENT-Confirm-Dialog)
+- [x] Tests: PlayerBackgroundTest (Unit) + SetPlayerBackgroundCommandServiceTest (IT, 4 Tests)
+- [x] Doc `player.md` Background-Sektion
 
-## Fixtures Needed
-Yes — Players pro Background
+## Out of Scope (in T-122b verschoben)
+
+- **Effect-Resolver** für die 7 Hook-Stellen (Mining/Reputation/RP/Pop-Growth/
+  Ship-Speed/Probe-Range/Trade-Income)
+- **Stack-Reihenfolge** mit T-098 Specialist-Tracks (Q1 in T-122b)
+- **Onboarding-UI** (T-046 Open) — Demo-CLI deckt das interim ab
+- **Public-Profile** (T-054 Open)
+- **Cosmetic-Anteil** (Welcome-Message, Banner-Default) — T-122c Folge
 
 ## Notes
 - Klein-Boni absichtlich (5%/-2%): kein Min-Maxing, eher Identity-Bonus

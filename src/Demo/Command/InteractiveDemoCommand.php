@@ -229,6 +229,7 @@ class InteractiveDemoCommand extends Command
                     'Colonize Planet' => $this->colonizePlanet($io, $player),
                     'Tick Forward (advance time)' => $this->tickForward($io, $player),
                     'Forschung' => $this->doResearch($io, $player),
+                    'Set Background' => $this->setBackground($io, $player),
                     'Reset Demo' => $this->resetSession($io, $player),
                     'Quit' => false,
                     default => true,
@@ -303,6 +304,7 @@ class InteractiveDemoCommand extends Command
             'Colonize Planet',
             'Tick Forward (advance time)',
             'Forschung',
+            'Set Background',
             'Reset Demo',
             'Quit',
         ];
@@ -1287,6 +1289,51 @@ class InteractiveDemoCommand extends Command
             $boosterIds,
         ));
         $io->success(sprintf('Forschung gestartet: %s', $slug));
+
+        return true;
+    }
+
+    private function setBackground(SymfonyStyle $io, Player $player): bool
+    {
+        $io->section('Player-Background wählen (PERMANENT)');
+
+        $current = $player->getBackground();
+        if ($current !== null) {
+            $io->warning(sprintf(
+                'Background ist bereits gesetzt: %s (%s). Re-Spec ist nicht möglich.',
+                $current->getDisplayName(),
+                $current->getDescription(),
+            ));
+            $this->lastActionParams = ['already_set' => $current->value];
+
+            return true;
+        }
+
+        $choices = [];
+        foreach (\App\Player\ValueObject\PlayerBackground::cases() as $bg) {
+            $choices[$bg->value] = sprintf('%s — %s', $bg->getDisplayName(), $bg->getDescription());
+        }
+        $io->note('Hinweis: Effekte (T-122b) noch nicht aktiv — diese Foundation speichert nur die Wahl.');
+        $label = $io->choice('Background', $choices);
+
+        $slug = array_search($label, $choices, true);
+        if ($slug === false) {
+            $slug = $label;
+        }
+        $background = \App\Player\ValueObject\PlayerBackground::from((string) $slug);
+
+        if (!$io->confirm(sprintf('PERMANENT setzen: %s?', $background->getDisplayName()), false)) {
+            $this->lastActionParams = ['confirmed' => false, 'background' => $background->value];
+
+            return true;
+        }
+
+        $this->bus->dispatch(new \App\Player\Command\SetPlayerBackgroundCommand(
+            $player->getId(),
+            $background,
+        ));
+        $this->lastActionParams = ['confirmed' => true, 'background' => $background->value];
+        $io->success(sprintf('Background gesetzt: %s', $background->getDisplayName()));
 
         return true;
     }

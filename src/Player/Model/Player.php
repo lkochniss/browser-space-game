@@ -6,7 +6,9 @@ namespace App\Player\Model;
 
 use App\Common\Doctrine\Type\PlayerIdType;
 use App\Planet\Model\Planet;
+use App\Player\Exception\BackgroundAlreadySetException;
 use App\Player\Repository\PlayerRepository;
+use App\Player\ValueObject\PlayerBackground;
 use App\Player\ValueObject\PlayerBubbleStatus;
 use App\Player\ValueObject\PlayerId;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -32,6 +34,14 @@ class Player
      */
     #[ORM\Column(name: 'bubble_status', type: 'string', length: 16, enumType: PlayerBubbleStatus::class)]
     private PlayerBubbleStatus $bubbleStatus = PlayerBubbleStatus::BUBBLE;
+
+    /**
+     * T-122: Player-Background (40k-Imperial-Flavor). Permanent gesetzt nach
+     * Onboarding (T-046) bzw. via Demo-CLI-Action. NULL = noch nicht gewählt.
+     * Effect-Resolver-Hooks (Multiplier-Anwendung) folgen in T-122b.
+     */
+    #[ORM\Column(name: 'background', type: 'string', length: 32, enumType: PlayerBackground::class, nullable: true)]
+    private ?PlayerBackground $background = null;
 
     public function __construct(
         #[ORM\Id]
@@ -76,5 +86,21 @@ class Player
             $this->planets->add($planet);
             $planet->setPlayer($this);
         }
+    }
+
+    public function getBackground(): ?PlayerBackground
+    {
+        return $this->background;
+    }
+
+    /**
+     * T-122: Background ist permanent. Re-Spec wirft Exception.
+     */
+    public function setBackground(PlayerBackground $background): void
+    {
+        if ($this->background !== null) {
+            throw new BackgroundAlreadySetException($this->background);
+        }
+        $this->background = $background;
     }
 }

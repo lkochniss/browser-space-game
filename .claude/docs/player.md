@@ -26,6 +26,24 @@ T-074/T-075/T-111/T-160/T-161).
 Migration `Version20260622000003` setzt bestehende Player mit >= 2 Planeten
 direkt auf EXITED (Backfill).
 
+## Player-Background (T-122)
+
+Pro Player optional `PlayerBackground` aus 5 Werten (40k-Imperial-Flavor):
+- `IMPERIAL_NOBILITY` — +5% Reputation, -2% Mining
+- `COMMON_BORN` — +5% Mining, -2% Reputation
+- `TECH_ADEPT` — +5% RP, -2% Pop-Wachstum
+- `VETERAN_PILOT` — +5% Schiff-Speed/Crit, -2% Pop-Wachstum
+- `FRONTIER_BORN` — +5% Sonden-Range/Discovery, -2% Trade-Income
+
+Default `NULL` = noch nicht gewählt (alle Multi ×1.0). Wahl via
+`SetPlayerBackgroundCommand` (Demo-CLI Action "Set Background") ist **PERMANENT**
+— `Player::setBackground()` wirft `BackgroundAlreadySetException` bei Re-Spec.
+
+Foundation-only: Multiplier-Hooks (Mining/Rep/RP/Pop/Ship/Probe/Trade) folgen
+in T-122b. Onboarding-UI in T-046 (Open). Demo-CLI deckt Wahl-Flow interim ab.
+
+Migration `Version20260622000005` fügt das nullable `background`-Feld.
+
 ## Bootstrap: ClaimStartPlanet (T-007 + T-008 + T-085 + T-018)
 
 `ClaimStartPlanetCommand(playerId, planetId)` → `ClaimStartPlanetCommandService`:
@@ -47,6 +65,9 @@ direkt auf EXITED (Backfill).
 - `src/Player/Model/Player.php` (Entity)
 - `src/Player/ValueObject/PlayerId.php`
 - `src/Player/ValueObject/PlayerBubbleStatus.php` (T-150)
+- `src/Player/ValueObject/PlayerBackground.php` (T-122)
+- `src/Player/Command/SetPlayerBackgroundCommand.php` + Handler + Service (T-122)
+- `src/Player/Exception/{BackgroundAlreadySetException,PlayerNotFoundException}.php`
 - `src/Player/Repository/PlayerRepository.php`
 - `src/Player/Command/{CreateNewPlayerCommand,...}.php`
 - `src/Player/Service/{CreateNewPlayerService,...}.php`
