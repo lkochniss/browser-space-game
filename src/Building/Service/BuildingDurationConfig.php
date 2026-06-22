@@ -20,8 +20,9 @@ class BuildingDurationConfig
         BuildingType::TITANIUM_MINE->value => 300,
         BuildingType::URANIUM_MINE->value => 300,
 
-        // Hub (30min)
-        BuildingType::HUB->value => 1800,
+        // T-172: HQ heavy-Verwaltung (60min), HUB klein-Wohngebäude (15min)
+        BuildingType::HQ->value => 3600,
+        BuildingType::HUB->value => 900,
 
         // Refinement (30min)
         BuildingType::IRON_SMELTER->value => 1800,
@@ -54,8 +55,8 @@ class BuildingDurationConfig
         BuildingType::AGRI_DOME->value => 900,
         BuildingType::ATMOSPHERIC_PROCESSOR->value => 900,
 
-        // T-064b: Construction-Hub (30min Strategic-Tier)
-        BuildingType::CONSTRUCTION_HUB->value => 1800,
+        // T-064b → T-172 Rename: Construction-Yard (30min Strategic-Tier)
+        BuildingType::CONSTRUCTION_YARD->value => 1800,
     ];
 
     /**

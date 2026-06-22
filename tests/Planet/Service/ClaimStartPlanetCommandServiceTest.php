@@ -58,15 +58,16 @@ final class ClaimStartPlanetCommandServiceTest extends IntegrationTestCase
         self::assertSame(100, $planet->getResource(ResourceType::WATER)->getAmount());
     }
 
-    public function test_start_planet_population_is_50_of_100_cap(): void
+    public function test_start_planet_population_is_50_of_125_cap(): void
     {
+        // T-172: ClaimStartPlanet baut HQ L1 (+25 Cap) und IRON_MINE auto.
         $player = $this->claimFreshPlayer();
         $planet = $player->getPlanets()->first();
 
         $pop = $planet->getPopulation();
         self::assertSame(50, $pop->getTotal());
         self::assertSame(0, $pop->getAssigned());
-        self::assertSame(100, $pop->getCap());
+        self::assertSame(125, $pop->getCap());
         self::assertSame(50, $pop->getFree());
     }
 

@@ -36,10 +36,9 @@ final class CancelBuildCommandServiceTest extends IntegrationTestCase
         $iron = $planet->getResource(ResourceType::IRON_ORE)->getAmount();
         $popFreeBefore = $planet->getPopulation()->getFree();
 
-        // HUB cost = 100 IRON_ORE + 50 COAL + 10 pop
+        // T-172: HUB cost = 50 IRON_ORE + 25 COAL + 5 pop
         $built = $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
 
-        // Während Bauphase: Resource abgezogen, Pop assigned
         $hasHub = false;
         foreach ($planet->getBuildings() as $b) {
             if ($b->getType() === BuildingType::HUB) {
@@ -48,13 +47,11 @@ final class CancelBuildCommandServiceTest extends IntegrationTestCase
             }
         }
         self::assertTrue($hasHub);
-        self::assertSame($iron - 100, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame($iron - 50, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
 
-        // Cancel
         $result = $this->bus->dispatch(new CancelBuildCommand($planet->getId(), $built->getId()));
         self::assertNull($result, 'Initial-Cancel returns null (Building gelöscht)');
 
-        // Building weg
         $found = false;
         foreach ($planet->getBuildings() as $b) {
             if ($b->getId()->equals($built->getId())) {
@@ -64,8 +61,8 @@ final class CancelBuildCommandServiceTest extends IntegrationTestCase
         }
         self::assertFalse($found, 'Building nach Cancel weg');
 
-        // Refund: 50% Resource + voll Pop
-        self::assertSame($iron - 50, $planet->getResource(ResourceType::IRON_ORE)->getAmount(), '50% Iron-Refund');
+        // Refund 50% von 50 = 25 → Netto -25 IRON
+        self::assertSame($iron - 25, $planet->getResource(ResourceType::IRON_ORE)->getAmount(), '50% Iron-Refund');
         self::assertSame($popFreeBefore, $planet->getPopulation()->getFree(), 'Pop voll released');
     }
 
@@ -79,7 +76,7 @@ final class CancelBuildCommandServiceTest extends IntegrationTestCase
         $clock->advanceSeconds(99999);
         $this->em->refresh($hub);
 
-        // Upgrade L1→L2 starten (cost = 100×2 = 200 IRON, 50×2=100 COAL, pop 10×2=20)
+        // T-172: HUB-Upgrade L1→L2 cost = 50×2 = 100 IRON + 25×2 = 50 COAL + 5×2 = 10 pop
         $ironBefore = $planet->getResource(ResourceType::IRON_ORE)->getAmount();
         $popFreeBefore = $planet->getPopulation()->getFree();
         $this->bus->dispatch(new UpgradeBuildingCommand($planet->getId(), $hub->getId()));
@@ -87,15 +84,14 @@ final class CancelBuildCommandServiceTest extends IntegrationTestCase
         self::assertSame(2, $hub->getLevel(), 'L2 während Upgrade');
         self::assertFalse($hub->isReady($clock->now()));
 
-        // Cancel
         $result = $this->bus->dispatch(new CancelBuildCommand($planet->getId(), $hub->getId()));
         self::assertNotNull($result);
         self::assertSame(1, $result->getLevel(), 'L1 nach Upgrade-Cancel');
         self::assertNull($result->getFinishedAt(), 'finishedAt cleared → ready');
         self::assertTrue($result->isReady($clock->now()));
 
-        // Upgrade-Cost 200 IRON abgezogen, Refund 50% = 100 zurück → Netto -100
-        self::assertSame($ironBefore - 100, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
+        // Upgrade-Cost 100 IRON abgezogen, Refund 50% = 50 zurück → Netto -50
+        self::assertSame($ironBefore - 50, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
         // Upgrade-Pop (20) released → free wieder wie vorher
         self::assertSame($popFreeBefore, $planet->getPopulation()->getFree());
     }

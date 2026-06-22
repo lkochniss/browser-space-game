@@ -51,19 +51,20 @@ readonly class DemoGoalChecker
 
     private function goalHubLevel2(Player $player): DemoGoal
     {
+        // T-172: nach Refactor ist HQ das zentrale Verwaltungs-Building (HUB ist multi-Wohnsiedlung).
         $bestLevel = 0;
         foreach ($player->getPlanets() as $planet) {
             foreach ($planet->getBuildings() as $b) {
-                if ($b->getType() === BuildingType::HUB) {
+                if ($b->getType() === BuildingType::HQ) {
                     $bestLevel = max($bestLevel, $b->getLevel());
                 }
             }
         }
 
         return new DemoGoal(
-            label: 'Hub auf Level 2 ausbauen',
+            label: 'HQ auf Level 2 ausbauen',
             completed: $bestLevel >= 2,
-            progressHint: sprintf('Hub-Level: %d/2', $bestLevel),
+            progressHint: sprintf('HQ-Level: %d/2', $bestLevel),
         );
     }
 

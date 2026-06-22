@@ -223,6 +223,11 @@ class ClaimStartPlanetCommandService
     {
         $now = $this->clock->now();
 
+        // T-172: HQ auto-built bei Claim — jeder Planet hat zentrales Verwaltungs-Building
+        $startHq = Building::createNewBuilding(BuildingType::HQ);
+        $startHq->setFinishedAt($now);
+        $planet->addBuilding($startHq, $now);
+
         // T-062: Start-Mine ist instant ready (finishedAt = jetzt) → kein Bauzeit-Wait beim Onboarding
         $startMine = Building::createNewBuilding(BuildingType::IRON_MINE);
         $startMine->setFinishedAt($now);

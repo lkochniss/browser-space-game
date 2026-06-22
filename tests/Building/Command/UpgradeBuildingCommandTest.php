@@ -54,30 +54,30 @@ final class UpgradeBuildingCommandTest extends IntegrationTestCase
     public function test_upgrade_hub_drops_cap_during_construction(): void
     {
         // T-062: Während Upgrade-Phase ist Hub "not ready" → kein Cap-Bonus.
-        // Cap fällt von L1-Wert (150) auf base (100), bis Upgrade fertig.
+        // T-172: HUB +100/Level. L1-Cap=200, Upgrade-Cost(L1→L2) = 50×2=100 IRON + 25×2=50 COAL + 5×2=10 pop.
         [$planet, $building] = $this->seedPlanetWithBuilding(
             type: BuildingType::HUB,
             iron: 500,
             coal: 200,
             popTotal: 100,
-            assignedFromBuild: 10,
+            assignedFromBuild: 5,
         );
 
-        // Pre-upgrade: Hub L1 finishedAt = null → ready → cap = 150
-        self::assertSame(150, $planet->getPopulation()->getCap());
+        // Pre-upgrade: HUB L1 finishedAt = null → ready → cap = 200
+        self::assertSame(200, $planet->getPopulation()->getCap());
 
         $this->bus->dispatch(new UpgradeBuildingCommand($planet->getId(), $building->getId()));
 
         $this->em->clear();
         $reloaded = $this->em->find(Planet::class, $planet->getId());
 
-        // Hub Level wurde inkrementiert, aber finishedAt liegt in Zukunft → not ready → cap = base 100
+        // Cap = base 100, da L2-HUB jetzt not-ready
         self::assertSame(100, $reloaded->getPopulation()->getCap());
         self::assertSame(2, $reloaded->getBuildings()->first()->getLevel());
         self::assertGreaterThan(new \DateTimeImmutable(), $reloaded->getBuildings()->first()->getFinishedAt());
-        self::assertSame(300, $reloaded->getResource(ResourceType::IRON_ORE)->getAmount()); // 500 - 200
-        self::assertSame(100, $reloaded->getResource(ResourceType::COAL)->getAmount()); // 200 - 100
-        self::assertSame(30, $reloaded->getPopulation()->getAssigned()); // 10 + 20
+        self::assertSame(400, $reloaded->getResource(ResourceType::IRON_ORE)->getAmount()); // 500 - 100
+        self::assertSame(150, $reloaded->getResource(ResourceType::COAL)->getAmount()); // 200 - 50
+        self::assertSame(15, $reloaded->getPopulation()->getAssigned()); // 5 (build) + 10 (upgrade)
     }
 
     public function test_throws_when_resources_insufficient_for_upgrade(): void

@@ -57,15 +57,25 @@ final class StorageCapacityTest extends TestCase
         self::assertSame(4500, $planet->getStorageCapacity(ResourceType::WATER));
     }
 
-    public function test_hub_adds_renewable_storage(): void
+    public function test_hq_adds_renewable_storage(): void
     {
+        // T-172: HQ übernimmt Renewable-Storage-Foundation (vorher HUB)
         $planet = Planet::generatePlanet(PlanetId::generate());
-        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HUB, 1));
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HQ, 1));
 
         // base 500 + 200/level
         self::assertSame(700, $planet->getStorageCapacity(ResourceType::WATER));
         self::assertSame(700, $planet->getStorageCapacity(ResourceType::FOOD));
         self::assertSame(700, $planet->getStorageCapacity(ResourceType::OXYGEN));
+    }
+
+    public function test_hub_does_not_add_storage(): void
+    {
+        // T-172: HUB ist reines Wohngebäude, kein Storage
+        $planet = Planet::generatePlanet(PlanetId::generate());
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HUB, 5));
+
+        self::assertSame(500, $planet->getStorageCapacity(ResourceType::WATER));
     }
 
     public function test_smelter_adds_iron_bar_cap(): void

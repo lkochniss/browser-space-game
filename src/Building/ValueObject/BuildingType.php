@@ -16,6 +16,13 @@ enum BuildingType: string
     case TITANIUM_MINE = 'titanium_mine';
     case URANIUM_MINE = 'uranium_mine';
 
+    // T-172: HQ ist die zentrale Planet-Verwaltung — strikt-unique, gibt Pop-Cap-
+    // Foundation + Slot-Bonus (PlanetSize-abhängig, capped) + Trade-Output-Hook.
+    // Wird beim ClaimStartPlanet automatisch als L1 errichtet.
+    case HQ = 'hq';
+
+    // T-172: HUB ist Wohnsiedlung — non-unique, multi-instance Pop-Cap-Booster
+    // ohne Storage-Beitrag. Storage kommt aus Tank/Silo/Storage-Buildings.
     case HUB = 'hub';
 
     case IRON_SMELTER = 'iron_smelter';
@@ -48,13 +55,16 @@ enum BuildingType: string
     case AGRI_DOME = 'agri_dome';
     case ATMOSPHERIC_PROCESSOR = 'atmospheric_processor';
 
-    // T-064b: Lokales Bauzeit-Boost-Building. Unique pro Planet, Tier-1.
-    case CONSTRUCTION_HUB = 'construction_hub';
+    // T-064b → T-172 rename: Lokaler Bauzeit-Boost. Unique pro Planet, Tier-1.
+    case CONSTRUCTION_YARD = 'construction_yard';
 
     public function getPopulationCapBonusPerLevel(): int
     {
         return match ($this) {
-            self::HUB => 50,
+            // T-172: HQ gibt kleine Pop-Cap-Foundation (+25/Level).
+            // HUB ist Wohnsiedlung (+100/Level, multi-stackable).
+            self::HQ => 25,
+            self::HUB => 100,
             default => 0,
         };
     }
@@ -63,18 +73,19 @@ enum BuildingType: string
      * T-171: Strikt-unique Buildings — max 1 Instanz pro Planet, Folge-Build wirft
      * `BuildingAlreadyExistsException`. Spieler nutzt Upgrade um Level zu steigern.
      *
-     * Strategic + Lifelines sind unique; Mines/Storage/Producer/Smelter sind Multi.
+     * Strategic + Lifelines sind unique; Mines/Storage/Producer/Smelter/HUB sind Multi.
+     * T-172: HQ ist unique, HUB ist multi (vorher beide HUB+unique).
      */
     public function isUnique(): bool
     {
         return match ($this) {
-            self::HUB,
+            self::HQ,
             self::RESEARCH_LAB,
             self::SHIPYARD,
             self::PROBE_LAB,
             self::RECYCLING_PLANT,
             self::TELESCOPE,
-            self::CONSTRUCTION_HUB => true,
+            self::CONSTRUCTION_YARD => true,
             default => false,
         };
     }
@@ -83,20 +94,20 @@ enum BuildingType: string
      * T-171: Slot-Size pro Building. Planet hat Slot-Cap (PlanetSize-abhängig);
      * Summe der gebauten + in-Bau-Building-Sizes muss ≤ Cap sein.
      *
-     * - Standard (Mines, Storage, Producer, Smelter): 1
-     * - Major Strategic (HUB, PROBE_LAB, RECYCLING_PLANT, TELESCOPE): 2
-     * - Heavy-Industry (RESEARCH_LAB, SHIPYARD): 3
+     * - Standard (Mines, Storage, Producer, Smelter, HUB-neu): 1
+     * - Major Strategic (PROBE_LAB, RECYCLING_PLANT, TELESCOPE, CONSTRUCTION_YARD): 2
+     * - Heavy-Industry / Verwaltung (HQ, RESEARCH_LAB, SHIPYARD): 3
      */
     public function getSlotSize(): int
     {
         return match ($this) {
+            self::HQ,
             self::RESEARCH_LAB,
             self::SHIPYARD => 3,
-            self::HUB,
             self::PROBE_LAB,
             self::RECYCLING_PLANT,
             self::TELESCOPE,
-            self::CONSTRUCTION_HUB => 2,
+            self::CONSTRUCTION_YARD => 2,
             default => 1,
         };
     }
@@ -106,7 +117,8 @@ enum BuildingType: string
      *
      * - Mining-Mines bringen kleinen Buffer für ihre eigene Resource
      * - IRON_SMELTER puffert IRON_BAR
-     * - HUB bringt natural Renewable-Storage (Lebensraum-Boost)
+     * - HQ bringt natural Renewable-Storage (Lebensraum-Foundation, T-172)
+     * - HUB hat KEIN Storage (T-172 Decision)
      * - Dedizierte Storage-Buildings bringen viel
      */
     public function getStorageContribution(ResourceType $resource): int
@@ -125,22 +137,25 @@ enum BuildingType: string
             self::RECYCLING_PLANT => [],
             self::TELESCOPE => [],
             self::RESEARCH_LAB => [],
-            self::HUB => [
+            // T-172: HQ übernimmt Renewable-Storage-Foundation (vom alten HUB).
+            self::HQ => [
                 ResourceType::WATER->value => 200,
                 ResourceType::FOOD->value => 200,
                 ResourceType::OXYGEN->value => 200,
             ],
+            // T-172: HUB hat kein Storage-Beitrag (reines Wohngebäude).
+            self::HUB => [],
             self::IRON_STORAGE => [ResourceType::IRON_ORE->value => 1000],
             self::COAL_STORAGE => [ResourceType::COAL->value => 1000],
             self::IRON_BAR_STORAGE => [ResourceType::IRON_BAR->value => 1000],
             self::WATER_TANK => [ResourceType::WATER->value => 2000],
             self::FOOD_SILO => [ResourceType::FOOD->value => 2000],
             self::OXYGEN_STORAGE => [ResourceType::OXYGEN->value => 2000],
-            // T-097a: Producer haben kein Storage-Beitrag — bleibt bei Hub/Tank/Silo
+            // T-097a: Producer haben kein Storage-Beitrag
             self::WATER_RECLAIMER => [],
             self::AGRI_DOME => [],
             self::ATMOSPHERIC_PROCESSOR => [],
-            self::CONSTRUCTION_HUB => [],
+            self::CONSTRUCTION_YARD => [],
         };
 
         return $contributions[$resource->value] ?? 0;

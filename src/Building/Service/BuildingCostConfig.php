@@ -50,12 +50,21 @@ class BuildingCostConfig
                 ],
                 populationCost: 10,
             ),
+            // T-172: HQ (Heavy-Verwaltung) — strikt-unique, auto-built bei Claim.
+            BuildingType::HQ->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 200,
+                    ResourceType::COAL->value => 100,
+                ],
+                populationCost: 20,
+            ),
+            // T-172: HUB (Wohnsiedlung) — multi-instance, klein.
             BuildingType::HUB->value => new BuildingCost(
                 resources: [
-                    ResourceType::IRON_ORE->value => 100,
-                    ResourceType::COAL->value => 50,
+                    ResourceType::IRON_ORE->value => 50,
+                    ResourceType::COAL->value => 25,
                 ],
-                populationCost: 10,
+                populationCost: 5,
             ),
             BuildingType::IRON_SMELTER->value => new BuildingCost(
                 resources: [
@@ -157,8 +166,8 @@ class BuildingCostConfig
                 populationCost: 5,
             ),
 
-            // T-064b: Construction-Hub. Strikt-unique, Tier-1 via metallurgy.
-            BuildingType::CONSTRUCTION_HUB->value => new BuildingCost(
+            // T-064b → T-172 Rename: Construction-Yard. Strikt-unique, Tier-1 via metallurgy.
+            BuildingType::CONSTRUCTION_YARD->value => new BuildingCost(
                 resources: [
                     ResourceType::IRON_BAR->value => 200,
                     ResourceType::SILICON->value => 100,

@@ -68,7 +68,8 @@ final class PlayerPlanetPersistenceTest extends IntegrationTestCase
         $this->em->clear();
 
         $loaded = $this->em->find(Planet::class, $planetId);
-        self::assertSame(150, $loaded->getPopulation()->getCap());
+        // T-172: HUB L1 = +100 Pop-Cap → 200
+        self::assertSame(200, $loaded->getPopulation()->getCap());
         self::assertSame(120, $loaded->getPopulation()->getTotal());
         self::assertSame(\App\Building\ValueObject\BuildingType::HUB, $loaded->getBuildings()->first()->getType());
     }

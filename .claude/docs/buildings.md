@@ -11,7 +11,8 @@
 | `ALUMINUM_MINE` | Aluminum-Production | ALUMINUM_ORE | 80 Iron | 5 | 5min |
 | `TITANIUM_MINE` | Titanium-Production | TITANIUM_ORE | 100 Iron | 5 | 5min |
 | `URANIUM_MINE` | Uranium-Production | URANIUM_ORE | 100 Iron + 30 Coal | 10 | 5min |
-| `HUB` | Pop-Cap +50 / Level | — | 100 Iron + 50 Coal | 10 | 30min |
+| `HQ` (T-172) | Pop-Cap +25/Lvl, W/F/O-Storage +200/Lvl, Slot-Bonus (PlanetSize-capped) | — | 200 Iron + 100 Coal | 20 | 60min |
+| `HUB` (T-172 refactor, multi-instance) | Pop-Cap +100/Lvl, kein Storage | — | 50 Iron + 25 Coal | 5 | 15min |
 | `IRON_SMELTER` | Refines IRON_BAR (2:1:1) | — (refinement) | 200 Iron + 100 Coal | 15 | 30min |
 | `IRON_STORAGE` | +1000 IRON_ORE-Cap / Level | — | 100 Iron + 50 Coal | 5 | 15min |
 | `COAL_STORAGE` | +1000 COAL-Cap / Level | — | 100 Iron + 50 Coal | 5 | 15min |
@@ -135,7 +136,7 @@ Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->no
 
 | Building | Slot-Size | Grund |
 |----------|-----------|-------|
-| `HUB` | 2 | Pop-Cap-Building, Multi sinnlos |
+| `HQ` (T-172) | 3 | Zentrale Verwaltung, multi sinnlos |
 | `RESEARCH_LAB` | 3 | Forschungs-Quelle; Multi-Lab via T-025b über mehrere Planeten |
 | `SHIPYARD` | 3 | Schiffbau-Gate, heavy industry |
 | `PROBE_LAB` | 2 | Sondenbau-Gate |
@@ -197,12 +198,12 @@ Forschungs-Multiplier (multiplikativ über Nodes UND Levels). Aktuelle Quellen:
 
 Build- und Upgrade-Service multiplizieren mit `Planet::getEffectiveConstructionSpeedMultiplier($type)` (T-063 Planet-Type-Bonus). **Decision: nicht retroaktiv** — wirkt nur auf neu gestartete Bauten.
 
-**Lokales Construction-Hub-Building (T-064b):** strikt-unique pro Planet, Slot-Size 2,
+**Lokales Construction-Yard-Building (T-064b):** strikt-unique pro Planet, Slot-Size 2,
 gated by `metallurgy` L1. `Planet::getConstructionHubSpeedMultiplier($now) = 1.10^level`
 (kein Hub = 1.0). Stackt multiplikativ mit T-064-Forschung + T-063-Planet-Type-Bonus.
 Build- und Upgrade-Service multiplizieren alle drei zusammen.
 
-Player kann so eine **Industrie-Welt** spezialisieren: Construction-Hub L5 = ×1.61
+Player kann so eine **Industrie-Welt** spezialisieren: Construction-Yard L5 = ×1.61
 nur auf diesem Planeten, kombiniert mit Forschung × Planet-Type-Bonus.
 
 ## Geplant

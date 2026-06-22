@@ -75,15 +75,16 @@ readonly class BuildBuildingCommandService
             throw new BuildingAlreadyExistsException($type);
         }
 
-        // T-171 Slot-Cap-Check
+        $now = $this->clock->now();
+
+        // T-171 + T-172 Slot-Cap-Check (effektiver Cap inkl. HQ-Bonus)
         $needed = $type->getSlotSize();
         $used = $planet->getBuildingSlotsUsed();
-        $cap = $planet->getBuildingSlotCap();
+        $cap = $planet->getEffectiveBuildingSlotCap($now);
         if ($used + $needed > $cap) {
             throw new PlanetSlotsFullException($used, $cap, $needed);
         }
 
-        $now = $this->clock->now();
         $active = $planet->countActiveBuildJobs($now);
         if ($active >= self::MAX_CONCURRENT_BUILDS) {
             throw new BuildQueueFullException($active, self::MAX_CONCURRENT_BUILDS);
@@ -102,8 +103,8 @@ readonly class BuildBuildingCommandService
         $speedMulti = $planet->getEffectiveConstructionSpeedMultiplier($type);
         // T-064: Forschungs-Bonus stackt multiplikativ
         $speedMulti *= $this->constructionSpeedResearch->getMultiplier($planet->getPlayer());
-        // T-064b: Lokales Construction-Hub-Building stackt multiplikativ
-        $speedMulti *= $planet->getConstructionHubSpeedMultiplier($now);
+        // T-064b → T-172 Rename: Lokales Construction-Yard-Building stackt multiplikativ
+        $speedMulti *= $planet->getConstructionYardSpeedMultiplier($now);
         $duration = (int) max(1, round($rawDuration / $speedMulti));
 
         $building = Building::createNewBuilding($type);

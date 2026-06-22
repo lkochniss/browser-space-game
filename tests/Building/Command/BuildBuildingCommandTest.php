@@ -52,7 +52,7 @@ final class BuildBuildingCommandTest extends IntegrationTestCase
 
     public function test_build_hub_in_progress_does_not_raise_cap(): void
     {
-        // T-062: Hub-Bau hat Bauzeit. Während Bauphase kein Cap-Bonus.
+        // T-062/T-172: HUB-Bau (50 IRON + 25 COAL + 5 pop) hat Bauzeit, kein Cap-Bonus während Bau.
         $planet = $this->seedPlanet(iron: 200, coal: 100, popTotal: 80);
         $planetId = $planet->getId();
 
@@ -61,12 +61,11 @@ final class BuildBuildingCommandTest extends IntegrationTestCase
         $this->em->clear();
         $reloaded = $this->em->find(Planet::class, $planetId);
 
-        // Cap stays at base 100 — Hub is still being constructed
+        // Cap stays at base 100 — HUB ist noch in Bau
         self::assertSame(100, $reloaded->getPopulation()->getCap());
-        self::assertSame(100, $reloaded->getResource(ResourceType::IRON_ORE)->getAmount());
-        self::assertSame(50, $reloaded->getResource(ResourceType::COAL)->getAmount());
-        self::assertSame(10, $reloaded->getPopulation()->getAssigned());
-        // finishedAt is in the future
+        self::assertSame(150, $reloaded->getResource(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame(75, $reloaded->getResource(ResourceType::COAL)->getAmount());
+        self::assertSame(5, $reloaded->getPopulation()->getAssigned());
         $hub = $reloaded->getBuildings()->first();
         self::assertGreaterThan(new \DateTimeImmutable(), $hub->getFinishedAt());
     }

@@ -40,7 +40,8 @@ final class ConstructionCompletionProcessorTest extends TestCase
         $later = $finishesAt->modify('+1 minute');
         (new ConstructionCompletionProcessor())->process($planet, $later);
 
-        self::assertSame(150, $planet->getPopulation()->getCap());
+        // T-172: HUB L1 = +100 Pop-Cap → 200
+        self::assertSame(200, $planet->getPopulation()->getCap());
     }
 
     public function test_no_clock_means_in_progress_buildings_excluded(): void

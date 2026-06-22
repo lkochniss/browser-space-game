@@ -19,52 +19,52 @@ use App\Resource\ValueObject\ResourceType;
 use App\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 
-final class ConstructionHubBuildingTest extends IntegrationTestCase
+final class ConstructionYardBuildingTest extends IntegrationTestCase
 {
     public function test_construction_hub_is_unique(): void
     {
-        self::assertTrue(BuildingType::CONSTRUCTION_HUB->isUnique());
+        self::assertTrue(BuildingType::CONSTRUCTION_YARD->isUnique());
     }
 
     public function test_construction_hub_slot_size_is_2(): void
     {
-        self::assertSame(2, BuildingType::CONSTRUCTION_HUB->getSlotSize());
+        self::assertSame(2, BuildingType::CONSTRUCTION_YARD->getSlotSize());
     }
 
     public function test_no_hub_returns_1x_multiplier(): void
     {
         $planet = $this->bootstrapPlanet();
-        self::assertSame(1.0, $planet->getConstructionHubSpeedMultiplier(new DateTimeImmutable()));
+        self::assertSame(1.0, $planet->getConstructionYardSpeedMultiplier(new DateTimeImmutable()));
     }
 
     public function test_unfinished_hub_no_boost(): void
     {
         $planet = $this->bootstrapPlanet();
-        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_HUB, 1);
+        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_YARD, 1);
         $hub->setFinishedAt(new DateTimeImmutable('+1 hour'));
         $planet->addBuilding($hub);
 
-        self::assertSame(1.0, $planet->getConstructionHubSpeedMultiplier(new DateTimeImmutable()));
+        self::assertSame(1.0, $planet->getConstructionYardSpeedMultiplier(new DateTimeImmutable()));
     }
 
     public function test_finished_hub_l1_gives_110_multiplier(): void
     {
         $planet = $this->bootstrapPlanet();
-        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_HUB, 1);
+        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_YARD, 1);
         $hub->setFinishedAt(new DateTimeImmutable('-1 minute'));
         $planet->addBuilding($hub);
 
-        self::assertEqualsWithDelta(1.10, $planet->getConstructionHubSpeedMultiplier(new DateTimeImmutable()), 0.001);
+        self::assertEqualsWithDelta(1.10, $planet->getConstructionYardSpeedMultiplier(new DateTimeImmutable()), 0.001);
     }
 
     public function test_finished_hub_l3_gives_1331_multiplier(): void
     {
         $planet = $this->bootstrapPlanet();
-        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_HUB, 3);
+        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_YARD, 3);
         $hub->setFinishedAt(new DateTimeImmutable('-1 minute'));
         $planet->addBuilding($hub);
 
-        self::assertEqualsWithDelta(1.331, $planet->getConstructionHubSpeedMultiplier(new DateTimeImmutable()), 0.001);
+        self::assertEqualsWithDelta(1.331, $planet->getConstructionYardSpeedMultiplier(new DateTimeImmutable()), 0.001);
     }
 
     public function test_build_with_construction_hub_is_faster(): void
@@ -78,7 +78,7 @@ final class ConstructionHubBuildingTest extends IntegrationTestCase
             - (new DateTimeImmutable())->getTimestamp();
 
         // Construction-Hub L1 hinzufügen → 10% schneller
-        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_HUB, 1);
+        $hub = new Building(BuildingId::generate(), BuildingType::CONSTRUCTION_YARD, 1);
         $hub->setFinishedAt(new DateTimeImmutable('-1 minute'));
         $planet->addBuilding($hub);
         $this->em->flush();

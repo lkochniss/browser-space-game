@@ -20,22 +20,23 @@ use PHPUnit\Framework\TestCase;
 
 final class DemoGoalCheckerTest extends TestCase
 {
-    public function test_hub_level_2_goal(): void
+    public function test_hq_level_2_goal(): void
     {
+        // T-172: Goal #1 prüft jetzt HQ-Level (war HUB vor Refactor).
         $player = $this->makePlayer();
         $planet = $player->getPlanets()->first();
-        $hub = new Building(BuildingId::generate(), BuildingType::HUB, 1);
-        $planet->addBuilding($hub);
+        $hq = new Building(BuildingId::generate(), BuildingType::HQ, 1);
+        $planet->addBuilding($hq);
 
         $checker = $this->makeChecker();
         $goals = $checker->check($player);
 
-        self::assertFalse($goals[0]->completed, 'Hub L1 noch nicht complete');
+        self::assertFalse($goals[0]->completed, 'HQ L1 noch nicht complete');
         self::assertStringContainsString('1/2', $goals[0]->progressHint);
 
-        $hub->setLevel(2);
+        $hq->setLevel(2);
         $goals = $checker->check($player);
-        self::assertTrue($goals[0]->completed, 'Hub L2 complete');
+        self::assertTrue($goals[0]->completed, 'HQ L2 complete');
     }
 
     public function test_basic_mines_goal(): void

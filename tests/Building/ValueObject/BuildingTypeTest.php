@@ -10,9 +10,16 @@ use PHPUnit\Framework\TestCase;
 
 final class BuildingTypeTest extends TestCase
 {
-    public function test_hub_contributes_50_per_level(): void
+    public function test_hub_contributes_100_per_level(): void
     {
-        self::assertSame(50, BuildingType::HUB->getPopulationCapBonusPerLevel());
+        // T-172: HUB ist jetzt multi-instance Wohnsiedlung mit 100 Pop-Cap/Level
+        self::assertSame(100, BuildingType::HUB->getPopulationCapBonusPerLevel());
+    }
+
+    public function test_hq_contributes_25_per_level(): void
+    {
+        // T-172: HQ ist zentrale Verwaltung mit 25 Pop-Cap-Foundation/Level
+        self::assertSame(25, BuildingType::HQ->getPopulationCapBonusPerLevel());
     }
 
     public function test_mines_have_no_pop_cap_bonus(): void

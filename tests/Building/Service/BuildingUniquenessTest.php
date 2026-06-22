@@ -32,11 +32,11 @@ final class BuildingUniquenessTest extends IntegrationTestCase
 
     public function test_unique_building_second_build_throws(): void
     {
+        // T-172: HQ wird bei ClaimStartPlanet auto-built → 2. Build muss werfen.
         $planet = $this->bootstrapPlanet();
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
 
         $this->expectException(BuildingAlreadyExistsException::class);
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HQ));
     }
 
     public function test_non_unique_building_can_be_built_multiple_times(): void
@@ -64,27 +64,26 @@ final class BuildingUniquenessTest extends IntegrationTestCase
 
     public function test_slot_cap_blocks_when_full(): void
     {
-        $planet = $this->bootstrapPlanet(); // MEDIUM = 18 Slots
-        // Fülle 16/18 manuell auf — direct entity um Build-Queue + Validation zu umgehen
-        for ($i = 0; $i < 16; $i++) {
+        // MEDIUM = 18 Slots. ClaimStartPlanet legt HQ (3) + IRON_MINE (1) = 4 belegt.
+        // 13 weitere IRON_MINE → 17 used. HUB braucht nur 1 → ok (18). HUB+1 → würfe.
+        $planet = $this->bootstrapPlanet();
+        for ($i = 0; $i < 13; $i++) {
             $b = new Building(BuildingId::generate(), BuildingType::IRON_MINE, 1);
             $planet->addBuilding($b);
         }
         $this->em->flush();
-        // 17 + ClaimStart-Initial-IRON_MINE(1) = 17 size-1 Buildings = 17 Slots used.
-        // Plus 1 freier Slot. HUB braucht 2 Slots → muss werfen.
+        // 17 belegt. 1 frei. RESEARCH_LAB braucht 3 Slots → wirft (Tier-0 size-3 ohne Tech-Lock).
 
         $this->expectException(PlanetSlotsFullException::class);
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::RESEARCH_LAB));
     }
 
     public function test_size_aware_specialization_via_direct_fill(): void
     {
-        // MEDIUM Planet hat 18 Slots. Direct fill mit 18× size-1, dann
-        // 19. via dispatch muss werfen (umgeht Build-Queue-Limit).
+        // MEDIUM Planet hat 18 Slots. HQ(3) + IRON_MINE(1) = 4 belegt nach ClaimStart.
+        // Fülle bis 18, dann 19. via dispatch muss werfen.
         $planet = $this->bootstrapPlanet();
-        // ClaimStart-Initial-IRON_MINE(1) zählt schon → +17 manuell = 18.
-        for ($i = 0; $i < 17; $i++) {
+        for ($i = 0; $i < 14; $i++) {
             $b = new Building(BuildingId::generate(), BuildingType::IRON_MINE, 1);
             $planet->addBuilding($b);
         }
@@ -93,20 +92,21 @@ final class BuildingUniquenessTest extends IntegrationTestCase
         self::assertSame(18, $planet->getBuildingSlotsUsed());
         self::assertSame(18, $planet->getBuildingSlotCap());
 
-        // 19. Build muss werfen (Cap 18)
         $this->expectException(PlanetSlotsFullException::class);
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::FOOD_SILO));
     }
 
     public function test_unique_strategic_buildings_are_unique(): void
     {
-        $planet = $this->bootstrapPlanet();
-        foreach ([BuildingType::HUB, BuildingType::RESEARCH_LAB, BuildingType::SHIPYARD,
-                  BuildingType::PROBE_LAB, BuildingType::RECYCLING_PLANT, BuildingType::TELESCOPE] as $bt) {
+        // T-172: HQ ist unique (HUB nicht mehr).
+        foreach ([BuildingType::HQ, BuildingType::RESEARCH_LAB, BuildingType::SHIPYARD,
+                  BuildingType::PROBE_LAB, BuildingType::RECYCLING_PLANT, BuildingType::TELESCOPE,
+                  BuildingType::CONSTRUCTION_YARD] as $bt) {
             self::assertTrue($bt->isUnique(), $bt->value . ' soll unique sein');
         }
-        foreach ([BuildingType::IRON_MINE, BuildingType::COAL_MINE, BuildingType::WATER_TANK,
-                  BuildingType::WATER_RECLAIMER, BuildingType::IRON_SMELTER] as $bt) {
+        foreach ([BuildingType::HUB, BuildingType::IRON_MINE, BuildingType::COAL_MINE,
+                  BuildingType::WATER_TANK, BuildingType::WATER_RECLAIMER,
+                  BuildingType::IRON_SMELTER] as $bt) {
             self::assertFalse($bt->isUnique(), $bt->value . ' soll non-unique sein');
         }
     }

@@ -21,7 +21,8 @@ final class BuildingDurationConfigTest extends TestCase
             'iron_mine'      => [BuildingType::IRON_MINE,       300],
             'coal_mine'      => [BuildingType::COAL_MINE,       300],
             'uranium_mine'   => [BuildingType::URANIUM_MINE,    300],
-            'hub'            => [BuildingType::HUB,             1800],
+            'hq'             => [BuildingType::HQ,              3600],
+            'hub'            => [BuildingType::HUB,             900],
             'iron_smelter'   => [BuildingType::IRON_SMELTER,    1800],
             'shipyard'       => [BuildingType::SHIPYARD,        3600],
             'probe_lab'      => [BuildingType::PROBE_LAB,       1800],
@@ -48,8 +49,8 @@ final class BuildingDurationConfigTest extends TestCase
     public function test_upgrade_l5_uses_32x_multiplier(): void
     {
         $config = new BuildingDurationConfig();
-        // HUB base 1800s × 32 = 57600s
-        self::assertSame(57600, $config->getDurationSeconds(BuildingType::HUB, currentLevel: 5));
+        // T-172: HQ base 3600s × 32 = 115200s
+        self::assertSame(115200, $config->getDurationSeconds(BuildingType::HQ, currentLevel: 5));
     }
 
     public function test_negative_level_throws(): void

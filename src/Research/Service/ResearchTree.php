@@ -68,7 +68,7 @@ class ResearchTree
             maxLevel: 1,
             prerequisites: [
                 new ResearchLevelPrerequisite('basic_mining', 1),
-                new BuildingLevelPrerequisite(BuildingType::HUB, 2),
+                new BuildingLevelPrerequisite(BuildingType::HQ, 2),
             ],
             resourceCostBase: [
                 ResourceType::IRON_ORE->value => 150,
@@ -113,7 +113,7 @@ class ResearchTree
             maxLevel: 1,
             prerequisites: [
                 new ResearchLevelPrerequisite('basic_mining', 1),
-                new BuildingLevelPrerequisite(BuildingType::HUB, 2),
+                new BuildingLevelPrerequisite(BuildingType::HQ, 2),
             ],
             resourceCostBase: [
                 ResourceType::IRON_ORE->value => 150,

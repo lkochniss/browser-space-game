@@ -1235,6 +1235,8 @@ class InteractiveDemoCommand extends Command
         }
 
         $now = $this->clock->now();
+        // T-172: HQ wird via ClaimStartPlanet auto-built. Demo-Buff legt zusätzlich
+        // 1 HUB L1 als Wohnsiedlung an → Pop-Cap-Boost für Day-1.
         $hub = new Building(BuildingId::generate(), BuildingType::HUB, 1);
         $hub->setFinishedAt($now);
         $startPlanet->addBuilding($hub, $now);

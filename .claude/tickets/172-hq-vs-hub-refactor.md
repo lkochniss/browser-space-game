@@ -1,7 +1,7 @@
 # T-172: HQ-Building + HUB-Refactor (Pop-Building-Familie)
 
 **Type:** Feature
-**Status:** Draft (Decisions vor Implementation klären)
+**Status:** Done
 **Effort:** M (~2.5h)
 **Depends on:** T-006 (HUB-Foundation), T-171 (Uniqueness/Slot-Cap)
 **Blocks:** T-070 Pop-QoL-Buildings, weitere Pop-Tier-Folge

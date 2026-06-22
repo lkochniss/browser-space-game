@@ -43,12 +43,12 @@ final class BuildingCostConfigTest extends TestCase
     public function test_upgrade_from_level_5_uses_32x_multiplier(): void
     {
         $config = new BuildingCostConfig();
-        $cost = $config->getCost(BuildingType::HUB, currentLevel: 5);
+        $cost = $config->getCost(BuildingType::HQ, currentLevel: 5);
 
-        // base hub: 100 Iron + 50 Coal + 10 Pop. *32:
-        self::assertSame(3200, $cost->resources[ResourceType::IRON_ORE->value]);
-        self::assertSame(1600, $cost->resources[ResourceType::COAL->value]);
-        self::assertSame(320, $cost->populationCost);
+        // T-172: HQ base = 200 Iron + 100 Coal + 20 Pop. * 32:
+        self::assertSame(6400, $cost->resources[ResourceType::IRON_ORE->value]);
+        self::assertSame(3200, $cost->resources[ResourceType::COAL->value]);
+        self::assertSame(640, $cost->populationCost);
     }
 
     public function test_negative_level_throws(): void

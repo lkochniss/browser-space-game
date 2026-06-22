@@ -38,4 +38,20 @@ enum PlanetSize: string
             self::HUGE => 40,
         };
     }
+
+    /**
+     * T-172: Maximaler HQ-Slot-Bonus auf diesem Planeten. HQ Lvl-N gibt min(N-1, max)
+     * zusätzliche Slots. PlanetSize bleibt entscheidender Faktor — kleine Planeten
+     * werden auch mit HQ L20 nicht zu massiven Bauwelten.
+     */
+    public function getMaxHQSlotBonus(): int
+    {
+        return match ($this) {
+            self::TINY => 2,
+            self::SMALL => 4,
+            self::MEDIUM => 6,
+            self::LARGE => 8,
+            self::HUGE => 10,
+        };
+    }
 }
