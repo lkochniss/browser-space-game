@@ -58,9 +58,8 @@ class BuildingDurationConfig
         // T-064b → T-172 Rename: Construction-Yard (30min Strategic-Tier)
         BuildingType::CONSTRUCTION_YARD->value => 1800,
 
-        // T-070 Pop-QoL-Buildings
+        // T-070 Pop-QoL-Buildings (T-182: UNIVERSITY entfernt — Wort-Mix-Up mit RESEARCH_LAB)
         BuildingType::HOSPITAL->value => 1800,        // 30min
-        BuildingType::UNIVERSITY->value => 2700,      // 45min (Schwerer)
         BuildingType::CULTURAL_CENTER->value => 1800, // 30min
         BuildingType::TEMPLE->value => 1200,          // 20min (kleines QoL)
     ];

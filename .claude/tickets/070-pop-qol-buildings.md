@@ -17,18 +17,18 @@ Buildings (alle strikt-unique pro Planet, T-171-konform):
 
 ## Acceptance Criteria
 
-- [x] BuildingType::HOSPITAL, UNIVERSITY, CULTURAL_CENTER, TEMPLE (alle unique)
-- [x] BuildingCostConfig-Entries (Hospital 250 IO + 50 Cu / 30 Pop, University
-      300 IO + 100 Si / 40 Pop, Cultural 200 IO + 50 Si / 20 Pop, Temple
-      150 IO / 15 Pop)
-- [x] BuildingDurationConfig-Entries (Hospital/Cultural 30min, University 45min, Temple 20min)
-- [x] Slot-Size: UNIVERSITY=2, andere=1
+- [x] BuildingType::HOSPITAL, CULTURAL_CENTER, TEMPLE (alle unique)
+      _(T-182: UNIVERSITY revoked — Wort-Mix-Up mit RESEARCH_LAB)_
+- [x] BuildingCostConfig-Entries (Hospital 250 IO + 50 Cu / 30 Pop,
+      Cultural 200 IO + 50 Si / 20 Pop, Temple 150 IO / 15 Pop)
+- [x] BuildingDurationConfig-Entries (Hospital/Cultural 30min, Temple 20min)
+- [x] Slot-Size: alle 1 (T-182: UNIVERSITY-Slot-2 obsolet)
 - [x] Hospital: +20 Pop-Cap/Level (via `getPopulationCapBonusPerLevel`)
 - [x] Cultural-Center: +2%/Level Mining + Refinement, capped +20% (via
       neuer `Planet::getCulturalCenterMultiplier()` Helper, multipliziert in
       `getEffectiveMiningMultiplier` + `getEffectiveRefinementMultiplier`)
 - [x] Tests: HospitalPopCapTest (4 Tests), CulturalCenterMultiplierTest (5 Tests)
-- [x] BuildingUniquenessTest erweitert um neue 4 Buildings
+- [x] BuildingUniquenessTest erweitert um neue Buildings
 - [x] Doc `buildings.md` QoL-Sektion (sobald `buildings.md` existiert)
 
 ## Out of Scope (in T-070b verschoben)

@@ -144,9 +144,11 @@ Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->no
 | `TELESCOPE` | 2 | Discovery-Source |
 | `CONSTRUCTION_YARD` (T-064b) | 2 | Lokaler Bauzeit-Boost ×1.10/Lvl |
 | `HOSPITAL` (T-070) | 1 | +20 Pop-Cap/Lvl; T-070b: Mangel-Tod-Reduction |
-| `UNIVERSITY` (T-070) | 2 | T-070b: +5% RP-Output/Lvl |
 | `CULTURAL_CENTER` (T-070) | 1 | +2%/Lvl Mining + Refinement (capped +20%) |
 | `TEMPLE` (T-070) | 1 | T-070b/T-122: Loyalty-Hook |
+
+> T-182: UNIVERSITY entfernt — war Wort-Mix-Up mit RESEARCH_LAB. Lab ist die
+> einzige Forschungs-Einrichtung; +RP-Output-Multi (T-070b) gestrichen.
 
 ### Non-unique (Multi-Instance erlaubt)
 

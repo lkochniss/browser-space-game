@@ -78,13 +78,13 @@
 | 064b-construction-hub-building.md | Feature | Done | CONSTRUCTION_HUB Building (unique, slot-size 2); ×1.10/Level lokaler Speed-Multi, stackt mit T-063 + T-064 |
 | 065-energy-system.md | Feature | Draft | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Blocked | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
-| 067-erzeugnis-tree-erweiterung.md | Feature | Draft | Steel/Chip/Composite/Hull/Shield Tier-2-Outputs |
-| 068-defense-buildings.md | Feature | Draft | Shield/Turret/Sensor/AA für Planet-Defense |
+| 067-erzeugnis-tree-erweiterung.md | Feature | Ready | Tier-2-Erzeugnisse (Steel/Chip/Composite/Hull/Shield) + 2 neue FINITE Erze + Multi-Tick-Cascade; Volume-Update T-180 |
+| 068-defense-buildings.md | Feature | Blocked | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
 | 069-research-lab-tier.md | Feature | Done | ResearchNode.requiredLabLevel + Tier-Gate-Validation; Tier-1/2/3-Mapping; LabLevelTooLowException |
 | 070-pop-qol-buildings.md | Feature | Done | 4 QoL-Foundation: Hospital +20 Pop/Lvl + Cultural-Center +2%/Lvl Mining/Refinement; Effekte in T-070b |
 | 070b-pop-qol-effects-extension.md | Feature | Draft | Hospital-Mangel-Tod + University-RP-Multi + Temple-Loyalty + Power-Consumption (Folge zu T-070) |
 | 071-power-plants.md | Feature | Draft | Solar/Fusion/Antimaterie-Reactor (3 Tiers) |
-| 072-erzeugnis-production-buildings.md | Feature | Draft | Steel-Smelter/Chip-Fab/Composite-Plant/Hull-Foundry/Shield-Assembler |
+| 072-erzeugnis-production-buildings.md | Feature | Superseded | Durch T-067 abgedeckt; AI-Foundry gehört zu T-115 |
 | 073-npc-faction-foundation.md | Feature | Done | Faction-Domain + lazy Reputation + 4 Seeds (Pirate/Renegade/Xenos/MerchantGuild); Migration + 4 Test-Suiten |
 | 074-pirate-encounter-spawn.md | Feature | Draft | Pirat-Random-Encounters in Systemen, Threat-skaliert |
 | 075-renegade-xenos-outposts.md | Feature | Draft | Statische POI-Threats (Renegade-Stronghold/Xenos-Hive/Wormhole-Gate) |
@@ -196,4 +196,5 @@
 | 179-pop-as-storage-item.md | Feature | Blocked | Pop wird Storage-Item mit hohem Size-Multi; T-004/T-005 refactored; blocked by T-178 |
 | 180-resource-volume-config.md | Feature | Done | ResourceVolumeConfig (m³/Unit für 14 ResourceTypes + Pop=10); Foundation für T-177ff Generic-Storage |
 | 181-resource-volume-debug-command.md | Feature | Done | `app:debug:resource-volume` Symfony-Command — Volume-Tabelle sortiert + Beispiel-Profile |
+| 182-techdebt-remove-university-building.md | TechDebt | Done | UNIVERSITY-Building entfernt (Wort-Mix-Up mit RESEARCH_LAB); T-070-AC + T-070b-Section + T-089/T-097a Refs aufgeräumt |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |

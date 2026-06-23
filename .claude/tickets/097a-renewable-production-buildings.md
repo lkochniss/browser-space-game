@@ -59,7 +59,7 @@ großen Stockpiles greift weiter.
 
 ## Out of Scope
 
-- **Pop-QoL-Buildings** (Krankenhaus, Universität, Kultur) — T-070
+- **Pop-QoL-Buildings** (Krankenhaus, Kultur, Tempel) — T-070
 - **Tier-2 Advanced-Producer** (Hydroponics-Lab, Recycling-Tower etc.) — T-097
 - **Forschungs-Lock auf höhere Tiers** — Folge-Ticket
 - **Type-Multiplier** (z.B. ICE-Planet bekommt WATER-Bonus) — Folge in T-063

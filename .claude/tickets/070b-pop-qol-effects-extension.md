@@ -22,12 +22,11 @@ Hooks in bestehenden Services und sind hier ausgelagert.
       L5 Hospital halbiert die Sterberate
 - [ ] Tests: Pop-Mortality bei W/F/O-Mangel mit + ohne Hospital
 
-### University — RP-Output-Multiplier
+### ~~University — RP-Output-Multiplier~~ (gestrichen via T-182)
 
-- [ ] `StartResearchCommandService` liest University-Level auf Primary-Lab-Planet
-- [ ] Effective-Lab-Bonus `+ 0.05 × universityLevel` (max +0.5 ≈ ½ Level)
-- [ ] ODER separater Speed-Multiplier auf `ResearchDurationConfig::durationSeconds`
-- [ ] Tests: Forschungs-Dauer mit/ohne University
+UNIVERSITY-Building wurde via T-182 entfernt (Wort-Mix-Up mit RESEARCH_LAB).
+RP-Output-Skalierung läuft ausschließlich über `RESEARCH_LAB` (T-025/T-069
+Tier-Gating + T-025c Multi-Lab Opt-In).
 
 ### Temple — Loyalty-Stub
 
@@ -36,19 +35,18 @@ Hooks in bestehenden Services und sind hier ausgelagert.
 - [ ] Effekt-Mapping zu T-122 Background-Bonuses (Loyalty = X% mehr Identity-Bonus?)
 - [ ] Tests
 
-### Power-Consumption (alle 4)
+### Power-Consumption (alle 3 QoL-Buildings; T-182: ohne UNIVERSITY)
 
 - [ ] T-065 Hook (sobald Energy-System Draft → Done):
-      Hospital 30/Lvl, University 25/Lvl, Cultural 15/Lvl, Temple 10/Lvl
+      Hospital 30/Lvl, Cultural 15/Lvl, Temple 10/Lvl
 - [ ] PowerNetService skipped, falls Strom nicht ausreicht → Effekt 0
 
 ## Open Questions
 
-### Q1: University RP-Multi-Modell
+### ~~Q1: University RP-Multi-Modell~~ (obsolet via T-182)
 
-- (a) Additiv zum Effective-Lab (`+0.05/lvl`)
-- (b) Multiplikativer Speed-Faktor (`× (1 + 0.05/lvl)`)
-- (c) Cost-Reduktion statt Speed-Boost
+UNIVERSITY entfernt. Q1 entfällt — RP-Skalierung läuft über RESEARCH_LAB
+(T-025c Multi-Lab + T-069 Lab-Tier-Gating).
 
 ### Q2: Hospital-Mangel-Tod-Formel
 

@@ -49,7 +49,6 @@ final class HospitalPopCapTest extends IntegrationTestCase
     public function test_pop_cap_bonus_per_level_value(): void
     {
         self::assertSame(20, BuildingType::HOSPITAL->getPopulationCapBonusPerLevel());
-        self::assertSame(0, BuildingType::UNIVERSITY->getPopulationCapBonusPerLevel());
         self::assertSame(0, BuildingType::CULTURAL_CENTER->getPopulationCapBonusPerLevel());
         self::assertSame(0, BuildingType::TEMPLE->getPopulationCapBonusPerLevel());
     }

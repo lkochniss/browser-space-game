@@ -19,7 +19,7 @@ Neue Resources (REFINED + RAW):
 
 Effekt:
 - Pop-Tier-System: Working-Class (W/F/O reicht), Middle-Class (zusätzlich Textiles/Ceramic), Upper-Class (Electronics/Luxury)
-- Höherer Pop-Tier = höheres Wachstum, höheres RP-Output via University (T-070)
+- Höherer Pop-Tier = höheres Wachstum, höheres RP-Output via RESEARCH_LAB (T-025)
 - Mangel an Civilian-Goods → Pop-Tier degradiert, Wachstum stagniert
 
 ## Acceptance Criteria
