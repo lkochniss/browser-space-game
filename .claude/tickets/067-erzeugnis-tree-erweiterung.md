@@ -1,6 +1,9 @@
 # T-067 Erzeugnis-Tree-Erweiterung (Tier-2: Steel/Chip/Composite/Hull/Shield)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Resource
+**Blocked By:** T-003
 **Status:** Done
 **Effort:** L
 **Depends on:** T-003 (Done)

@@ -1,6 +1,9 @@
 # T-094 Bau-Queue
 
 **Type:** Feature
+**Epic:** Building System
+**Domain:** Building
+**Blocked By:** T-009, T-062
 **Status:** Done (Foundation: Parallel-Slots; Cancel/Refund/Slot-Bonus deferred)
 **Effort:** M
 **Depends on:** T-009 (Building-Cost), T-062 (Echtzeit-Bauzeit)

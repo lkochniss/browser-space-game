@@ -1,6 +1,9 @@
 # T-035: Frontend-Stack — Tailwind + Stimulus + AssetMapper
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-034
 **Status:** Open
 **FX:** No
 **MIG:** No

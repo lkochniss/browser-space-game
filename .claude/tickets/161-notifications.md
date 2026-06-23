@@ -1,6 +1,9 @@
 # T-161 Notifications (in-game / PWA Web-Push)
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-034, T-047
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-034 (Web-Layer), T-047 (In-Game-Notifications-Foundation)

@@ -1,6 +1,9 @@
 # T-175: Pirate-Owned-Station-Spawn (Galaxy-Bootstrap)
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** POI
+**Blocked By:** T-073, T-049a, T-023
 **Status:** Draft (Decisions pending)
 **Effort:** M (~2-3h)
 **Depends on:** T-073 (Faction-Foundation), T-049a (WorldFixture), T-023 (Station-Entity)

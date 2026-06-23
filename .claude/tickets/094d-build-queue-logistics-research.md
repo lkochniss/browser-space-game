@@ -1,6 +1,9 @@
 # T-094d: Bau-Queue Slot-Bonus via Logistics-Forschung
 
 **Type:** Feature
+**Epic:** Building System
+**Domain:** Building
+**Blocked By:** T-094, T-094c, T-025
 **Status:** Done
 **Effort:** S (~1h)
 **Depends on:** T-094 (Bau-Queue Foundation), T-094c (HQ-Slot-Bonus), T-025 (Forschungs-Framework)

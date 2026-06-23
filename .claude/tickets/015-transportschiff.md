@@ -1,6 +1,9 @@
 # T-015: Transportschiff + Cargo-Transfer
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Ship
+**Blocked By:** T-012
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000006` — ships.cargo_resources/cargo_pop_count/cargo_capacity)

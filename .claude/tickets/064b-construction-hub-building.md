@@ -1,6 +1,9 @@
 # T-064b: Construction-Hub Building (lokaler Bauzeit-Boost)
 
 **Type:** Feature
+**Epic:** Building System
+**Domain:** Building
+**Blocked By:** T-064
 **Status:** Done
 **Effort:** S (~1.5h)
 **Depends on:** T-064 (Forschungs-Bauzeit-Boost)

@@ -1,6 +1,9 @@
 # T-130 Allianz-Verträge (MVP: Crusade-Coalition + Resource-Federation)
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** User
+**Blocked By:** T-052, T-121, T-110
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-052 (Allianz), T-121 (Crusade), T-110 (Trade-Routes)

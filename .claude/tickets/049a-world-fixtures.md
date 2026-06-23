@@ -1,6 +1,9 @@
 # T-049a: World-Fixtures (deterministische Galaxy)
 
 **Type:** Feature
+**Epic:** Foundation: Galaxy
+**Domain:** SolarSystem
+**Blocked By:** None
 **Status:** Done
 **Effort:** S (~1.5h)
 **FX:** Yes (Ticket-Inhalt)

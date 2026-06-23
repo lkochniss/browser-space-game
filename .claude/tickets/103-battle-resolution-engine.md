@@ -1,6 +1,9 @@
 # T-103 Battle-Resolution-Engine
 
 **Type:** Feature
+**Epic:** Combat & Battle
+**Domain:** Ship
+**Blocked By:** T-102, T-068, T-104b
 **Status:** Draft (deferred 2026-06-19 — XL-Deps T-102/T-068/T-104b alle Draft)
 **Effort:** XL
 **Depends on:** T-102 (Schiff-Klassen), T-068 (Defense), T-104b (Captain-Skills)

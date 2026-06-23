@@ -1,6 +1,9 @@
 # T-082c: Demo-Goals (Mini-Quest-Display)
 
 **Type:** Feature
+**Epic:** Demo CLI
+**Domain:** Demo
+**Blocked By:** T-082b, T-021, T-014
 **Status:** Done
 **Effort:** S (~45min)
 **Depends on:** T-082b (Demo-CLI), T-021 (Recycling), T-014 (Colonize)

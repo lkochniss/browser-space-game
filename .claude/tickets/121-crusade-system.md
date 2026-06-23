@@ -1,6 +1,9 @@
 # T-121 Crusade-System (6-Wochen-Cycle)
 
 **Type:** Feature
+**Epic:** Endgame
+**Domain:** Crusade
+**Blocked By:** T-077, T-052, T-076
 **Status:** Draft
 **Effort:** XL
 **Depends on:** T-077 (World-Boss), T-052 (Allianz), T-076 (Galaxy-Events)

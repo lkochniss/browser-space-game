@@ -1,6 +1,9 @@
 # T-062: Echtzeit-Bauzeit (Wall-Clock Construction)
 
 **Type:** Feature
+**Epic:** Foundation: Buildings
+**Domain:** Building
+**Blocked By:** T-009
 **Status:** Done
 **FX:** No
 **MIG:** No (`buildings.finished_at` Spalte schon in `Version20260618000003` durch T-009 angelegt)

@@ -1,6 +1,9 @@
 # TD-031: PHPUnit Bootstrap fehlt
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Common
+**Blocked By:** None
 **Status:** Done
 **Severity:** High
 **Effort:** M

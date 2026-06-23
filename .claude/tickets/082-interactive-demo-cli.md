@@ -1,6 +1,9 @@
 # T-082: Interactive Demo-CLI für Game-Sandbox
 
 **Type:** Feature
+**Epic:** Demo CLI
+**Domain:** Demo
+**Blocked By:** T-001, T-023, T-073, T-085, T-016, T-017, T-019, T-020, T-022, T-151
 **Status:** Done
 **Effort:** L
 **MIG:** No (separate demo-env mit eigener SQLite-File)

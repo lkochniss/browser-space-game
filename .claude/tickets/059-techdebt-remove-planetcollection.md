@@ -1,6 +1,9 @@
 # TD-059: PlanetCollection löschen (unused)
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Planet
+**Blocked By:** None
 **Status:** Done
 **Severity:** Low
 **Effort:** S (< 1h)

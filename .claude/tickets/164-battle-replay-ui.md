@@ -1,6 +1,9 @@
 # T-164 Battle-Replay UI (Table vs Animated)
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-103
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-103 (Battle-Engine)

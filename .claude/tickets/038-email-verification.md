@@ -1,6 +1,9 @@
 # T-038: E-Mail-Verifizierung
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-036, T-040
 **Status:** Open
 **FX:** No
 **MIG:** Yes (verification-token-Felder oder Tabelle)

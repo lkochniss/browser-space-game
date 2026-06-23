@@ -1,6 +1,9 @@
 # T-180: Resource/Pop Size-Multiplier-Config (Foundation)
 
 **Type:** Feature (Foundation)
+**Epic:** Storage Vision
+**Domain:** Resource
+**Blocked By:** None
 **Status:** Done
 **Effort:** S (~1.5-2h)
 **Depends on:** —

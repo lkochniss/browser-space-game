@@ -1,6 +1,9 @@
 # T-133 Allianz-Defense-Coalition (Folge zu T-130)
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** User
+**Blocked By:** T-130, T-153, T-068
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-130 (Allianz-Verträge MVP), T-153 (Allianz-Rescue), T-068 (Defense-Buildings)

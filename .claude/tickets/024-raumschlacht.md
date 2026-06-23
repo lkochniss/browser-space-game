@@ -1,6 +1,9 @@
 # T-024: Raumschlacht-Resolution (PvE-Pivot)
 
 **Type:** Feature
+**Epic:** Combat & Battle
+**Domain:** Ship
+**Blocked By:** T-017, T-021, T-073
 **Status:** Superseded by T-103 (T-167 Cleanup)
 **FX:** No
 **MIG:** No

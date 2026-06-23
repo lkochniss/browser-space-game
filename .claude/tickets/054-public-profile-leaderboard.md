@@ -1,6 +1,9 @@
 # T-054: Public Player-Profile + Leaderboard
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** User
+**Blocked By:** T-043
 **Status:** Open
 **FX:** No
 **MIG:** No (Score evtl. denormalisiert later)

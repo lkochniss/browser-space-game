@@ -1,6 +1,9 @@
 # T-117 Allianz-Forschung als Community-Goal
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** Research
+**Blocked By:** T-069, T-052, T-098
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-069 (Lab-Tier), T-052 (Allianz), T-098 (Specialist-Tracks)

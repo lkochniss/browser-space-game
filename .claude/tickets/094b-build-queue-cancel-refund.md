@@ -1,6 +1,9 @@
 # T-094b: Bau-Queue Cancel + Refund
 
 **Type:** Feature
+**Epic:** Building System
+**Domain:** Building
+**Blocked By:** T-094
 **Status:** Done
 **Effort:** S (~1.5h)
 **Depends on:** T-094 (Bau-Queue Foundation)

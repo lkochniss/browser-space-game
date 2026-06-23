@@ -1,6 +1,9 @@
 # T-176: Pirate-Takeover ABANDONED → Pirate-Faction + Combat-Capture
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** POI
+**Blocked By:** T-023b, T-073, T-103
 **Status:** Draft (Decisions pending)
 **Effort:** M-L (~3-4h, abhängig von T-103-Foundation)
 **Depends on:** T-023b (ABANDONED-State), T-073 (Faction-Foundation), T-103 (Battle-Engine — Draft)

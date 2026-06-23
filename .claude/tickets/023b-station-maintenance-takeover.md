@@ -1,6 +1,9 @@
 # T-023b: Station-Maintenance + Übernahme-Mechanik
 
 **Type:** Feature
+**Epic:** POI System
+**Domain:** POI
+**Blocked By:** T-023, T-005
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-023 (Raumstation Foundation), T-005 (Population Tick-Logic)

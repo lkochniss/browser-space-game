@@ -1,6 +1,9 @@
 # T-153 Allianz-Rescue-Mechanik
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** User
+**Blocked By:** T-052, T-105
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-052 (Allianz), T-105 (Schiff-Maintenance, Stranded-State)

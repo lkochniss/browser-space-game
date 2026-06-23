@@ -1,6 +1,9 @@
 # T-169: Demo "Reset Demo"-Action lässt Player ohne Buff/Galaxy + Loop verirrt sich
 
 **Type:** Bug
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Demo
+**Blocked By:** None
 **Status:** Done
 **Severity:** High (Reset-Funktion komplett kaputt)
 **Effort:** XS (~20min)

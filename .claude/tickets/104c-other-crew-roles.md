@@ -1,6 +1,9 @@
 # T-104c Andere Crew-Rollen (Forscher, Engineer, Diplomat)
 
 **Type:** Feature
+**Epic:** Combat & Battle
+**Domain:** Ship
+**Blocked By:** T-104a, T-069, T-110
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-104a (Crew-Foundation), T-069 (Lab-Tier), T-110 (Trade-Routes)

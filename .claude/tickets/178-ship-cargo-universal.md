@@ -1,6 +1,9 @@
 # T-178: Ship-Cargo-Universal (alle Schiffe haben Cargo)
 
 **Type:** Feature (Refactor)
+**Epic:** Storage Vision
+**Domain:** Ship
+**Blocked By:** T-177, T-180
 **Status:** Blocked (by T-177)
 **Effort:** M (~4-5h)
 **Depends on:** T-177 (Generic-Storage-Refactor), T-180 (Size-Multiplier-Config)

@@ -1,6 +1,9 @@
 # T-016: Bergungsschiff + Salvage
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Ship
+**Blocked By:** T-012, T-020
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000013` — ships.salvage_*)

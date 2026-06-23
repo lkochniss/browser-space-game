@@ -1,6 +1,9 @@
 # T-167: Cleanup Loose Ends — Status-Sync, Stale Stubs, Folge-Tickets
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Common
+**Blocked By:** None
 **Status:** Done
 **Severity:** Low
 **Effort:** S (~1h)

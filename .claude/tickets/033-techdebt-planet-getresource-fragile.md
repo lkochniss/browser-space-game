@@ -1,6 +1,9 @@
 # TD-033: Planet::getResource fragil
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Planet
+**Blocked By:** None
 **Status:** Done
 **Severity:** Medium
 **Effort:** S

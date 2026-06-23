@@ -1,6 +1,9 @@
 # T-150 Bubble-Schutz (Tutorial-Phase bis 2. Planet)
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Player
+**Blocked By:** T-014
 **Status:** Done (Foundation; Effekte + Catch-Up in T-150b split)
 **Effort:** M
 **Depends on:** T-014 (Kolonisation, Done)

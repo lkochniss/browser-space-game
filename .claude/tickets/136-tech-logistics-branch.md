@@ -1,6 +1,9 @@
 # T-136 Forschungs-Branch: Logistik
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-094, T-110, T-101
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025, T-094 (Bau-Queue), T-110 (Trade-Routes), T-101 (Planet-Cap)

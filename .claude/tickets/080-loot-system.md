@@ -1,6 +1,9 @@
 # T-080 Loot-System (Drop-Tabellen pro Faction)
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** T-073, T-103
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-073 (Faction), T-103 (Battle)

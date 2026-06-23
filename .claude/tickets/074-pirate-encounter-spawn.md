@@ -1,6 +1,9 @@
 # T-074 Pirat-Encounter-Spawn
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** T-073, T-007, T-017
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-073 (Faction-Foundation), T-007 (SolarSystem), T-017 (Flotte)

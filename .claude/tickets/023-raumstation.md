@@ -1,6 +1,9 @@
 # T-023: Raumstation pro System
 
 **Type:** Feature
+**Epic:** POI System
+**Domain:** POI
+**Blocked By:** T-007, T-011, T-019
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000012` — pois.station_*)

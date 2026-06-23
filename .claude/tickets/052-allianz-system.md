@@ -1,6 +1,9 @@
 # T-052: Allianz-System
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** User
+**Blocked By:** T-043, T-024
 **Status:** Open
 **FX:** No
 **MIG:** Yes (Alliance-Tabelle + Membership)

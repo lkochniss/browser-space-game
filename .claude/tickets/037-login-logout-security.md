@@ -1,6 +1,9 @@
 # T-037: Login / Logout (Symfony Security)
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-036
 **Status:** Open
 **FX:** No
 **MIG:** No

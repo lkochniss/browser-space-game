@@ -1,6 +1,9 @@
 # T-070 Pop-QoL-Buildings (Krankenhaus, Universität, Kultur)
 
 **Type:** Feature
+**Epic:** Pop QoL
+**Domain:** Building
+**Blocked By:** T-005, T-006, T-172
 **Status:** Done (Foundation; Mangel-Tod-Reduction + University-RP + Temple-Loyalty + Power in T-070b split)
 **Effort:** M
 **Depends on:** T-005 (Done), T-006 (Done), T-172 (Done)

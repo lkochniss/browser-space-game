@@ -1,6 +1,9 @@
 # T-021: Trümmerfeld + Trümmer + Recycling-Anlage
 
 **Type:** Feature
+**Epic:** POI System
+**Domain:** POI
+**Blocked By:** T-019, T-103
 **Status:** Done
 **FX:** No
 **MIG:** No

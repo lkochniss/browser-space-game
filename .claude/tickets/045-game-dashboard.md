@@ -1,6 +1,9 @@
 # T-045: Game-Dashboard (Hauptansicht)
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-035, T-037, T-043
 **Status:** Open
 **FX:** No
 **MIG:** No

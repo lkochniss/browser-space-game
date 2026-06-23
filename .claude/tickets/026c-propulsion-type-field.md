@@ -1,6 +1,9 @@
 # T-026c: PropulsionType-Field auf Ship + Speed/Range
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Ship
+**Blocked By:** T-026
 **Status:** Done
 **Effort:** M (~3h)
 **Depends on:** T-026 (Antriebs-Tree, Done)

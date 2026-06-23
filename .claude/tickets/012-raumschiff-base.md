@@ -1,6 +1,9 @@
 # T-012: Raumschiff-Basis + Life-Support
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Ship
+**Blocked By:** T-001, T-011
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000004` — ships table)

@@ -1,6 +1,9 @@
 # T-076 Galaxy-Events (Kosmische Stürme, Anomalien, Limited-Time)
 
 **Type:** Feature
+**Epic:** Galaxy Events
+**Domain:** SolarSystem
+**Blocked By:** T-007, T-019
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-007 (SolarSystem), T-019 (POI-System)

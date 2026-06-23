@@ -1,6 +1,9 @@
 # T-027: Planetologie-Forschung
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-013, T-025
 **Status:** Open
 **FX:** No
 **MIG:** No

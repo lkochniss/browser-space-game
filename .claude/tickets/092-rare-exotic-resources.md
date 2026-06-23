@@ -1,6 +1,9 @@
 # T-092 Rare / Exotic Resources (Endgame-Drops + Specialty-Mining)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Resource
+**Blocked By:** T-115, T-080, T-086
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-115 (Tier-3), T-080 (Loot), T-086 (Black-Hole)

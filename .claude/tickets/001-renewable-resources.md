@@ -1,6 +1,9 @@
 # T-001: Renewable Rohstoffe
 
 **Type:** Feature
+**Epic:** Foundation: Resources
+**Domain:** Resource
+**Blocked By:** None
 **Status:** Done
 **FX:** No
 **MIG:** No (enum-Erweiterung; Spalte bleibt `string length 32`)

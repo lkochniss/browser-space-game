@@ -1,6 +1,9 @@
 # T-075 Renegade- und Xenos-Outposts
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** POI
+**Blocked By:** T-073, T-019
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-073 (Faction), T-019 (POI-System)

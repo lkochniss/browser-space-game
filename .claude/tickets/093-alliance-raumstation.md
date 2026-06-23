@@ -1,6 +1,9 @@
 # T-093 Allianz-Raumstation (T-023 Erweiterung)
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** POI
+**Blocked By:** T-023, T-052
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-023 (Raumstation), T-052 (Allianz)

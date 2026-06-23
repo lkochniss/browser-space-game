@@ -1,6 +1,9 @@
 # T-109 Tier-3 Containment-Storage (Antimatter / AI-Core / Bound-Resources)
 
 **Type:** Feature
+**Epic:** Storage Vision
+**Domain:** Building
+**Blocked By:** T-115, T-092, T-177, T-061
 **Status:** Blocked (by T-177 — Storage-Buildings-Konzept wird refactored)
 **Effort:** S (TBD)
 **Depends on:** T-115 (Tier-3-Resources), T-092 (Rare-Resources), T-177 (Generic-Storage-Refactor — superseded T-061)

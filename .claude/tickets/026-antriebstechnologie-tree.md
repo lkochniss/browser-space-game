@@ -1,6 +1,9 @@
 # T-026: Antriebstechnologie-Tree
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025
 **Status:** Done (Foundation: Nodes + Inter-System-Travel-Lock; PropulsionType+Speed/Fuel via Folge)
 **FX:** No
 **MIG:** No

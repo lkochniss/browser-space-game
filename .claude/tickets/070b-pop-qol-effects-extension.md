@@ -1,6 +1,9 @@
 # T-070b Pop-QoL-Buildings Effekte-Extension (Folge zu T-070)
 
 **Type:** Feature
+**Epic:** Pop QoL
+**Domain:** Building
+**Blocked By:** T-070, T-005
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-070 (Foundation, Done), T-005 (Pop-Verbrauch, Done),

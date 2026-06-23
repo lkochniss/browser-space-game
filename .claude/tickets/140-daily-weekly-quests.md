@@ -1,6 +1,9 @@
 # T-140 Daily / Weekly Quest-Erzeugung
 
 **Type:** Feature
+**Epic:** Quests & Engagement
+**Domain:** Quest
+**Blocked By:** T-120, T-096
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-120 (Quest-Engine), T-096 (Player-Stats)

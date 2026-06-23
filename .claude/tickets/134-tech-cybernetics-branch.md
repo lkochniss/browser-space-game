@@ -1,6 +1,9 @@
 # T-134 Forschungs-Branch: Kybernetik
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-069, T-090, T-091
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025, T-069 (Lab-Tier), T-090 (Medicine), T-091 (Tier-3-Combat)

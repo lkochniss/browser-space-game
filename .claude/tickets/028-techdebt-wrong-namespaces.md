@@ -1,6 +1,9 @@
 # TD-028: Falsche Namespace-Imports (PlanetId / PlayerId)
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Planet
+**Blocked By:** None
 **Status:** Done
 **Severity:** High
 **Effort:** S

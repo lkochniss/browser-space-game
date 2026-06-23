@@ -1,6 +1,9 @@
 # T-018: Teleskop + System-Erkundung
 
 **Type:** Feature
+**Epic:** Exploration & Probes
+**Domain:** Probe
+**Blocked By:** T-007, T-019
 **Status:** Done
 **FX:** No
 **MIG:** No

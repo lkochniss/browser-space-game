@@ -1,6 +1,9 @@
 # T-125 Mega-Struktur: Stargate
 
 **Type:** Feature
+**Epic:** Mega Structures
+**Domain:** Mega
+**Blocked By:** T-116, T-124
 **Status:** Draft
 **Effort:** XL (TBD)
 **Depends on:** T-116 (Mega-Foundation), T-124 (Wormhole-Generator)

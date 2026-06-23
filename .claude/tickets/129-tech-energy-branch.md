@@ -1,6 +1,9 @@
 # T-129 Forschungs-Branch: Energie
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-065, T-066, T-071
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025, T-065 (Energy), T-066 (Treibstoff), T-071 (Power-Plants)

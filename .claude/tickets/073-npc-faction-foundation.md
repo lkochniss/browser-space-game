@@ -1,6 +1,9 @@
 # T-073: NPC-Faction-Foundation
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** None
 **Status:** Done
 **FX:** No (separate Seed-Service via `FactionSeedService`, kein Doctrine-Fixtures-Bundle nötig)
 **MIG:** Yes (factions + player_faction_reputation Tabellen)

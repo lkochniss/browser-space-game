@@ -1,6 +1,9 @@
 # T-042: Account-Löschung (GDPR / DSGVO)
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-041, T-043
 **Status:** Open
 **FX:** No
 **MIG:** Yes (deletedAt o.ä.)

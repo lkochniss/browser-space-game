@@ -1,6 +1,9 @@
 # T-163 Strategy-Forecast / Dashboard
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-045
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-045 (Game-Dashboard)

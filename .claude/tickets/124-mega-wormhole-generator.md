@@ -1,6 +1,9 @@
 # T-124 Mega-Struktur: Wormhole-Generator
 
 **Type:** Feature
+**Epic:** Mega Structures
+**Domain:** Mega
+**Blocked By:** T-116, T-085
 **Status:** Draft
 **Effort:** XL (TBD)
 **Depends on:** T-116 (Mega-Foundation), T-085 (Wormhole-POI)

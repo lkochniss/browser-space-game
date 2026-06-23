@@ -1,6 +1,9 @@
 # T-126 Skill-Slot-Implementation (Folge zu T-123)
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-123
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-123 (Player-XP / Karriere)

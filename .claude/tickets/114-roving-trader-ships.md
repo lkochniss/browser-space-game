@@ -1,6 +1,9 @@
 # T-114 Roving-Trader-Schiffe (Spawn / Despawn-Cycle)
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Ship
+**Blocked By:** T-112, T-073, T-007
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-112 (Need-Based-Pricing), T-073 (Faction), T-007 (SolarSystem)

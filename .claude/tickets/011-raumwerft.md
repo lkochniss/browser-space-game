@@ -1,6 +1,9 @@
 # T-011: Raumwerft
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Building
+**Blocked By:** T-009
 **Status:** Done
 **FX:** No
 **MIG:** No

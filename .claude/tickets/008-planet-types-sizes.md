@@ -1,6 +1,9 @@
 # T-008: Planet-Typen + Größen
 
 **Type:** Feature
+**Epic:** Foundation: Planet Types
+**Domain:** Planet
+**Blocked By:** None
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000002` — planets.type + planets.size)

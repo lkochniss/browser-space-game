@@ -1,6 +1,9 @@
 # T-096b Player-Stats Extension (Folge zu T-096)
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-096, T-103, T-080
 **Status:** Draft
 **Effort:** M-L
 **Depends on:** T-096 (Foundation, Done), T-103 (Battle), T-080 (Loot),

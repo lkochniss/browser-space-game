@@ -1,6 +1,9 @@
 # T-025c: Multi-Lab Opt-In + Kosten-Trade-off
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-025b
 **Status:** Done
 **Effort:** M (~3-4h)
 **Depends on:** T-025 (Forschungs-Foundation), T-025b (Auto-Aggregator → wird ersetzt)

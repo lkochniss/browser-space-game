@@ -1,6 +1,9 @@
 # T-047: In-Game-Benachrichtigungen
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-043, T-045
 **Status:** Open
 **FX:** No
 **MIG:** Yes (Notification-Tabelle)

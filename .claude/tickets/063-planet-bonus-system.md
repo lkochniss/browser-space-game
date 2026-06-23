@@ -1,6 +1,9 @@
 # T-063: Planet-Boni-System
 
 **Type:** Feature
+**Epic:** Foundation: Planet Types
+**Domain:** Planet
+**Blocked By:** T-008
 **Status:** Done
 **FX:** No
 **MIG:** No

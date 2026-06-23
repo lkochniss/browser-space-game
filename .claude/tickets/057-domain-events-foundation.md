@@ -1,6 +1,9 @@
 # T-057: Domain-Events Foundation
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** Common
+**Blocked By:** None
 **Status:** Open
 **FX:** No
 **MIG:** No

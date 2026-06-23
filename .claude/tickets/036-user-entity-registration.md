@@ -1,6 +1,9 @@
 # T-036: User-Entity + Registrierung
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** None
 **Status:** Open
 **FX:** Yes (Demo-User)
 **MIG:** Yes

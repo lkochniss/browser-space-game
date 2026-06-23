@@ -1,6 +1,9 @@
 # T-066 Treibstoff-Resource (Promethium / H2)
 
 **Type:** Feature
+**Epic:** Storage Vision
+**Domain:** Resource
+**Blocked By:** T-002, T-003
 **Status:** Blocked (by T-177)
 **Effort:** M
 **Depends on:** T-002 (Endliche Rohstoffe), T-003 (Erzeugnis Iron-Bar)

@@ -1,6 +1,9 @@
 # T-088 Combat-Munition (Verbrauchs-Resources im Battle)
 
 **Type:** Feature
+**Epic:** Combat & Battle
+**Domain:** Resource
+**Blocked By:** T-067, T-103
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-067 (Tier-2), T-103 (Battle-Engine)

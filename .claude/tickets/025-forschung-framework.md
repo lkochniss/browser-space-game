@@ -1,6 +1,9 @@
 # T-025: Forschungs-Framework (Wallclock-based Foundation)
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** None
 **Status:** Done
 **Effort:** M-L (~3-4h)
 **FX:** No

@@ -1,6 +1,9 @@
 # T-108 Specialty-Mining-Buildings (Asteroid-Drone / Deep-Drill / Atmospheric-Harvester)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Building
+**Blocked By:** T-002, T-019, T-020, T-066
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-002 (Endliche Rohstoffe), T-019 (POI), T-020 (Asteroidenfeld), T-066 (Treibstoff)

@@ -1,6 +1,9 @@
 # T-107 Manufacturing-Building-Cluster (Munition / Civilian / Bio / Tier-3)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Building
+**Blocked By:** T-067, T-088, T-089, T-090, T-091, T-115
 **Status:** Draft
 **Effort:** XL (TBD)
 **Depends on:** T-067 (Tier-2), T-088 (Munition), T-089 (Civilian), T-090 (Medicine), T-091 (Tier-3-Combat), T-115 (Tier-3-Resources)

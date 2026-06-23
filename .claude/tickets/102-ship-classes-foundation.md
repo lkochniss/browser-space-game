@@ -1,6 +1,9 @@
 # T-102 Schiff-Klassen-Foundation
 
 **Type:** Feature
+**Epic:** Combat & Battle
+**Domain:** Ship
+**Blocked By:** T-011, T-012, T-067, T-104a
 **Status:** Draft
 **Effort:** XL
 **Depends on:** T-011 (Raumwerft), T-012 (Schiff-Base), T-067 (Erzeugnis-Tree), T-104a (Crew-Foundation)

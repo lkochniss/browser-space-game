@@ -1,6 +1,9 @@
 # T-104b Captain-Skill-Trees
 
 **Type:** Feature
+**Epic:** Combat & Battle
+**Domain:** Ship
+**Blocked By:** T-104a, T-103
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-104a (Crew-Foundation), T-103 (Battle-Engine)

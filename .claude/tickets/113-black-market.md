@@ -1,6 +1,9 @@
 # T-113 Black-Market (Renegade-Reputation-Path)
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Trade
+**Blocked By:** T-131, T-073
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-131 (Spy-System), T-073 (Faction)

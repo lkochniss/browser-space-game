@@ -1,6 +1,9 @@
 # T-122b Player-Background Effect-Resolver (Folge zu T-122)
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-122, T-073
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-122 (Foundation, Done), T-073 (Faction-Rep, Done),

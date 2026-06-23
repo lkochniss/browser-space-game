@@ -1,6 +1,9 @@
 # T-139 Tech-Tree-Master-Design (Meta-Ticket)
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-026, T-027, T-127, T-128, T-129, T-134, T-135, T-136, T-137, T-138
 **Status:** Draft
 **Effort:** S (TBD)
 **Depends on:** T-025, T-026, T-027, T-127, T-128, T-129, T-134, T-135, T-136, T-137, T-138

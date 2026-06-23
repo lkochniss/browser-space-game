@@ -1,6 +1,9 @@
 # T-162 Build-Templates / Bau-Queue-UI
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** Building
+**Blocked By:** T-094, T-034
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-094 (Bau-Queue), T-034 (Web-Layer)

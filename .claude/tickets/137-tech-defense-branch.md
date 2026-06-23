@@ -1,6 +1,9 @@
 # T-137 Forschungs-Branch: Defense
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-068, T-081
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025, T-068 (Defense-Buildings), T-081 (Heimat-Schutz)

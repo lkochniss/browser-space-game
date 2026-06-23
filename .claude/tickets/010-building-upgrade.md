@@ -1,6 +1,9 @@
 # T-010: Building Level-Upgrade
 
 **Type:** Feature
+**Epic:** Foundation: Buildings
+**Domain:** Building
+**Blocked By:** T-009
 **Status:** Done
 **FX:** No
 **MIG:** No

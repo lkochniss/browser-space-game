@@ -1,6 +1,9 @@
 # T-034: Symfony Web-Layer Bootstrap
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** None
 **Status:** Open
 **FX:** No
 **MIG:** No

@@ -1,6 +1,9 @@
 # T-101b Planet-Abandon-Mechanik (Folge zu T-101)
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Planet
+**Blocked By:** T-101
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-101 (Planet-Cap, Done)

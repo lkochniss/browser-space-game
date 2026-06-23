@@ -1,6 +1,9 @@
 # T-112 Need-Based-Pricing + Statische Handelsposten
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Trade
+**Blocked By:** T-111, T-073, T-007, T-023
 **Status:** Draft
 **Effort:** XL
 **Depends on:** T-111 (Auction-House), T-073 (Merchant-Guild-Faction), T-007 (SolarSystem), T-023 (Raumstation)

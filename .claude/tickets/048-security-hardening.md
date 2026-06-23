@@ -1,6 +1,9 @@
 # T-048: Security-Hardening (Health + Headers + Rate-Limit)
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** Common
+**Blocked By:** None
 **Status:** Open
 **FX:** No
 **MIG:** No

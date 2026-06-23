@@ -1,6 +1,9 @@
 # T-064: Bauzeit-Speed-Boost via Forschung + Buildings
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-062, T-025, T-026
 **Status:** Done (Foundation: Forschungs-Multiplier; Construction-Hub-Building defer)
 **FX:** No
 **MIG:** No (computed multiplier; keine neuen Spalten)

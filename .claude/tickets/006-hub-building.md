@@ -1,6 +1,9 @@
 # T-006: Hub-Gebäude
 
 **Type:** Feature
+**Epic:** Foundation: Buildings
+**Domain:** Building
+**Blocked By:** T-004
 **Status:** Done
 **FX:** No
 **MIG:** No

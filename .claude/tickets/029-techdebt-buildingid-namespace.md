@@ -1,6 +1,9 @@
 # TD-029: BuildingId / BuildingType im falschen Namespace
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Building
+**Blocked By:** None
 **Status:** Done
 **Severity:** Medium → High (real-world: blockierte Symfony-Boot nach TD-028)
 **Effort:** S

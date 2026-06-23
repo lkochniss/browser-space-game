@@ -1,6 +1,9 @@
 # T-087 Fog-of-War / Discovery-State
 
 **Type:** Feature
+**Epic:** Exploration & Probes
+**Domain:** Probe
+**Blocked By:** T-018, T-007, T-013, T-019
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-018 (Teleskop), T-007 (SolarSystem), T-013 (Sonden), T-019 (POI-Foundation)

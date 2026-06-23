@@ -1,6 +1,9 @@
 # T-022: Nebel POI + Stealth
 
 **Type:** Feature
+**Epic:** POI System
+**Domain:** POI
+**Blocked By:** T-019
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000010` — pois.nebula_concealment)

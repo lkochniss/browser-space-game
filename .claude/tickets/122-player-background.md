@@ -1,6 +1,9 @@
 # T-122 Player-Background (5 Backgrounds, Onboarding-Choice)
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-073
 **Status:** Done (Foundation; Effect-Resolver + Onboarding-UI in T-122b split)
 **Effort:** M
 **Depends on:** T-073 (Faction, Done)

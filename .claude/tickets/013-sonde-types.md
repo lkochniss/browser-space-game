@@ -1,6 +1,9 @@
 # T-013: Sonden (Systemsonde, Orbitalsonde, Tiefenscan-Sonde)
 
 **Type:** Feature
+**Epic:** Exploration & Probes
+**Domain:** Probe
+**Blocked By:** T-012
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000005` — probes table)

@@ -1,6 +1,9 @@
 # T-138 Forschungs-Branch: Xenobiologie
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-073, T-090, T-092
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025, T-073 (Xenos-Faction), T-090 (Bio-Resources), T-092 (Xenos-Artifacts)

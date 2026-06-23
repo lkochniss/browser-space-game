@@ -1,6 +1,9 @@
 # T-152 Inactivity-Schutz (7d / 30d / 90d Stages + Vacation-Pack)
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Player
+**Blocked By:** T-037, T-074
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-037 (Login), T-074 (Pirate-Spawn)

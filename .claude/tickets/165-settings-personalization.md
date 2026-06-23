@@ -1,6 +1,9 @@
 # T-165 Settings / Personalization (UI-Theme, Default-Tactic, Galaxy-Filter)
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-041
 **Status:** Draft
 **Effort:** S
 **Depends on:** T-041 (User-Profile-Settings)

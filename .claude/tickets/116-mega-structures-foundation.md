@@ -1,6 +1,9 @@
 # T-116 Mega-Strukturen Foundation (Genesis-Forge first)
 
 **Type:** Feature
+**Epic:** Mega Structures
+**Domain:** Mega
+**Blocked By:** T-115, T-027, T-052
 **Status:** Draft
 **Effort:** XL
 **Depends on:** T-115 (Tier-3), T-027 (Planetologie), T-052 (Allianz)

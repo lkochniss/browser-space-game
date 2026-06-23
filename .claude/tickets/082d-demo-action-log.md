@@ -1,6 +1,9 @@
 # T-082d: Demo-Action-Log Export für KI-Tuning
 
 **Type:** Feature
+**Epic:** Demo CLI
+**Domain:** Demo
+**Blocked By:** T-082, T-082b, T-082c
 **Status:** Done
 **Effort:** S (~1.5h)
 **Depends on:** T-082 (Demo-CLI), T-082b, T-082c

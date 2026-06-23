@@ -1,6 +1,9 @@
 # T-179: Pop als Storage-Item (Refactor)
 
 **Type:** Feature (Refactor)
+**Epic:** Storage Vision
+**Domain:** Planet
+**Blocked By:** T-177, T-178, T-180
 **Status:** Blocked (by T-178)
 **Effort:** L (~6-8h, hoch wegen Migration der Pop-Logik T-004/T-005/T-014)
 **Depends on:** T-177 (Generic-Storage-Planet), T-178 (Ship-Cargo), T-180 (Size-Multiplier-Config)

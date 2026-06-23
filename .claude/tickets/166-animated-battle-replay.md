@@ -1,6 +1,9 @@
 # T-166 Animated-Battle-Replay (Folge zu T-164)
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-164, T-103
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-164 (Battle-Replay-Table-MVP), T-103 (Battle-Engine)

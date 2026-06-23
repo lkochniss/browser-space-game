@@ -1,6 +1,9 @@
 # T-053: In-Game-Chat / Messaging
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** User
+**Blocked By:** T-043, T-052
 **Status:** Open
 **FX:** No
 **MIG:** Yes (Conversation + Message Tabellen)

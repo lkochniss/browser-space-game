@@ -1,6 +1,9 @@
 # T-005: Population-Verbrauch pro Tick
 
 **Type:** Feature
+**Epic:** Foundation: Population
+**Domain:** Planet
+**Blocked By:** T-001, T-004
 **Status:** Done
 **FX:** No
 **MIG:** No

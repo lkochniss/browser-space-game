@@ -1,6 +1,9 @@
 # T-151 Soft-Cap / Diminishing Returns (Sanft, -0.1%/Step)
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Common
+**Blocked By:** T-005, T-009, T-061
 **Status:** Done
 **Effort:** S
 **MIG:** No

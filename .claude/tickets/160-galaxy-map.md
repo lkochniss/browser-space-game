@@ -1,6 +1,9 @@
 # T-160 Galaxie-Map (Canvas + Stimulus oder SVG)
 
 **Type:** Feature
+**Epic:** Game UI
+**Domain:** UI
+**Blocked By:** T-034, T-035, T-087
 **Status:** Draft
 **Effort:** XL
 **Depends on:** T-034 (Web-Layer), T-035 (Frontend-Stack), T-087 (Fog-of-War)

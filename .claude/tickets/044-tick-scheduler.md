@@ -1,6 +1,9 @@
 # T-044: Tick-Scheduler — Background-Worker
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** Tick
+**Blocked By:** None
 **Status:** Open
 **FX:** No
 **MIG:** No

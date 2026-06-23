@@ -1,6 +1,9 @@
 # T-090 Medicine / Bio-Resources
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Resource
+**Blocked By:** T-005, T-070
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-005 (Pop-Verbrauch), T-070 (Hospital)

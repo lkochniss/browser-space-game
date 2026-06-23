@@ -1,6 +1,9 @@
 # T-081 Heimat-Schutz (Anti-Crush-Foundation)
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Planet
+**Blocked By:** T-007
 **Status:** Done (Foundation; Effekte in T-081b split)
 **Effort:** M
 **Depends on:** T-007 (SolarSystem, Done)

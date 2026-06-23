@@ -1,6 +1,9 @@
 # T-111 Auction-House (Galaxy-weit + Lieferzeit via Transportschiff)
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Trade
+**Blocked By:** T-110, T-073
 **Status:** Draft
 **Effort:** XL
 **Depends on:** T-110 (Trade-Routes), T-073 (Faction für Trade-Steuer)

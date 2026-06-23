@@ -1,6 +1,9 @@
 # T-077 World-Boss / Raid-Target (Allianz-Content)
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** T-052, T-103, T-074, T-075
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-052 (Allianz), T-103 (Battle), T-074/T-075

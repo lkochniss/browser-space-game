@@ -1,6 +1,9 @@
 # T-081b Heimat-Schutz-Effekte (Folge zu T-081)
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Planet
+**Blocked By:** T-081, T-103, T-080
 **Status:** Draft
 **Effort:** M-L
 **Depends on:** T-081 (Foundation, Done), T-103 (Battle-Engine), T-080 (Loot),

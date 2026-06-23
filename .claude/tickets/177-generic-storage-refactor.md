@@ -1,6 +1,9 @@
 # T-177: Generic-Storage-Refactor (Planet)
 
 **Type:** Feature (Refactor)
+**Epic:** Storage Vision
+**Domain:** Planet
+**Blocked By:** T-180
 **Status:** Done
 **Effort:** L (~6-8h, hoch wegen Migration + Test-Refactor)
 **Depends on:** T-180 (Size-Multiplier-Config, Done)

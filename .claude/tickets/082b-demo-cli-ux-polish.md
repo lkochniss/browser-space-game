@@ -1,6 +1,9 @@
 # T-082b: Demo-CLI UX-Polish
 
 **Type:** Feature
+**Epic:** Demo CLI
+**Domain:** Demo
+**Blocked By:** T-082
 **Status:** Done
 **Effort:** S (~1.5h)
 **Depends on:** T-082 (Demo-Foundation)

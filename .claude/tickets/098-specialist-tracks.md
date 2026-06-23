@@ -1,6 +1,9 @@
 # T-098 Specialist-Tracks (Forced Specialization)
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-025, T-046
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-025 (Forschungs-Framework), T-046 (Onboarding)

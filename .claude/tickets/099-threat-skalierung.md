@@ -1,6 +1,9 @@
 # T-099 Threat-Skalierung (PvE-Encounter passt sich an Spieler-Stärke an)
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** T-074, T-075, T-096
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-074 (Pirate), T-075 (Outposts), T-096 (Stats)

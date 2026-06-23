@@ -1,6 +1,9 @@
 # T-009: Building-Kosten + Bauprozess
 
 **Type:** Feature
+**Epic:** Foundation: Buildings
+**Domain:** Building
+**Blocked By:** T-004
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260618000003` — `buildings.finished_at`)

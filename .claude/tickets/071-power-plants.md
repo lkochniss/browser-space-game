@@ -1,6 +1,9 @@
 # T-071 Power-Plants (Solar / Fusion / Antimaterie)
 
 **Type:** Feature
+**Epic:** Energy System
+**Domain:** Building
+**Blocked By:** T-065
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-065 (Energy-System)

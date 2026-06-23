@@ -1,6 +1,9 @@
 # T-086 Schwarzes-Loch-POI
 
 **Type:** Feature
+**Epic:** POI System
+**Domain:** POI
+**Blocked By:** T-019, T-027
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-019 (POI), T-027 (Planetologie-Forschung)

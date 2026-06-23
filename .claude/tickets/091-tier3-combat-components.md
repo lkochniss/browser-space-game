@@ -1,6 +1,9 @@
 # T-091 Tier-3-Combat-Komponenten (Targeting / Reactive-Armor / Plasma-Coil / ECM)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Resource
+**Blocked By:** T-067, T-115, T-102
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-067 (Tier-2), T-115 (Tier-3-Resources), T-102 (Schiff-Klassen)

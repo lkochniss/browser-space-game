@@ -1,6 +1,9 @@
 # T-173: HQ-Level als Building-Cap + steile HQ-Kosten + Speed-Bonus
 
 **Type:** Feature
+**Epic:** Building System
+**Domain:** Building
+**Blocked By:** T-172
 **Status:** Draft (Decisions pending — siehe Open Questions)
 **Effort:** M (~2-3h, abhängig von Q1/Q6)
 **Depends on:** T-172 (HQ-Foundation)

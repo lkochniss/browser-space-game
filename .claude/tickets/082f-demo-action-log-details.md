@@ -1,6 +1,9 @@
 # T-082f: Demo-Action-Log zeigt zu wenig Details (Build/Research/etc.)
 
 **Type:** Bug
+**Epic:** Demo CLI
+**Domain:** Demo
+**Blocked By:** None
 **Status:** Done
 **Severity:** Medium (KI-Tuning kann Patterns nicht erkennen ohne Action-Params)
 **Effort:** XS (~30min)

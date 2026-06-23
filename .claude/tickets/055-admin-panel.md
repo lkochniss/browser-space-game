@@ -1,6 +1,9 @@
 # T-055: Admin-Panel
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-037
 **Status:** Open
 **FX:** No
 **MIG:** No

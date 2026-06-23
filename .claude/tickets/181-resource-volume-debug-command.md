@@ -1,6 +1,9 @@
 # T-181: Debug-Command für Resource-Volume-Inspection
 
 **Type:** Feature (Tooling, Low-Prio)
+**Epic:** Storage Vision
+**Domain:** Resource
+**Blocked By:** T-180
 **Status:** Done
 **Effort:** XS (~30min)
 **Depends on:** T-180 (Resource-Volume-Config)

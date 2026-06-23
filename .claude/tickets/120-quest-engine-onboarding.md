@@ -1,6 +1,9 @@
 # T-120 Quest-Engine + 10 Onboarding-Quests
 
 **Type:** Feature
+**Epic:** Quests & Engagement
+**Domain:** Quest
+**Blocked By:** T-046, T-073
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-046 (Onboarding), T-073 (Faction)

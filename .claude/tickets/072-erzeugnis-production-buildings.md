@@ -1,7 +1,10 @@
 # T-072 Erzeugnis-Production-Buildings (Stahlwerk, Chip-Fab, Composite)
 
 **Type:** Feature
-**Status:** Draft
+**Epic:** Resources Tier-2/3
+**Domain:** Building
+**Blocked By:** T-067
+**Status:** Superseded (durch T-067 — alle 5 Buildings dort in AC; AI-Foundry gehört zu T-115)
 **Effort:** M
 **Depends on:** T-067 (Erzeugnis-Tree)
 **Blocks:** T-102 (Schiff-Klassen)

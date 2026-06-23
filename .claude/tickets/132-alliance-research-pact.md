@@ -1,6 +1,9 @@
 # T-132 Allianz-Research-Pact (Folge zu T-130)
 
 **Type:** Feature
+**Epic:** Multiplayer
+**Domain:** Research
+**Blocked By:** T-130, T-117
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-130 (Allianz-Verträge MVP), T-117 (Allianz-Forschung-Community-Goal)

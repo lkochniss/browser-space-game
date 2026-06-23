@@ -1,6 +1,9 @@
 # T-049: Dev-Fixtures
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** Common
+**Blocked By:** T-036, T-043
 **Status:** Open
 **FX:** Yes (das ist der Ticket-Inhalt)
 **MIG:** No

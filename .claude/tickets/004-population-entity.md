@@ -1,6 +1,9 @@
 # T-004: Population on Planet
 
 **Type:** Feature
+**Epic:** Foundation: Population
+**Domain:** Planet
+**Blocked By:** None
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260618000002` — 3 Spalten auf `planets`)

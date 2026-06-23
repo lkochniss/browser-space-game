@@ -1,6 +1,9 @@
 # T-069 Forschungs-Lab Tier-Mechanik
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-025c
 **Status:** Done (Foundation; Power-Hook bleibt T-065-Stub-NoOp)
 **Effort:** M
 **Depends on:** T-025 (Done), T-025c (Multi-Lab Effective-Lab, Done)

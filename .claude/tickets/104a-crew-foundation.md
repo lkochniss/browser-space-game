@@ -1,6 +1,9 @@
 # T-104a Crew-Foundation (Akademie + Captains)
 
 **Type:** Feature
+**Epic:** Combat & Battle
+**Domain:** Ship
+**Blocked By:** T-009, T-070
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-009 (Building-Cost), T-070 (Pop-QoL via Officer-Quarters)

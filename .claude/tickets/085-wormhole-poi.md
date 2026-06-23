@@ -1,6 +1,9 @@
 # T-085 Wurmloch-POI
 
 **Type:** Feature
+**Epic:** POI System
+**Domain:** POI
+**Blocked By:** T-019
 **Status:** Done
 **Effort:** M
 **MIG:** Yes (`Version20260619000011` — pois.wormhole_twin_id + wormhole_tech_slug)

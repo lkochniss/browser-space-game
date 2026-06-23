@@ -1,6 +1,9 @@
 # T-079 Spy-Heist + Infiltration (Erweiterung zu T-131)
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** T-131, T-080
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-131 (Spy-Foundation), T-080 (Loot)

@@ -1,6 +1,9 @@
 # T-174: Deprecate Station-Build-Command (Lost-Tech-Lore)
 
 **Type:** TechDebt (Feature-Refactor)
+**Epic:** Tech-Debt & Cleanup
+**Domain:** POI
+**Blocked By:** T-175
 **Status:** Done (Soft-Deprecate-Variante; Hard-Remove erst nach T-175)
 **Effort:** S (~1-1.5h)
 **Depends on:** T-175 (Pirate-Owned-Station-Spawn — sonst gibt es keine Stations im Universum)

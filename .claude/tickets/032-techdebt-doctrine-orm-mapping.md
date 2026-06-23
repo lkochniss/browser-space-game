@@ -1,6 +1,9 @@
 # TD-032: Doctrine ORM-Mapping aller Entities
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Common
+**Blocked By:** None
 **Status:** Done
 **Severity:** High
 **Effort:** XL

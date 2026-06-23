@@ -1,6 +1,9 @@
 # TD-030: Deposit kann negativ werden + Level-Math fragwürdig
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Resource
+**Blocked By:** None
 **Status:** Done
 **Severity:** Medium
 **Effort:** S

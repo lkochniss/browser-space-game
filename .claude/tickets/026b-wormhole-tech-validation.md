@@ -1,6 +1,9 @@
 # T-026b: Wormhole-spezifischer Tech-Lock
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-026, T-085
 **Status:** Superseded by T-017b
 **Effort:** S (~1h)
 **Depends on:** T-026 (Antrieb-Tree), T-085 (Wormhole-POI)

@@ -1,6 +1,9 @@
 # T-095 Auto-Production-Routing (Folge-Ticket zu T-110 Trade-Routes)
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Trade
+**Blocked By:** T-110
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-110 (Trade-Routes)

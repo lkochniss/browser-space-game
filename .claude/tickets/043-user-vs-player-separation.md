@@ -1,6 +1,9 @@
 # T-043: User vs Player Trennung
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-036
 **Status:** Open
 **FX:** No
 **MIG:** Yes (Player.userId FK)

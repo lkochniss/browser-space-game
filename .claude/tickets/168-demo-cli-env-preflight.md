@@ -1,6 +1,9 @@
 # T-168: Demo-CLI Auto-Switch in demo-Env
 
 **Type:** Bug
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Demo
+**Blocked By:** None
 **Status:** Done
 **Severity:** Medium (verwirrt jeden, der den Demo zum ersten Mal startet)
 **Effort:** S (~30min)

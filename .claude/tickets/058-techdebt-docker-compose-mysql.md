@@ -1,6 +1,9 @@
 # TD-058: docker-compose Postgres → MySQL angleichen
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Common
+**Blocked By:** None
 **Status:** Done
 **Severity:** Medium
 **Effort:** S (< 1h)

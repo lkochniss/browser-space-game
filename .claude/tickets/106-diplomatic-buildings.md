@@ -1,6 +1,9 @@
 # T-106 Diplomatic-Buildings (Embassy / Comm-Array / Cultural-Mission)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Building
+**Blocked By:** T-073, T-052, T-104c
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-073 (Faction), T-052 (Allianz), T-104c (Diplomat-Crew)

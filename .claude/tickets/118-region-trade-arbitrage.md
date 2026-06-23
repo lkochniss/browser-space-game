@@ -1,6 +1,9 @@
 # T-118 Region-Trade-Arbitrage (Geographische Need-Profile)
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Trade
+**Blocked By:** T-112, T-114, T-007
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-112 (Static-Posts), T-114 (Roving-Trader), T-007 (SolarSystem)

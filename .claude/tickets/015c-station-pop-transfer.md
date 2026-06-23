@@ -1,6 +1,9 @@
 # T-015c: Station-Pop-Transfer (Cargo-Pop ↔ Station-Pop)
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Ship
+**Blocked By:** T-015b, T-023b
 **Status:** Done
 **Effort:** S (~1.5h)
 **Depends on:** T-015b (Station-Cargo-Transfer), T-023b (Station-Maintenance — Draft)

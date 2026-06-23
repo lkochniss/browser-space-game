@@ -1,6 +1,9 @@
 # T-003: Erzeugnis-Konzept + Eisenbarren via Eisenhütte
 
 **Type:** Feature
+**Epic:** Foundation: Resources
+**Domain:** Resource
+**Blocked By:** T-002
 **Status:** Done
 **FX:** No
 **MIG:** No

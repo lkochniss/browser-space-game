@@ -1,6 +1,9 @@
 # T-143 Cosmetics-Inventory-System
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-141, T-080
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-141 (Achievements), T-080 (Loot-Drops)

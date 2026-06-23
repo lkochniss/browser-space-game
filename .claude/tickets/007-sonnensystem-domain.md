@@ -1,6 +1,9 @@
 # T-007: Sonnensystem-Domain
 
 **Type:** Feature
+**Epic:** Foundation: Galaxy
+**Domain:** SolarSystem
+**Blocked By:** None
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000001` — solar_systems Tabelle + planets.solar_system_id FK)

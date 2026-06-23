@@ -1,6 +1,9 @@
 # T-142 Login-Streak (7-Tage-Cycle)
 
 **Type:** Feature
+**Epic:** Quests & Engagement
+**Domain:** Player
+**Blocked By:** T-037
 **Status:** Draft
 **Effort:** S
 **Depends on:** T-037 (Login)

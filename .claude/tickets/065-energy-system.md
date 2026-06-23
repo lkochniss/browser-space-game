@@ -1,6 +1,9 @@
 # T-065 Energy-System (Power-Net pro Planet)
 
 **Type:** Feature
+**Epic:** Energy System
+**Domain:** Building
+**Blocked By:** T-006, T-009
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-006 (Hub), T-009 (Building-Cost)

@@ -1,6 +1,9 @@
 # T-131 Spy-System Foundation (Recon + Sabotage gegen NPC-Outposts)
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** T-073, T-075, T-104c
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-073 (Faction), T-075 (Outposts), T-104c (Crew, Spy-Rolle)

@@ -1,6 +1,9 @@
 # T-056: i18n Setup (DE + EN)
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** Common
+**Blocked By:** None
 **Status:** Open
 **FX:** No
 **MIG:** No

@@ -1,6 +1,9 @@
 # T-100 Trade-Hub-Buildings (Marketplace / Spaceport / Customs-House)
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Building
+**Blocked By:** T-110, T-111, T-112, T-177
 **Status:** Blocked (by T-177 — WAREHOUSE überschneidet sich mit Generic-Storage-Refactor)
 **Effort:** M (TBD)
 **Depends on:** T-110 (Trade-Routes), T-111 (Auction), T-112 (NPC-Posts), T-177 (Generic-Storage-Refactor)

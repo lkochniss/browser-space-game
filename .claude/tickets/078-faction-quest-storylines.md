@@ -1,6 +1,9 @@
 # T-078 Faction-Quest-Storylines
 
 **Type:** Feature
+**Epic:** NPC Factions
+**Domain:** Faction
+**Blocked By:** T-073, T-120
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-073 (Faction), T-120 (Quest-Engine)

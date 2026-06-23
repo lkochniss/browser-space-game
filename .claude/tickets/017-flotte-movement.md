@@ -1,6 +1,9 @@
 # T-017: Flotte + Bewegung
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Fleet
+**Blocked By:** T-007, T-012
 **Status:** Done
 **FX:** No
 **MIG:** Yes (`Version20260619000007` — fleets table + ships.fleet_id)

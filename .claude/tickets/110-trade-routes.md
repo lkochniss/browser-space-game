@@ -1,6 +1,9 @@
 # T-110 Trade-Routes (Auto-Transport eigene Planeten)
 
 **Type:** Feature
+**Epic:** Trade & Economy
+**Domain:** Trade
+**Blocked By:** T-015, T-014
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-015 (Transportschiff), T-014 (Kolonisationsschiff)

@@ -1,6 +1,9 @@
 # T-097a: Renewable-Production-Buildings (Foundation)
 
 **Type:** Feature
+**Epic:** Pop QoL
+**Domain:** Building
+**Blocked By:** T-009, T-061, T-062
 **Status:** Done
 **Effort:** M (~2-3h)
 **Depends on:** T-009 (Building-Cost), T-061 (Storage-System), T-062 (Real-Time-Construction)

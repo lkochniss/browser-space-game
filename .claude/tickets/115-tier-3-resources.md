@@ -1,6 +1,9 @@
 # T-115 Tier-3 Resources (Plasteel, Adamantium, Plasma-Cell, AI-Core)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Resource
+**Blocked By:** T-067, T-086
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-067 (Erzeugnis-Tree), T-086 (Black-Hole für Antimaterie-Source)

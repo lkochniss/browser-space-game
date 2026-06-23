@@ -1,6 +1,9 @@
 # T-061: Storage-System (Lager-Kapazität pro Resource)
 
 **Type:** Feature
+**Epic:** Storage Vision
+**Domain:** Planet
+**Blocked By:** None
 **Status:** Done
 **FX:** No
 **MIG:** No (cap ist live-computed, keine neuen Spalten; neue BuildingType-Enum-Cases passen in vorhandene varchar(32))

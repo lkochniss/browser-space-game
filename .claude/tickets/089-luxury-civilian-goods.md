@@ -1,6 +1,9 @@
 # T-089 Luxury / Civilian-Goods (Pop-Demand-Layer)
 
 **Type:** Feature
+**Epic:** Resources Tier-2/3
+**Domain:** Resource
+**Blocked By:** T-005, T-067
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-005 (Pop-Verbrauch), T-067 (Tier-2)

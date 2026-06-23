@@ -1,6 +1,9 @@
 # T-135 Forschungs-Branch: Diplomatie
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-073, T-104c, T-106
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025, T-073 (Faction), T-104c (Diplomat-Crew), T-106 (Diplomatic-Buildings)

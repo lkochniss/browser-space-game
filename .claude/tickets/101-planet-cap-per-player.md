@@ -1,6 +1,9 @@
 # T-101 Planet-Cap pro Player
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Planet
+**Blocked By:** T-014, T-094d
 **Status:** Done (Foundation; Abandon-Mechanik in T-101b split)
 **Effort:** S
 **Depends on:** T-014 (Kolonisationsschiff, Done), T-094d (logistics_1, Done)

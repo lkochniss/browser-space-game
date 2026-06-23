@@ -1,6 +1,9 @@
 # T-150b Bubble-Effekte + Catch-Up-Multiplier (Folge zu T-150)
 
 **Type:** Feature
+**Epic:** Game Balance
+**Domain:** Player
+**Blocked By:** T-150, T-074
 **Status:** Draft
 **Effort:** M
 **Depends on:** T-150 (Foundation, Done), T-074 (Pirate-Spawn, Draft),

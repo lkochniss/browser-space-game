@@ -1,6 +1,9 @@
 # T-128 Forschungs-Branch: Schiffbau
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-011, T-102, T-091
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025, T-011 (Raumwerft), T-102 (Schiff-Klassen), T-091 (Tier-3-Combat-Components)

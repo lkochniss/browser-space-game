@@ -1,6 +1,9 @@
 # T-127 Forschungs-Branch: Mining / Industrie
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025, T-002, T-067, T-115
 **Status:** Draft
 **Effort:** L (TBD)
 **Depends on:** T-025 (Forschungs-Framework), T-002, T-067, T-115

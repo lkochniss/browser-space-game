@@ -1,6 +1,9 @@
 # T-084 Galactic-Council (Endgame-Influence-Voting)
 
 **Type:** Feature
+**Epic:** Endgame
+**Domain:** Faction
+**Blocked By:** T-052, T-121, T-130
 **Status:** Draft
 **Effort:** XL (TBD)
 **Depends on:** T-052 (Allianz), T-121 (Crusade), T-130 (Allianz-Verträge)

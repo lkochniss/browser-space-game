@@ -1,6 +1,9 @@
 # T-182: Remove UNIVERSITY Building (Wort-Mix-Up; Lab ist die einzige Forschungs-Einrichtung)
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Building
+**Blocked By:** None
 **Status:** Done
 **Effort:** S (~1-1.5h)
 **Depends on:** —

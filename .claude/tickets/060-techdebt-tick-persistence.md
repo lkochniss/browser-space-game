@@ -1,6 +1,9 @@
 # TD-060: Tick-Mutationen persistieren
 
 **Type:** TechDebt
+**Epic:** Tech-Debt & Cleanup
+**Domain:** Tick
+**Blocked By:** None
 **Status:** Done
 **Severity:** High
 **Effort:** M (1-4h)

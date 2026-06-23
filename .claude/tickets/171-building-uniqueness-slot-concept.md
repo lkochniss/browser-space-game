@@ -1,6 +1,9 @@
 # T-171: Building-Uniqueness + Planet-Slot-Konzept
 
 **Type:** Feature
+**Epic:** Building System
+**Domain:** Building
+**Blocked By:** T-009, T-094, T-170
 **Status:** Done (Foundation implementiert; Folge: Cancel/Demolish/Slot-Bonus)
 **Effort:** M (~3h, abhängig von Decisions)
 **Depends on:** T-009 (Building-Cost), T-094 (Bau-Queue Foundation), T-170 (Tech-Tree)

@@ -1,6 +1,9 @@
 # T-119 Mega-Struktur: Dyson-Sphäre
 
 **Type:** Feature
+**Epic:** Mega Structures
+**Domain:** Mega
+**Blocked By:** T-116, T-115
 **Status:** Draft
 **Effort:** XL (TBD)
 **Depends on:** T-116 (Mega-Strukturen-Foundation), T-115 (Tier-3)

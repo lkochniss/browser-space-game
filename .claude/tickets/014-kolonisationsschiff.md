@@ -1,6 +1,9 @@
 # T-014: Kolonisationsschiff + Besiedlungsflow
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Ship
+**Blocked By:** T-007, T-012
 **Status:** Done
 **FX:** No
 **MIG:** No (ShipType ist string-Spalte, neue Enum-Werte ohne Schema-Change)

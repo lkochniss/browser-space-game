@@ -1,6 +1,9 @@
 # T-096 Player-History / Stats
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-014, T-009, T-012
 **Status:** Done (Foundation; Tick-/Battle-Counters in T-096b split)
 **Effort:** S
 **Depends on:** T-014 (Done), T-009 (Done), T-012 (Done)

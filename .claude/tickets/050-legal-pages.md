@@ -1,6 +1,9 @@
 # T-050: Legal-Pages — Impressum / Datenschutz / ToS / Cookie-Banner
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** UI
+**Blocked By:** None
 **Status:** Open
 **FX:** No
 **MIG:** No

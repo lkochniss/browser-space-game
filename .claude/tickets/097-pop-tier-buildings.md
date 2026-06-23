@@ -1,6 +1,9 @@
 # T-097 Pop-Tier-Buildings (Genebank / Cloning-Vat / Civic-Center)
 
 **Type:** Feature
+**Epic:** Pop QoL
+**Domain:** Building
+**Blocked By:** T-005, T-070, T-089, T-090
 **Status:** Draft
 **Effort:** M (TBD)
 **Depends on:** T-005 (Pop), T-070 (QoL), T-089 (Civilian-Goods), T-090 (Medicine)

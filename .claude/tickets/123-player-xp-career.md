@@ -1,6 +1,9 @@
 # T-123 Player-XP / Karriere
 
 **Type:** Feature
+**Epic:** Player Progression
+**Domain:** Player
+**Blocked By:** T-096
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-096 (Player-Stats)

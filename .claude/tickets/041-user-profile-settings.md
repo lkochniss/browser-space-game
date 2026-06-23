@@ -1,6 +1,9 @@
 # T-041: User-Profil + Einstellungen
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-037
 **Status:** Open
 **FX:** No
 **MIG:** No

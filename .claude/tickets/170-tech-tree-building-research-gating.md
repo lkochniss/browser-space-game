@@ -1,6 +1,9 @@
 # T-170: Tech-Tree Building↔Research Gating
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-009, T-025
 **Status:** Done
 **Effort:** M-L (~3h)
 **Depends on:** T-009 (Building-Bau), T-025 (Forschungs-Framework)

@@ -1,6 +1,9 @@
 # T-141 Achievement-System Foundation (Cosmetic-only)
 
 **Type:** Feature
+**Epic:** Quests & Engagement
+**Domain:** Player
+**Blocked By:** T-096
 **Status:** Draft
 **Effort:** L
 **Depends on:** T-096 (Player-Stats)

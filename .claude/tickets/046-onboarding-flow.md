@@ -1,6 +1,9 @@
 # T-046: Onboarding-Flow für neuen Spieler
 
 **Type:** Feature
+**Epic:** Web Layer & Auth
+**Domain:** User
+**Blocked By:** T-037, T-043
 **Status:** Open
 **FX:** No
 **MIG:** No

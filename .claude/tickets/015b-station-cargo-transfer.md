@@ -1,6 +1,9 @@
 # T-015b: Station-Cargo-Transfer (Erweiterung zu T-015)
 
 **Type:** Feature
+**Epic:** Ships & Fleet
+**Domain:** Ship
+**Blocked By:** T-015, T-023
 **Status:** Done (Foundation: Resources only; Pop-Transfer + Owner-Restriction defer)
 **Effort:** S
 **Depends on:** T-015 (Cargo-Foundation), T-023 (SpaceStation)

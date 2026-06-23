@@ -1,6 +1,9 @@
 # T-025b: Multi-Lab Research-Boost
 
 **Type:** Feature
+**Epic:** Research & Tech-Tree
+**Domain:** Research
+**Blocked By:** T-025
 **Status:** Done
 **Effort:** S (~1h)
 **Depends on:** T-025 (Forschungs-Foundation)
