@@ -76,10 +76,10 @@
 | 063-planet-bonus-system.md | Feature | Foundation: Planet Types | Planet | Done | T-008 | Planet-Type-Boni (Mining-Multi pro Resource je Type) |
 | 064-construction-speed-boost.md | Feature | Research & Tech-Tree | Research | Done | T-062, T-025, T-026 | construction_speed_1 (3 Levels) reduziert Bauzeit multiplikativ; Stack mit T-063 Planet-Type |
 | 064b-construction-hub-building.md | Feature | Building System | Building | Done | T-064 | CONSTRUCTION_HUB Building (unique, slot-size 2); ×1.10/Level lokaler Speed-Multi, stackt mit T-063 + T-064 |
-| 065-energy-system.md | Feature | Energy System | Building | Draft | T-006, T-009 | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
+| 065-energy-system.md | Feature | Energy System | Building | Ready | T-006, T-009 | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Storage Vision | Resource | Blocked | T-002, T-003 | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Resources Tier-2/3 | Resource | Done | T-003 | Tier-2-Erzeugnisse (3 Bars + 5 Compounds) + 2 neue FINITE Erze + Snapshot-Single-Step-Cascade; Volume-Tabelle erweitert. T-072 superseded |
-| 068-defense-buildings.md | Feature | Combat & Battle | Building | Draft | T-065, T-067 | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
+| 068-defense-buildings.md | Feature | Combat & Battle | Building | Ready | T-065, T-067 | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
 | 069-research-lab-tier.md | Feature | Research & Tech-Tree | Research | Done | T-025, T-025c | ResearchNode.requiredLabLevel + Tier-Gate-Validation; Tier-1/2/3-Mapping; LabLevelTooLowException |
 | 070-pop-qol-buildings.md | Feature | Pop QoL | Building | Done | T-005, T-006, T-172 | 4 QoL-Foundation: Hospital +20 Pop/Lvl + Cultural-Center +2%/Lvl Mining/Refinement; Effekte in T-070b |
 | 070b-pop-qol-effects-extension.md | Feature | Pop QoL | Building | Draft | T-070, T-005 | Hospital-Mangel-Tod + University-RP-Multi + Temple-Loyalty + Power-Consumption (Folge zu T-070) |
@@ -105,7 +105,7 @@
 | 085-wormhole-poi.md | Feature | POI System | POI | Done | T-019 | Wormhole POI-Subtype mit Pair-Verlinkung + Galaxy-Pair-Spawn (Foundation) |
 | 086-black-hole-poi.md | Feature | POI System | POI | Draft | T-019, T-027 | Schwarzes-Loch + Antimaterie-Harvest (Tech-gated) |
 | 087-fog-of-war.md | Feature | Exploration & Probes | Probe | Draft | T-018, T-007, T-013, T-019 | Player-spezifische Discovery-Levels (UNKNOWN/METADATA/SCANNED) |
-| 088-combat-munition.md | Feature | Combat & Battle | Resource | Draft | T-067, T-103 | BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE Verbrauch im Battle |
+| 088-combat-munition.md | Feature | Combat & Battle | Resource | Ready | T-067, T-103, T-102, T-178 | BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE Verbrauch im Battle |
 | 089-luxury-civilian-goods.md | Feature | Resources Tier-2/3 | Resource | Draft | T-005, T-067 | Pop-Tier-Layer (Working/Middle/Upper) + Civilian-Goods |
 | 090-medicine-bio-resources.md | Feature | Resources Tier-2/3 | Resource | Draft | T-005, T-070 | BIOMASS/PHARMA/VACCINE/CYBERNETIC-IMPLANT |
 | 091-tier3-combat-components.md | Feature | Resources Tier-2/3 | Resource | Draft | T-067, T-115, T-102 | TARGETING_COMPUTER/REACTIVE_ARMOR/PLASMA_COIL/ECM/WARP_DRIVE_CORE |
@@ -126,16 +126,21 @@
 | 101-planet-cap-per-player.md | Feature | Game Balance | Planet | Done | T-014, T-094d | Planet-Cap Foundation: BASE 5 + logistics_1 Bonus, HARD_CAP 10; Colonize-Cap-Check; Demo-Status N/M |
 | 101b-planet-abandon-mechanic.md | Feature | Game Balance | Planet | Draft | T-101 | Planet-Abandon-Mechanik (Folge zu T-101) — Resources/Buildings reset + Slot frei |
 | 102-ship-classes-foundation.md | Feature | Combat & Battle | Ship | Ready | T-011, T-012, T-067, T-104a | 5 Combat × 3 Mk + 4 Spezial-Klassen, hohe Cost, Captain-Required |
-| 103-battle-resolution-engine.md | Feature | Combat & Battle | Ship | Draft | T-102, T-068 | Round-based Auto-Resolution + Tactic-Counter (RPS-light) |
+| 103-battle-resolution-engine.md | Feature | Combat & Battle | Ship | Ready | T-102, T-068 | Round-based Auto-Resolution + Tactic-Counter (RPS-light) |
+| 103b-tactic-rps-system.md | Feature | Combat & Battle | Ship | Draft | T-103 | — |
+| 103c-npc-ai-tactic-heuristik.md | Feature | Combat & Battle | Ship | Draft | T-103b | — |
+| 103d-battle-replay-persistence.md | Feature | Combat & Battle | Ship | Draft | T-103 | — |
+| 103e-loot-trigger-hook.md | Feature | Combat & Battle | Ship | Draft | T-103, T-080 | — |
 | 104a-crew-foundation.md | Feature | Combat & Battle | Ship | Ready | T-009, T-070 | Akademie + Officer-Quarters + Captain-Crew-Type |
-| 104b-captain-skill-trees.md | Feature | Combat & Battle | Ship | Draft | T-104a, T-103 | Beam-Master/Missile-Spec/Shield-Tactician/Fleet-Commander |
-| 104c-other-crew-roles.md | Feature | Combat & Battle | Ship | Draft | T-104a, T-069, T-110 | Forscher/Engineer/Diplomat (Lab-Boost/Maintenance/Reputation) |
+| 104b-captain-skill-trees.md | Feature | Combat & Battle | Ship | Ready | T-104a, T-103 | Beam-Master/Missile-Spec/Shield-Tactician/Fleet-Commander |
+| 104c-other-crew-roles.md | Feature | Combat & Battle | Ship | Ready | T-104a, T-110 | Forscher/Engineer/Diplomat (Lab-Boost/Maintenance/Reputation) |
 | 105-ship-maintenance.md | Feature | Ships & Fleet | Ship | Blocked | T-066, T-102, T-005, T-178, T-179 | Treibstoff + Crew-Versorgung; Stranding bei Mangel; blocked by T-178 |
 | 106-diplomatic-buildings.md | Feature | Resources Tier-2/3 | Building | Draft | T-073, T-052, T-104c | EMBASSY/COMM_ARRAY/CULTURAL_MISSION/INTELLIGENCE_HQ/TRANSLATOR_BUREAU |
 | 107-manufacturing-buildings.md | Feature | Resources Tier-2/3 | Building | Draft | T-067, T-088, T-089, T-090, T-091, T-115 | Bündel: ~20 Manufacturing-Buildings (Munition/Civilian/Bio/Tier-3-Combat/Tier-3-Resources) |
 | 108-specialty-mining-buildings.md | Feature | Resources Tier-2/3 | Building | Draft | T-002, T-019, T-020, T-066 | ASTEROID_DRONE/DEEP_DRILL/ATMOSPHERIC_HARVESTER/ICE_DRILLER/VOLCANIC_TAPPER/LUNAR_PROCESSOR |
 | 109-tier3-containment-storage.md | Feature | Storage Vision | Building | Blocked | T-115, T-092, T-177, T-061 | ANTIMATTER_CONTAINMENT/AI_CORE_VAULT/ADAMANTIUM_DEPOT/VOID_CONTAINER/ARTIFACT_VAULT; blocked by T-177 |
-| 110-trade-routes.md | Feature | Trade & Economy | Trade | Draft | T-015, T-014 | Auto-Transport eigene Planeten — Schiff-bound Routes |
+| 110-trade-routes.md | Feature | Trade & Economy | Trade | Ready | T-015, T-014 | Auto-Transport eigene Planeten — Schiff-bound Routes |
+| 110b-route-refill-logic.md | Feature | Trade & Economy | Trade | Draft | T-110, T-088, T-105 | — |
 | 111-auction-house.md | Feature | Trade & Economy | Trade | Draft | T-110, T-073 | Galaxy-weit Auction + Lieferzeit via Transportschiff |
 | 112-hybrid-pricing.md | Feature | Trade & Economy | Trade | Draft | T-111, T-073, T-007, T-023 | Need-Based-Pricing + Statische Handelsposten (Inventory-bound, nicht-übernehmbar) |
 | 113-black-market.md | Feature | Trade & Economy | Trade | Draft | T-131, T-073 | Renegade-Rep-Path → illegale Tech + Tier-3-Resources |
