@@ -4,8 +4,8 @@
 **Epic:** Building System
 **Domain:** Building
 **Blocked By:** T-172
-**Status:** Draft (Decisions pending — siehe Open Questions)
-**Effort:** M (~2-3h, abhängig von Q1/Q6)
+**Status:** Ready
+**Effort:** M (~3h)
 **Depends on:** T-172 (HQ-Foundation)
 **Related:** T-064 (construction_speed Research), T-064b (CONSTRUCTION_HUB Speed-Multi), T-094 (Build-Queue)
 **Blocks:** —
@@ -29,95 +29,144 @@ ist an HQ-Tempo gekoppelt.
 
 ## Open Questions (vor Implementation klären)
 
-### Q1: Cap-Rule Scope
+### Q1: Cap-Rule Scope — RESOLVED = (a)
 
-Welche Buildings unterliegen dem HQ-Cap?
+**Decision:** HQ-Cap gilt für **ALLE** Buildings inkl. Unique-Strategics
+(Shipyard, Research-Lab, Construction-Yard, Probe-Lab, HUB, QoL, Mines,
+Storage, Producer, Smelter). HQ selbst ausgenommen. Keine Building auf dem
+Planeten darf höher als HQ leveln. HQ ist DAS Pacing-Tor.
 
-- (a) **Alle** — inklusive andere Unique-Strategic (Shipyard, Research-Lab,
-  Construction-Hub, Probe-Lab, ggf. HUB-Familie)
-- (b) **Nur "normale" Buildings** — Production/Storage/Renewable; andere
-  Unique-Strategic bleiben unabhängig (eigener Tech-Gate-Pfad)
-- (c) **HQ selbst ausgenommen** (klar) + alle restlichen Buildings kapped
+### Q2: Cap-Vergleich — RESOLVED = (a)
 
-### Q2: Cap-Vergleich (≤ vs <)
+**Decision:** **Strikt-gleich erlaubt** (`buildingLevel ≤ hqLevel`).
+HQ L4 → alle anderen Buildings max L4. Player kann parallel auf gleichem
+Level halten. Intuitiver als "HQ eins voraus".
 
-- (a) **Strikt-gleich erlaubt** (HQ L4 → Buildings max L4)
-- (b) **Strikt-kleiner** (HQ L4 → Buildings max L3) — HQ immer "eins voraus"
+### Q3: HQ-Cost-Curve — RESOLVED = (c) Multi-Resource-Last
 
-### Q3: HQ-Cost-Curve
+**Decision:** Quadratische Multi-Resource-Last. HQ-Upgrades fordern mit
+steigendem Level zusätzliche REFINED-Resources in wachsender Menge. Verbindet
+HQ-Push mit Industrie-Aufbau (Iron-Smelter → Steel-Smelter → Hull-Foundry-
+Chain). Standard `2^level`-Skalierung der Base-Kosten bleibt; hinzu kommen
+Tier-2/3-Anteile.
 
-Welche Form soll die Steilheit annehmen?
+**Vorschlag-Tabelle (final beim Implementation-Start; Tuning-Knob):**
 
-- (a) **Höhere Exponential-Base** (z.B. `3^level` statt `2^level`)
-- (b) **Step-Function** — moderate Cost bis L3, danach harte Sprünge (z.B.
-  L4: ×4, L5: ×8, L6: ×16 statt linear ×2)
-- (c) **Quadratische Multi-Resource-Last** — höhere Tiers brauchen REFINED
-  Resources (Iron-Bar, Steel) in steigender Menge
-- (d) **Konkrete Tabelle vorgegeben** — Player gibt Cost/Duration je Level
-- **Default-Vorschlag:** `2^level` für L1-L3, dann `(level^3)` Multiplier ab L4
+| HQ-Level | Base-Multi | Zusatz-REFINED |
+|----------|-----------|----------------|
+| 1 (Auto) | ×1 | — (Foundation via ClaimStartPlanet) |
+| 2 | ×2 | + 50 IRON_BAR |
+| 3 | ×4 | + 100 IRON_BAR + 30 STEEL |
+| 4 | ×8 | + 200 IRON_BAR + 100 STEEL + 30 COMPOSITE |
+| 5 | ×16 | + 400 IRON_BAR + 250 STEEL + 100 COMPOSITE + 30 HULL_PLATE |
+| 6+ | ×2^L | quadratisch wachsende REFINED-Tier-2/3 (Tuning-Folge) |
 
-### Q4: Speed-Bonus Magnitude + Stack
+Konsistent mit T-067 Tier-2-Tree (STEEL/COMPOSITE/HULL_PLATE alle Done).
 
-- Magnitude: **-2%/Level**, **-5%/Level**, **-10%/Level**, oder anders?
-- Stack-Verhalten:
-  - (a) Multiplikativ mit T-064 (construction_speed-Tech) + T-064b
-    (CONSTRUCTION_HUB) + T-063 (Planet-Type)
-  - (b) Additiv mit gleichen Sources
-- **Default-Vorschlag:** -3%/Level, multiplikativ — bei L10 = ~74% Bauzeit
-  (`0.97^10`)
+### Q4: Speed-Bonus — RESOLVED
 
-### Q5: Max-HQ-Level
+**Magnitude:** `-3%/Level` Bauzeit-Reduktion (multiplier = `0.97^hqLevel`).
+HQ L1 = 0.97×, L5 = 0.86×, L10 = 0.74× (~74% Bauzeit).
 
-- (a) **L10** — moderate Endgame-Grenze
-- (b) **L15** — viel Raum für Late-Game-Progress
-- (c) **Unbegrenzt** — exponentielle Cost regelt von selbst
-- **Default-Vorschlag:** L10 (analog T-094c Slot-Cap-Skalierungs-Ideen)
+**Stack:** **Multiplikativ** mit anderen Speed-Sources:
+```
+effective_speed_multi = HQ_speed × T-064_research × T-064b_yard × T-063_type
+```
+Multiplikativ schaltet die volle Stack-Power frei (z.B. HQ L10 × T-064 L3
+× CONSTRUCTION_YARD L5 × BARREN-Planet ≈ Bauzeit-Halbierung).
 
-### Q6: Retroactive-Behavior (Existing-Buildings)
+### Q5: Max-HQ-Level — RESOLVED = (c) Unbegrenzt
 
-Was passiert, wenn bei Einführung bereits Buildings höher als HQ stehen
-(z.B. HQ L2, aber Iron-Mine L4)?
+**Decision:** Keine harte `maxLevel`-Konstante für HQ. Die quadratisch
+wachsenden Resource-Kosten (Q3) + REFINED-Tier-Anforderungen regeln Late-Game
+natürlich. Cost wird zum Bottleneck statt Level-Cap. Konsistent mit
+"HQ ist Pacing-Tor".
 
-- (a) **Grandfather** — bestehende bleiben, aber kein weiteres Upgrade bis
-  HQ aufgeholt hat
-- (b) **Hard-Block** — Migration setzt HQ auto auf Max(Existing-Building-Level)
-- (c) **Nicht relevant** — wenn T-172 vorgibt "HQ L1 ab Planet-Claim" und
-  Cap-Rule von Anfang an gilt, kann diese Situation nicht entstehen (außer
-  bei Migration alter Demo-State)
+T-094c Slot-Cap-Skalierung (HQ L5+ liefert +1 Build-Queue-Slot) funktioniert
+weiterhin — kein Cap-Konflikt.
 
-### Q7: Cap auch für Initial-Build, oder nur Upgrade?
+### Q6: Retroactive-Behavior — RESOLVED = (c)
 
-- (a) **Initial + Upgrade** — neue Buildings werden direkt mit L1 gebaut;
-  Cap betrifft nur Upgrade-Pfad (trivial, da L1 ≤ alles)
-- (b) **Strikt** — wenn Building-Initial L1 ist und HQ noch L0 (theoretisch),
-  Block Initial-Build bis HQ existiert
-- **Default-Vorschlag:** (a) — Initial-Build = L1, automatisch ≤ HQ wenn
-  HQ ≥ L1 (Voraussetzung via T-172 Auto-Bootstrap)
+**Decision:** Situation kann garnicht entstehen — T-172 baut HQ L1 auto-
+matisch beim `ClaimStartPlanet`, Cap gilt von Anfang an. Demo-Reset cleart
+alles. Migration nicht erforderlich.
 
-### Q8: Error-Verhalten beim Cap-Violation
+Falls in Production-DB doch Demo-Buff-Player mit existing Buildings > HQ
+existieren: Fallback = Grandfather (Buildings bleiben, kein Upgrade bis
+HQ aufholt). Aber das ist Edge-Case ohne Test-Coverage in T-173.
 
-- Domain-Exception bei `UpgradeBuildingCommand` mit klarer Message
-  ("Cannot upgrade BUILDING to L5 — HQ is L4")?
-- UI-Hint im Demo-CLI: "Upgrade HQ first" wenn Cap-Block?
+### Q7: Cap-Check Initial-Build — RESOLVED = (a)
 
-## Acceptance Criteria (Draft — final nach Q1-Q8)
+**Decision:** Cap-Check läuft auf **Initial-Build + Upgrade**. Initial-Build
+ist trivial-OK (L1 ≤ HQ-Level wenn HQ ≥ L1 via T-172 Auto-Bootstrap). Real-
+wirksam ist der Cap-Check auf `UpgradeBuildingCommand`.
 
-- [ ] HQ-Cost-Konfiguration mit steiler Late-Game-Curve (Q3)
-- [ ] HQ-Duration-Skalierung analog steiler (Q3)
-- [ ] HQ `maxLevel` Cap-Konstante (Q5)
-- [ ] `Planet::canUpgradeBuilding(BuildingType, level)` prüft HQ-Cap (Q1, Q2, Q7)
-- [ ] `UpgradeBuildingCommand` wirft Domain-Exception bei Cap-Violation (Q8)
-- [ ] `BuildingType::HQ` liefert `getBuildSpeedMultiplier(level)` für Speed-Bonus (Q4)
-- [ ] Speed-Bonus stackt korrekt mit T-064/T-064b/T-063 (Q4)
-- [ ] Integration-Tests:
-  - Upgrade-Block wenn Building bereits = HQ-Level (Q2 hängt von a/b ab)
-  - HQ-Upgrade öffnet wieder Building-Upgrade-Path
-  - Cost-Curve-Werte je Level
-  - Speed-Bonus wirkt auf neue Build-Aufträge
-  - Stack-Berechnung mit anderen Speed-Sources
-- [ ] Demo-CLI: Cost-Preview zeigt HQ-Cap-Status ("HQ L3 → Buildings ≤ L3")
-- [ ] Doc: `buildings.md` updated (HQ-Cap-Section, Cost-Curve, Speed-Bonus)
-- [ ] Doc: `decisions.md` Eintrag für Cap-Mechanik
+### Q8: Error-Verhalten — RESOLVED
+
+**Decision:** Domain-Exception + Demo-CLI Hint.
+
+- `HqLevelCapViolationException(BuildingType $type, int $target, int $hqLevel)`
+  mit Message: "Cannot upgrade <type> to L<target> — HQ is L<hqLevel>"
+- Demo-CLI Upgrade-Action: `[BLOCKED: HQ is L<hqLevel>]` neben gecappten
+  Buildings im Preview-Menu (Cap-Status sichtbar BEVOR Player es versucht)
+- Cost-Preview im Build/Upgrade-Menü zeigt zusätzlich
+  `HQ-Cap: Buildings ≤ L<hqLevel>` als globalen Hinweis
+
+## Acceptance Criteria
+
+### Cap-Mechanik (Q1/Q2/Q7)
+
+- [ ] `Planet::canUpgradeBuilding(Building $b): bool` — prüft ob
+      `b.level + 1 ≤ hqLevel`. HQ selbst ausgenommen.
+- [ ] `UpgradeBuildingCommand` wirft `HqLevelCapViolationException(type, target, hqLevel)`
+      bei Verletzung — VOR Resource/Pop-Validation
+- [ ] Initial-Build wird ebenfalls geprüft (trivial-OK wenn HQ ≥ L1 via T-172)
+- [ ] Cap betrifft ALLE non-HQ Buildings (inkl. Strategic + QoL + Mines etc.)
+
+### HQ-Cost-Curve (Q3)
+
+- [ ] `BuildingCostConfig` für HQ liefert Multi-Resource-Cost je Level:
+      - L2: Base + 50 IRON_BAR
+      - L3: Base + 100 IRON_BAR + 30 STEEL
+      - L4: Base + 200 IRON_BAR + 100 STEEL + 30 COMPOSITE
+      - L5: Base + 400 IRON_BAR + 250 STEEL + 100 COMPOSITE + 30 HULL_PLATE
+      - L6+: quadratisch wachsend, Per-Level-Tuning offen
+- [ ] HQ-Duration ebenfalls steiler — Vorschlag: bestehende `2^level`-Skalierung
+      verdoppelt für HQ (Effective `4^level`)
+- [ ] Kein `maxLevel`-Cap auf HQ (Q5) — Cost regelt natürlich
+
+### Speed-Bonus (Q4)
+
+- [ ] `Planet::getHqBuildSpeedMultiplier($now): float` = `0.97^hqLevel`
+      (HQ L1 = 0.97, L10 = ~0.74)
+- [ ] `BuildBuildingCommandService` + `UpgradeBuildingCommandService`
+      multiplizieren HQ-Speed in den existing Speed-Stack:
+      `effective = HQ × T-064_research × T-064b_yard × T-063_type`
+
+### Error-Verhalten + UI (Q8)
+
+- [ ] `HqLevelCapViolationException` mit klarer Message
+- [ ] Demo-CLI Upgrade-Action zeigt `[BLOCKED: HQ is L<n>]` neben gecappten
+      Buildings im Preview-Menu
+- [ ] Demo-CLI Cost-Preview zeigt `HQ-Cap: Buildings ≤ L<n>` als Global-Hint
+
+### Tests
+
+- [ ] `HqLevelCapTest` (IT): Upgrade-Block bei building.level == hqLevel
+- [ ] `HqLevelCapTest`: HQ-Upgrade öffnet Upgrade-Pfad wieder
+- [ ] `HqLevelCapTest`: HQ selbst nicht gecapped (HQ-Upgrade möglich)
+- [ ] `HqCostCurveTest`: Multi-Resource-Cost Werte je Level
+- [ ] `HqBuildSpeedTest`: 0.97^level Multiplier, Stack mit T-064/T-064b/T-063
+- [ ] `BuildBuildingCommandTest`: Initial-Build trivial-OK trotz Cap
+
+### Docs
+
+- [ ] `buildings.md` HQ-Cap-Section + Cost-Curve-Tabelle + Speed-Bonus
+- [ ] `decisions.md` Eintrag für T-173 HQ-Cap-Mechanik
+
+## Fixtures Needed
+
+No. Tests nutzen direkt `Planet::generatePlanet()` + Building-Constructor.
 
 ## Out of Scope
 
@@ -135,3 +184,7 @@ Was passiert, wenn bei Einführung bereits Buildings höher als HQ stehen
   haben, um andere Buildings parallel zu pushen während HQ wartet.
 - Speed-Bonus + Cap = klassisches Pacing-Pattern: "HQ-Investition zahlt sich
   in Tempo aus, aber das Tempo gilt nur, wenn man die Investition macht."
+
+### Refinement Tokens (estimate)
+- Input: ~10k
+- Output: ~3k

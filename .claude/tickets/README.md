@@ -79,7 +79,7 @@
 | 065-energy-system.md | Feature | Energy System | Building | Draft | T-006, T-009 | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Storage Vision | Resource | Blocked | T-002, T-003 | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Resources Tier-2/3 | Resource | Done | T-003 | Tier-2-Erzeugnisse (3 Bars + 5 Compounds) + 2 neue FINITE Erze + Snapshot-Single-Step-Cascade; Volume-Tabelle erweitert. T-072 superseded |
-| 068-defense-buildings.md | Feature | Combat & Defense | Building | Blocked | T-065, T-067, T-103 | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
+| 068-defense-buildings.md | Feature | Combat & Battle | Building | Draft | T-065, T-067 | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
 | 069-research-lab-tier.md | Feature | Research & Tech-Tree | Research | Done | T-025, T-025c | ResearchNode.requiredLabLevel + Tier-Gate-Validation; Tier-1/2/3-Mapping; LabLevelTooLowException |
 | 070-pop-qol-buildings.md | Feature | Pop QoL | Building | Done | T-005, T-006, T-172 | 4 QoL-Foundation: Hospital +20 Pop/Lvl + Cultural-Center +2%/Lvl Mining/Refinement; Effekte in T-070b |
 | 070b-pop-qol-effects-extension.md | Feature | Pop QoL | Building | Draft | T-070, T-005 | Hospital-Mangel-Tod + University-RP-Multi + Temple-Loyalty + Power-Consumption (Folge zu T-070) |
@@ -125,9 +125,9 @@
 | 100-trade-hub-buildings.md | Feature | Trade & Economy | Building | Blocked | T-110, T-111, T-112, T-177 | MARKETPLACE/SPACEPORT/CUSTOMS_HOUSE/WAREHOUSE/BAZAAR; blocked by T-177 |
 | 101-planet-cap-per-player.md | Feature | Game Balance | Planet | Done | T-014, T-094d | Planet-Cap Foundation: BASE 5 + logistics_1 Bonus, HARD_CAP 10; Colonize-Cap-Check; Demo-Status N/M |
 | 101b-planet-abandon-mechanic.md | Feature | Game Balance | Planet | Draft | T-101 | Planet-Abandon-Mechanik (Folge zu T-101) — Resources/Buildings reset + Slot frei |
-| 102-ship-classes-foundation.md | Feature | Combat & Battle | Ship | Draft | T-011, T-012, T-067, T-104a | 5 Combat × 3 Mk + 4 Spezial-Klassen, hohe Cost, Captain-Required |
-| 103-battle-resolution-engine.md | Feature | Combat & Battle | Ship | Draft | T-102, T-068, T-104b | Round-based Auto-Resolution + Tactic-Counter (RPS-light) |
-| 104a-crew-foundation.md | Feature | Combat & Battle | Ship | Draft | T-009, T-070 | Akademie + Officer-Quarters + Captain-Crew-Type |
+| 102-ship-classes-foundation.md | Feature | Combat & Battle | Ship | Ready | T-011, T-012, T-067, T-104a | 5 Combat × 3 Mk + 4 Spezial-Klassen, hohe Cost, Captain-Required |
+| 103-battle-resolution-engine.md | Feature | Combat & Battle | Ship | Draft | T-102, T-068 | Round-based Auto-Resolution + Tactic-Counter (RPS-light) |
+| 104a-crew-foundation.md | Feature | Combat & Battle | Ship | Ready | T-009, T-070 | Akademie + Officer-Quarters + Captain-Crew-Type |
 | 104b-captain-skill-trees.md | Feature | Combat & Battle | Ship | Draft | T-104a, T-103 | Beam-Master/Missile-Spec/Shield-Tactician/Fleet-Commander |
 | 104c-other-crew-roles.md | Feature | Combat & Battle | Ship | Draft | T-104a, T-069, T-110 | Forscher/Engineer/Diplomat (Lab-Boost/Maintenance/Reputation) |
 | 105-ship-maintenance.md | Feature | Ships & Fleet | Ship | Blocked | T-066, T-102, T-005, T-178, T-179 | Treibstoff + Crew-Versorgung; Stranding bei Mangel; blocked by T-178 |
@@ -188,7 +188,7 @@
 | 170-tech-tree-building-research-gating.md | Feature | Research & Tech-Tree | Research | Done | T-009, T-025 | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |
 | 171-building-uniqueness-slot-concept.md | Feature | Building System | Building | Done | T-009, T-094, T-170 | 6 Strategic-Unique + Slot-Size pro Building (1-3) + Slot-Cap pro PlanetSize (8-40) |
 | 172-hq-vs-hub-refactor.md | Feature | Building System | Building | Done | T-006, T-171 | HQ (unique, slot-3, +25 Pop, Storage, Slot-Bonus capped); HUB (multi, slot-1, +100 Pop); CONSTRUCTION_YARD rename |
-| 173-hq-building-level-cap.md | Feature | Building System | Building | Draft | T-172 | HQ-Level cappt Building-Level + steile HQ-Cost-Curve + lokaler Build-Speed-Bonus |
+| 173-hq-building-level-cap.md | Feature | Building System | Building | Ready | T-172 | HQ-Level cappt Building-Level + steile HQ-Cost-Curve + lokaler Build-Speed-Bonus |
 | 174-deprecate-station-build.md | TechDebt | Tech-Debt & Cleanup | POI | Done | T-175 | Station-Build soft-deprecated: wirft `StationConstructionDeprecatedException`; 6 orphan POI-Exceptions entfernt; Hard-Remove erst nach T-175 |
 | 175-pirate-station-spawn.md | Feature | NPC Factions | POI | Draft | T-073, T-049a, T-023 | Galaxy-Bootstrap-Spawn von Pirate-owned + ABANDONED Stations (Lost-Tech-Lore) |
 | 176-pirate-station-takeover.md | Feature | NPC Factions | POI | Draft | T-023b, T-073, T-103 | Pirate-Takeover ABANDONED → Pirate + Combat-Capture-Mechanik (zweistufig) |

@@ -1,13 +1,14 @@
 # T-068 Defense-Buildings (Schild, Geschütze, Radar)
 
 **Type:** Feature
-**Epic:** Combat & Defense
+**Epic:** Combat & Battle
 **Domain:** Building
-**Blocked By:** T-065, T-067, T-103
-**Status:** Blocked (by T-103 — Battle-Resolution-Engine definiert Defense-Stats-Contract)
+**Blocked By:** T-065, T-067
+**Status:** Draft
 **Effort:** L
-**Depends on:** T-065 (Energy), T-067 (Erzeugnis-Tree), T-103 (Battle-Resolution-Engine — Foundation für Defense-Stats-Konsum)
-**Blocks:** T-081 (Heimat-Schutz)
+**Depends on:** T-065 (Energy), T-067 (Erzeugnis-Tree, Done)
+**Blocks:** T-081 (Heimat-Schutz), T-103 (Battle-Resolution-Engine konsumiert Defense-Stats)
+**Note:** T-103-Dep entfernt (Refinement 2026-06-23) — Circular-Resolution: T-068 implementiert Defense-Buildings + Stats-Contract; T-103 LIEST die Stats später beim Battle-Resolver.
 
 ## Beschreibung
 Planet-Defense gegen NPC-Angriffe. PvE only — kein Spieler-Spieler-Damage.

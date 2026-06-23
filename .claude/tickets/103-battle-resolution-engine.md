@@ -3,11 +3,12 @@
 **Type:** Feature
 **Epic:** Combat & Battle
 **Domain:** Ship
-**Blocked By:** T-102, T-068, T-104b
-**Status:** Draft (deferred 2026-06-19 — XL-Deps T-102/T-068/T-104b alle Draft)
+**Blocked By:** T-102, T-068
+**Status:** Draft
 **Effort:** XL
-**Depends on:** T-102 (Schiff-Klassen), T-068 (Defense), T-104b (Captain-Skills)
-**Blocks:** T-074, T-075, T-077, T-080
+**Depends on:** T-102 (Schiff-Klassen), T-068 (Defense — Stats-Contract)
+**Blocks:** T-074, T-075, T-077, T-080, T-104b (Captain-Skills konsumieren Battle-Hook)
+**Note:** T-104b-Dep entfernt (Refinement 2026-06-23) — Circular-Resolution: T-104b definiert Captain-Skill-Trees statisch; T-103 KONSUMIERT die Skill-Hooks beim Battle-Resolver.
 
 ## Decisions (2026-06-19)
 
