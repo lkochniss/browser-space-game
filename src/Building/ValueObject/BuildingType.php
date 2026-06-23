@@ -70,6 +70,22 @@ enum BuildingType: string
     case CULTURAL_CENTER = 'cultural_center';
     case TEMPLE = 'temple';
 
+    // T-067 Tier-2 Erzeugnis-Tree:
+    //  - 2 neue Mines für FINITE Erze (PLASTIC_RESIN, TRITIUM_ORE)
+    //  - 8 Refineries: 3 Bar (Aluminum/Copper/Titanium) + 5 Compounds (Steel/Chip/Composite/Hull/Shield)
+    // Alle non-unique pro Planet, Slot-1.
+    case PLASTIC_RESIN_MINE = 'plastic_resin_mine';
+    case TRITIUM_MINE = 'tritium_mine';
+
+    case ALUMINUM_REFINERY = 'aluminum_refinery';
+    case COPPER_REFINERY = 'copper_refinery';
+    case TITANIUM_REFINERY = 'titanium_refinery';
+    case STEEL_SMELTER = 'steel_smelter';
+    case CHIP_FAB = 'chip_fab';
+    case COMPOSITE_PLANT = 'composite_plant';
+    case HULL_FOUNDRY = 'hull_foundry';
+    case SHIELD_ASSEMBLER = 'shield_assembler';
+
     public function getPopulationCapBonusPerLevel(): int
     {
         return match ($this) {
@@ -179,6 +195,18 @@ enum BuildingType: string
             self::HOSPITAL => [],
             self::CULTURAL_CENTER => [],
             self::TEMPLE => [],
+            // T-067 Mines: Storage-Beitrag für eigene Resource
+            self::PLASTIC_RESIN_MINE => [ResourceType::PLASTIC_RESIN->value => 100],
+            self::TRITIUM_MINE => [ResourceType::TRITIUM_ORE->value => 100],
+            // T-067 Refineries: kleiner Storage-Beitrag für eigenen Output (T-061-Pattern)
+            self::ALUMINUM_REFINERY => [ResourceType::ALUMINUM_BAR->value => 100],
+            self::COPPER_REFINERY => [ResourceType::COPPER_BAR->value => 100],
+            self::TITANIUM_REFINERY => [ResourceType::TITANIUM_BAR->value => 100],
+            self::STEEL_SMELTER => [ResourceType::STEEL->value => 100],
+            self::CHIP_FAB => [ResourceType::CHIP->value => 100],
+            self::COMPOSITE_PLANT => [ResourceType::COMPOSITE->value => 100],
+            self::HULL_FOUNDRY => [ResourceType::HULL_PLATE->value => 100],
+            self::SHIELD_ASSEMBLER => [ResourceType::SHIELD_MODULE->value => 100],
         };
 
         return $contributions[$resource->value] ?? 0;

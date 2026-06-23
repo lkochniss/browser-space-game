@@ -62,6 +62,20 @@ class BuildingDurationConfig
         BuildingType::HOSPITAL->value => 1800,        // 30min
         BuildingType::CULTURAL_CENTER->value => 1800, // 30min
         BuildingType::TEMPLE->value => 1200,          // 20min (kleines QoL)
+
+        // T-067 Tier-2 Mines (5min — wie Tier-1-Mines)
+        BuildingType::PLASTIC_RESIN_MINE->value => 300,
+        BuildingType::TRITIUM_MINE->value => 300,
+
+        // T-067 Tier-2 Refineries (Bars 30min, Compounds 35-60min)
+        BuildingType::ALUMINUM_REFINERY->value => 1800,
+        BuildingType::COPPER_REFINERY->value => 1800,
+        BuildingType::TITANIUM_REFINERY->value => 1800,
+        BuildingType::STEEL_SMELTER->value => 1800,
+        BuildingType::CHIP_FAB->value => 2400,         // 40min — Hightech
+        BuildingType::COMPOSITE_PLANT->value => 2100,  // 35min
+        BuildingType::HULL_FOUNDRY->value => 3600,     // 60min — Heavy
+        BuildingType::SHIELD_ASSEMBLER->value => 2700, // 45min
     ];
 
     /**

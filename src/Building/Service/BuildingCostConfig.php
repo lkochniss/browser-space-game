@@ -195,6 +195,70 @@ class BuildingCostConfig
                 resources: [ResourceType::IRON_ORE->value => 150],
                 populationCost: 15,
             ),
+
+            // T-067 Tier-2 Mines (FINITE Erze)
+            BuildingType::PLASTIC_RESIN_MINE->value => new BuildingCost(
+                resources: [ResourceType::IRON_ORE->value => 80],
+                populationCost: 5,
+            ),
+            BuildingType::TRITIUM_MINE->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 100,
+                    ResourceType::COAL->value => 30,
+                ],
+                populationCost: 10,
+            ),
+
+            // T-067 Tier-2 Refineries (Bars — günstig, Foundation für Compounds)
+            BuildingType::ALUMINUM_REFINERY->value => new BuildingCost(
+                resources: [ResourceType::IRON_BAR->value => 100],
+                populationCost: 10,
+            ),
+            BuildingType::COPPER_REFINERY->value => new BuildingCost(
+                resources: [ResourceType::IRON_BAR->value => 100],
+                populationCost: 10,
+            ),
+            BuildingType::TITANIUM_REFINERY->value => new BuildingCost(
+                resources: [ResourceType::IRON_BAR->value => 150],
+                populationCost: 15,
+            ),
+
+            // T-067 Tier-2 Refineries (Compounds — schwerer, hochwertig)
+            BuildingType::STEEL_SMELTER->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 200,
+                    ResourceType::COPPER_ORE->value => 50,
+                ],
+                populationCost: 20,
+            ),
+            BuildingType::CHIP_FAB->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 150,
+                    ResourceType::SILICON->value => 100,
+                ],
+                populationCost: 20,
+            ),
+            BuildingType::COMPOSITE_PLANT->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 200,
+                    ResourceType::ALUMINUM_ORE->value => 50,
+                ],
+                populationCost: 20,
+            ),
+            BuildingType::HULL_FOUNDRY->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 300,
+                    ResourceType::TITANIUM_ORE->value => 100,
+                ],
+                populationCost: 30,
+            ),
+            BuildingType::SHIELD_ASSEMBLER->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 250,
+                    ResourceType::SILICON->value => 100,
+                ],
+                populationCost: 25,
+            ),
         ];
     }
 

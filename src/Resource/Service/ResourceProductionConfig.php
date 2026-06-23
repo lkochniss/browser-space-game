@@ -17,6 +17,10 @@ class ResourceProductionConfig
         ResourceType::TITANIUM_ORE->value => 4.0,
         ResourceType::URANIUM_ORE->value => 2.0,
 
+        // T-067 Tier-2 Mines (selten, mittlere Rate)
+        ResourceType::PLASTIC_RESIN->value => 5.0,
+        ResourceType::TRITIUM_ORE->value => 3.0,
+
         ResourceType::WATER->value => 5.0,
         ResourceType::FOOD->value => 3.0,
         ResourceType::OXYGEN->value => 0.0,

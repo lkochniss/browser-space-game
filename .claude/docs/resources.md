@@ -22,10 +22,20 @@
 | `ALUMINUM_ORE` | aluminum_ore | FINITE | `ALUMINUM_MINE` | 8.0 | 0 | nein |
 | `TITANIUM_ORE` | titanium_ore | FINITE | `TITANIUM_MINE` | 4.0 | 0 | nein |
 | `URANIUM_ORE` | uranium_ore | FINITE | `URANIUM_MINE` | 2.0 | 0 | nein |
+| `PLASTIC_RESIN` (T-067) | plastic_resin | FINITE | `PLASTIC_RESIN_MINE` | 5.0 | 0 | nein |
+| `TRITIUM_ORE` (T-067) | tritium_ore | FINITE | `TRITIUM_MINE` | 3.0 | 0 | nein |
 | `WATER` | water | RENEWABLE | — (T-005/T-006) | 5.0 | 100 | nein |
 | `FOOD` | food | RENEWABLE | — | 3.0 | 100 | nein |
 | `OXYGEN` | oxygen | RENEWABLE | — | 0.0 | 100 | nein |
 | `IRON_BAR` | iron_bar | REFINED | `IRON_SMELTER` (2 Iron + 1 Coal → 1 Bar) | linear × Level | — | nein, lazy auto-create |
+| `ALUMINUM_BAR` (T-067) | aluminum_bar | REFINED | `ALUMINUM_REFINERY` (2 Al-Ore + 1 Coal → 1) | linear × Level | — | nein |
+| `COPPER_BAR` (T-067) | copper_bar | REFINED | `COPPER_REFINERY` (2 Cu-Ore + 1 Coal → 1) | linear × Level | — | nein |
+| `TITANIUM_BAR` (T-067) | titanium_bar | REFINED | `TITANIUM_REFINERY` (2 Ti-Ore + 1 Coal → 1) | linear × Level | — | nein |
+| `STEEL` (T-067) | steel | REFINED | `STEEL_SMELTER` (2 Iron-Bar + 1 Coal → 1) | linear × Level | — | nein |
+| `CHIP` (T-067) | chip | REFINED | `CHIP_FAB` (2 Cu-Bar + 1 Silicon → 1) | linear × Level | — | nein |
+| `COMPOSITE` (T-067) | composite | REFINED | `COMPOSITE_PLANT` (2 Al-Bar + 2 Plastic-Resin → 1) | linear × Level | — | nein |
+| `HULL_PLATE` (T-067) | hull_plate | REFINED | `HULL_FOUNDRY` (4 Steel + 2 Composite → 1) | linear × Level | — | nein |
+| `SHIELD_MODULE` (T-067) | shield_module | REFINED | `SHIELD_ASSEMBLER` (3 Chip + 1 Tritium → 1) | linear × Level | — | nein |
 | `DEBRIS_LOW` | debris_low | DEBRIS | Salvage von DebrisField (T-021) | — | — | — |
 | `DEBRIS_MEDIUM` | debris_medium | DEBRIS | Salvage von DebrisField (T-021) | — | — | — |
 | `DEBRIS_HIGH` | debris_high | DEBRIS | Salvage von DebrisField (T-021) | — | — | — |
@@ -50,6 +60,25 @@
 | Output | Building | Inputs (pro Output-Einheit) |
 |--------|----------|------------------------------|
 | `IRON_BAR` | `IRON_SMELTER` | 2 IRON_ORE + 1 COAL |
+| `ALUMINUM_BAR` (T-067) | `ALUMINUM_REFINERY` | 2 ALUMINUM_ORE + 1 COAL |
+| `COPPER_BAR` (T-067) | `COPPER_REFINERY` | 2 COPPER_ORE + 1 COAL |
+| `TITANIUM_BAR` (T-067) | `TITANIUM_REFINERY` | 2 TITANIUM_ORE + 1 COAL |
+| `STEEL` (T-067) | `STEEL_SMELTER` | 2 IRON_BAR + 1 COAL |
+| `CHIP` (T-067) | `CHIP_FAB` | 2 COPPER_BAR + 1 SILICON |
+| `COMPOSITE` (T-067) | `COMPOSITE_PLANT` | 2 ALUMINUM_BAR + 2 PLASTIC_RESIN |
+| `HULL_PLATE` (T-067) | `HULL_FOUNDRY` | 4 STEEL + 2 COMPOSITE |
+| `SHIELD_MODULE` (T-067) | `SHIELD_ASSEMBLER` | 3 CHIP + 1 TRITIUM_ORE |
+
+### Snapshot-Single-Step-pro-Tick (T-067 Q3)
+
+`RefinementProductionProcessor` snapshotted alle REFINED-Resource-Amounts vor
+dem Tick. REFINED-Inputs werden gegen Snapshot geprüft (verhindert Cascade —
+Iron-Bar aus diesem Tick kann nicht im selben Tick zu Steel werden). FINITE-
+Inputs (Erze, Coal etc.) gehen weiter live, weil Mining-Output bereits VOR
+Refinement im `ResourceProductionProcessor` produziert wurde.
+
+Folge: Volle Tier-1→Tier-2→Tier-3-Cascade (Iron-Ore → Iron-Bar → Steel →
+Hull-Plate) braucht 3 Ticks (1 Schritt pro Tick).
 
 ## Recycling-Mechanik (T-021)
 
@@ -128,7 +157,17 @@ Auszug Multiplier-Tabelle (m³/Unit):
 | IRON_ORE / COPPER_ORE / ALUMINUM_ORE / TITANIUM_ORE | 2.0 |
 | COAL / SILICON | 1.8 |
 | URANIUM_ORE | 2.5 (Bleicontainer) |
+| PLASTIC_RESIN (T-067) | 1.5 |
+| TRITIUM_ORE (T-067) | 2.0 |
 | IRON_BAR | 1.5 (kompakter als Erz) |
+| ALUMINUM_BAR (T-067) | 0.8 |
+| COPPER_BAR (T-067) | 1.4 |
+| TITANIUM_BAR (T-067) | 1.0 |
+| STEEL (T-067) | 1.0 |
+| CHIP (T-067) | 0.3 (klein, hochwertig) |
+| COMPOSITE (T-067) | 1.2 |
+| HULL_PLATE (T-067) | 2.5 (großflächig) |
+| SHIELD_MODULE (T-067) | 0.8 |
 | DEBRIS_* | 1.0 |
 
 Pop-Multi: **10.0 m³** pro Person.

@@ -38,6 +38,13 @@ class ResourceBuildingMap
             ResourceType::URANIUM_ORE->value => [
                 BuildingType::URANIUM_MINE->value => 1.0,
             ],
+            // T-067 Tier-2 Mines
+            ResourceType::PLASTIC_RESIN->value => [
+                BuildingType::PLASTIC_RESIN_MINE->value => 1.0,
+            ],
+            ResourceType::TRITIUM_ORE->value => [
+                BuildingType::TRITIUM_MINE->value => 1.0,
+            ],
         ];
     }
 

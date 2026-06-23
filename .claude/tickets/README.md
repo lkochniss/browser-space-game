@@ -78,7 +78,7 @@
 | 064b-construction-hub-building.md | Feature | Done | CONSTRUCTION_HUB Building (unique, slot-size 2); ×1.10/Level lokaler Speed-Multi, stackt mit T-063 + T-064 |
 | 065-energy-system.md | Feature | Draft | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Blocked | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
-| 067-erzeugnis-tree-erweiterung.md | Feature | Ready | Tier-2-Erzeugnisse (Steel/Chip/Composite/Hull/Shield) + 2 neue FINITE Erze + Multi-Tick-Cascade; Volume-Update T-180 |
+| 067-erzeugnis-tree-erweiterung.md | Feature | Done | Tier-2-Erzeugnisse (3 Bars + 5 Compounds) + 2 neue FINITE Erze + Snapshot-Single-Step-Cascade; Volume-Tabelle erweitert. T-072 superseded |
 | 068-defense-buildings.md | Feature | Blocked | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
 | 069-research-lab-tier.md | Feature | Done | ResearchNode.requiredLabLevel + Tier-Gate-Validation; Tier-1/2/3-Mapping; LabLevelTooLowException |
 | 070-pop-qol-buildings.md | Feature | Done | 4 QoL-Foundation: Hospital +20 Pop/Lvl + Cultural-Center +2%/Lvl Mining/Refinement; Effekte in T-070b |
@@ -197,4 +197,5 @@
 | 180-resource-volume-config.md | Feature | Done | ResourceVolumeConfig (m³/Unit für 14 ResourceTypes + Pop=10); Foundation für T-177ff Generic-Storage |
 | 181-resource-volume-debug-command.md | Feature | Done | `app:debug:resource-volume` Symfony-Command — Volume-Tabelle sortiert + Beispiel-Profile |
 | 182-techdebt-remove-university-building.md | TechDebt | Done | UNIVERSITY-Building entfernt (Wort-Mix-Up mit RESEARCH_LAB); T-070-AC + T-070b-Section + T-089/T-097a Refs aufgeräumt |
+| 183-station-generic-storage.md | Feature | Blocked | Station-Generic-Volume-Storage (analog T-177 Planet); blocked by T-177 + T-180 |
 | 170-tech-tree-building-research-gating.md | Feature | Done | Tech-Tree Foundation: Buildings via Research locked, Research via Building-Vorhandensein gated; 6 Tier-1-Nodes, 13 Buildings gated |

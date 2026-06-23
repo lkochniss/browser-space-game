@@ -42,8 +42,22 @@ class ResourceVolumeConfig
         ResourceType::TITANIUM_ORE->value => 2.0, // Analog Iron/Copper
         ResourceType::URANIUM_ORE->value => 2.5,  // Radioaktiv → Bleicontainer
 
-        // Refined
+        // T-067 Tier-2 FINITE Erze
+        ResourceType::PLASTIC_RESIN->value => 1.5, // Halbflüssig, Verpackung
+        ResourceType::TRITIUM_ORE->value => 2.0,   // Erz, sperrig
+
+        // Refined (Tier-1)
         ResourceType::IRON_BAR->value => 1.5,     // Refined kompakter als Erz
+
+        // T-067 Tier-2 REFINED (Bars + Compounds)
+        ResourceType::ALUMINUM_BAR->value => 0.8,   // Leicht, refined kompakt
+        ResourceType::COPPER_BAR->value => 1.4,    // Schwerer als Aluminum, kompakt
+        ResourceType::TITANIUM_BAR->value => 1.0,  // Mittlere Dichte refined
+        ResourceType::STEEL->value => 1.0,         // Industrieprodukt (Tier-2-Default)
+        ResourceType::CHIP->value => 0.3,          // Klein, hochwertig pro Volumen
+        ResourceType::COMPOSITE->value => 1.2,     // Sandwich-Material, leichter Bulk
+        ResourceType::HULL_PLATE->value => 2.5,    // Großflächig, sperrig
+        ResourceType::SHIELD_MODULE->value => 0.8, // Kompakte Einheit
 
         // Debris (T-021)
         ResourceType::DEBRIS_LOW->value => 1.0,
