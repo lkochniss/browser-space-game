@@ -191,7 +191,7 @@
 | 174-deprecate-station-build.md | TechDebt | Done | Station-Build soft-deprecated: wirft `StationConstructionDeprecatedException`; 6 orphan POI-Exceptions entfernt; Hard-Remove erst nach T-175 |
 | 175-pirate-station-spawn.md | Feature | Draft | Galaxy-Bootstrap-Spawn von Pirate-owned + ABANDONED Stations (Lost-Tech-Lore) |
 | 176-pirate-station-takeover.md | Feature | Draft | Pirate-Takeover ABANDONED → Pirate + Combat-Capture-Mechanik (zweistufig) |
-| 177-generic-storage-refactor.md | Feature | Ready | Storage-Refactor Planet: Single generic Volume-Bucket (T-061 superseded); T-180 Foundation done |
+| 177-generic-storage-refactor.md | Feature | Done | Generic Volume-Storage Planet (m³) + WAREHOUSE konsolidiert 6 T-061-Buildings; Volume-Cap-Stop für Production; canAddItem/maxAddableQuantity. T-061 superseded |
 | 178-ship-cargo-universal.md | Feature | Blocked | Ship-Cargo-Universal: alle Schiffe haben Cargo-Volume; blocked by T-177 |
 | 179-pop-as-storage-item.md | Feature | Blocked | Pop wird Storage-Item mit hohem Size-Multi; T-004/T-005 refactored; blocked by T-178 |
 | 180-resource-volume-config.md | Feature | Done | ResourceVolumeConfig (m³/Unit für 14 ResourceTypes + Pop=10); Foundation für T-177ff Generic-Storage |

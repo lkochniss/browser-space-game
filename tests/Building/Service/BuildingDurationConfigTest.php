@@ -26,9 +26,8 @@ final class BuildingDurationConfigTest extends TestCase
             'iron_smelter'   => [BuildingType::IRON_SMELTER,    1800],
             'shipyard'       => [BuildingType::SHIPYARD,        3600],
             'probe_lab'      => [BuildingType::PROBE_LAB,       1800],
-            'iron_storage'   => [BuildingType::IRON_STORAGE,    900],
-            'water_tank'     => [BuildingType::WATER_TANK,      900],
-            'food_silo'      => [BuildingType::FOOD_SILO,       900],
+            // T-177: 6 T-061 Storage-Buildings konsolidiert zu WAREHOUSE
+            'warehouse'      => [BuildingType::WAREHOUSE,       900],
         ];
     }
 

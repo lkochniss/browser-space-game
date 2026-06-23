@@ -126,29 +126,13 @@ class BuildingCostConfig
                 populationCost: 15,
             ),
 
-            // Storage-Buildings (T-061)
-            BuildingType::IRON_STORAGE->value => new BuildingCost(
-                resources: [ResourceType::IRON_ORE->value => 100, ResourceType::COAL->value => 50],
-                populationCost: 5,
-            ),
-            BuildingType::COAL_STORAGE->value => new BuildingCost(
-                resources: [ResourceType::IRON_ORE->value => 100, ResourceType::COAL->value => 50],
-                populationCost: 5,
-            ),
-            BuildingType::IRON_BAR_STORAGE->value => new BuildingCost(
-                resources: [ResourceType::IRON_BAR->value => 100],
-                populationCost: 10,
-            ),
-            BuildingType::WATER_TANK->value => new BuildingCost(
-                resources: [ResourceType::IRON_ORE->value => 100],
-                populationCost: 5,
-            ),
-            BuildingType::FOOD_SILO->value => new BuildingCost(
-                resources: [ResourceType::IRON_ORE->value => 100],
-                populationCost: 5,
-            ),
-            BuildingType::OXYGEN_STORAGE->value => new BuildingCost(
-                resources: [ResourceType::IRON_ORE->value => 150],
+            // T-177: WAREHOUSE konsolidiert T-061 (6 Storage-Buildings gelöscht).
+            // Hauptquelle Volume-Storage; non-unique, 1 Slot, +500 m³/Lvl.
+            BuildingType::WAREHOUSE->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_ORE->value => 100,
+                    ResourceType::COAL->value => 50,
+                ],
                 populationCost: 5,
             ),
 

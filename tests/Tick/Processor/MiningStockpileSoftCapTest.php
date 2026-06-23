@@ -63,8 +63,8 @@ final class MiningStockpileSoftCapTest extends TestCase
         $planet->addResource(Resource::generateWithAmount(ResourceType::IRON_ORE, $currentStockpile));
         $planet->addDeposit(ResourceDeposit::generateDepositWithAmount(ResourceType::IRON_ORE, 1_000_000));
 
-        // Storage-Cap > Stockpile damit cap-Stop nicht greift
-        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::IRON_STORAGE, 1000));
+        // T-177: WAREHOUSE statt IRON_STORAGE — Generic-Volume statt per-Resource-Cap
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::WAREHOUSE, 1000));
         $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::IRON_MINE, 1));
 
         return $planet;

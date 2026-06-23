@@ -12,29 +12,30 @@ final class BuildingUnlockConfigTest extends TestCase
 {
     public function test_tier_0_buildings_have_no_lock(): void
     {
+        // T-177: WAREHOUSE konsolidiert die 6 T-061 Storage-Buildings als Tier-0
         $config = new BuildingUnlockConfig();
 
         self::assertNull($config->requiredResearch(BuildingType::IRON_MINE));
         self::assertNull($config->requiredResearch(BuildingType::HUB));
         self::assertNull($config->requiredResearch(BuildingType::RESEARCH_LAB));
-        self::assertNull($config->requiredResearch(BuildingType::WATER_TANK));
-        self::assertNull($config->requiredResearch(BuildingType::FOOD_SILO));
-        self::assertNull($config->requiredResearch(BuildingType::OXYGEN_STORAGE));
+        self::assertNull($config->requiredResearch(BuildingType::WAREHOUSE));
+        self::assertNull($config->requiredResearch(BuildingType::WATER_RECLAIMER));
     }
 
     public function test_basic_mining_unlocks(): void
     {
+        // T-177: IRON_STORAGE / COAL_STORAGE gelöscht (durch WAREHOUSE ersetzt).
         $config = new BuildingUnlockConfig();
-        foreach ([BuildingType::COAL_MINE, BuildingType::COPPER_MINE, BuildingType::IRON_STORAGE, BuildingType::COAL_STORAGE] as $bt) {
+        foreach ([BuildingType::COAL_MINE, BuildingType::COPPER_MINE] as $bt) {
             self::assertSame(['slug' => 'basic_mining', 'level' => 1], $config->requiredResearch($bt), $bt->value);
         }
     }
 
     public function test_metallurgy_unlocks(): void
     {
+        // T-177: IRON_BAR_STORAGE gelöscht (durch WAREHOUSE ersetzt).
         $config = new BuildingUnlockConfig();
         self::assertSame(['slug' => 'metallurgy', 'level' => 1], $config->requiredResearch(BuildingType::IRON_SMELTER));
-        self::assertSame(['slug' => 'metallurgy', 'level' => 1], $config->requiredResearch(BuildingType::IRON_BAR_STORAGE));
     }
 
     public function test_advanced_mining_unlocks_tier2_mines(): void

@@ -39,31 +39,30 @@ final class BuildingTypeTest extends TestCase
         }
     }
 
-    public function test_shipyard_exists_and_contributes_neither_pop_cap_nor_storage(): void
+    public function test_shipyard_exists_and_contributes_neither_pop_cap_nor_volume(): void
     {
+        // T-177: getStorageContribution(R) entfernt — neue API getVolumeContribution()
         self::assertSame('shipyard', BuildingType::SHIPYARD->value);
         self::assertSame(0, BuildingType::SHIPYARD->getPopulationCapBonusPerLevel());
-
-        foreach (ResourceType::cases() as $resource) {
-            self::assertSame(
-                0,
-                BuildingType::SHIPYARD->getStorageContribution($resource),
-                $resource->value,
-            );
-        }
+        self::assertSame(0, BuildingType::SHIPYARD->getVolumeContribution());
     }
 
-    public function test_probe_lab_exists_and_contributes_neither_pop_cap_nor_storage(): void
+    public function test_probe_lab_exists_and_contributes_neither_pop_cap_nor_volume(): void
     {
         self::assertSame('probe_lab', BuildingType::PROBE_LAB->value);
         self::assertSame(0, BuildingType::PROBE_LAB->getPopulationCapBonusPerLevel());
+        self::assertSame(0, BuildingType::PROBE_LAB->getVolumeContribution());
+    }
 
-        foreach (ResourceType::cases() as $resource) {
-            self::assertSame(
-                0,
-                BuildingType::PROBE_LAB->getStorageContribution($resource),
-                $resource->value,
-            );
-        }
+    public function test_warehouse_volume_contribution(): void
+    {
+        // T-177: WAREHOUSE +500 m³/Lvl (Hauptquelle Generic-Volume-Storage)
+        self::assertSame(500, BuildingType::WAREHOUSE->getVolumeContribution());
+    }
+
+    public function test_hq_volume_contribution(): void
+    {
+        // T-177: HQ +25 m³/Lvl (Verwaltungs-Buffer)
+        self::assertSame(25, BuildingType::HQ->getVolumeContribution());
     }
 }

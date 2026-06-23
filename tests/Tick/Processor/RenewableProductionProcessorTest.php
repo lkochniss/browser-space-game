@@ -61,13 +61,14 @@ final class RenewableProductionProcessorTest extends TestCase
 
     public function test_storage_cap_clamps_production(): void
     {
-        // WATER hat default cap = 500 (RENEWABLE base-cap), kein Tank/Hub auf Planet
-        $planet = $this->makePlanet(initialWater: 495, waterReclaimerLevel: 5);
+        // T-177 Volume: base 5000 m³, WATER_RECLAIMER trägt 0 m³ (Producer).
+        // WATER multi=1.0. WATER=4995 (m³) → frei 5 m³ → 5 WATER addable.
+        $planet = $this->makePlanet(initialWater: 4995, waterReclaimerLevel: 5);
         $processor = new RenewableProductionProcessor(new RenewableProductionConfig());
         $processor->process($planet, new DateTimeImmutable('now'));
 
-        // 5 Levels × 10 = 50 produziert, aber nur 5 Platz → cap 500
-        self::assertSame(500, $planet->getResource(ResourceType::WATER)->getAmount());
+        // 5 WATER addable bei 5 m³ frei → 4995 + 5 = 5000
+        self::assertSame(5000, $planet->getResource(ResourceType::WATER)->getAmount());
     }
 
     public function test_agri_dome_produces_food(): void

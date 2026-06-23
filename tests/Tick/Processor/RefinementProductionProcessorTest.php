@@ -123,30 +123,33 @@ final class RefinementProductionProcessorTest extends TestCase
 
     public function test_storage_cap_stops_refinement_when_full(): void
     {
-        // L1 smelter → cap iron_bar = 100 base + 100 (smelter) = 200. Pre-fill at 200.
-        $planet = $this->makePlanet(smelterLevel: 1, iron: 100, coal: 100);
-        $planet->getResource(ResourceType::IRON_BAR)->setAmount(200);
+        // T-177 Volume: base 5000 + IRON_SMELTER L1 (50) = 5050 m³.
+        // 10 iron (20m³) + 10 coal (18m³) + 3348 iron_bar (5022m³) = 5060 m³ → über cap.
+        $planet = $this->makePlanet(smelterLevel: 1, iron: 10, coal: 10);
+        $planet->getResource(ResourceType::IRON_BAR)->setAmount(3348);
 
         $this->processor->process($planet);
 
-        // no production, no inputs consumed
-        self::assertSame(100, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
-        self::assertSame(100, $planet->getResource(ResourceType::COAL)->getAmount());
-        self::assertSame(200, $planet->getResource(ResourceType::IRON_BAR)->getAmount());
+        // Kein IRON_BAR addable → keine Production, keine Inputs konsumiert
+        self::assertSame(10, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame(10, $planet->getResource(ResourceType::COAL)->getAmount());
+        self::assertSame(3348, $planet->getResource(ResourceType::IRON_BAR)->getAmount());
     }
 
     public function test_storage_cap_partially_clamps_refinement(): void
     {
-        // L3 smelter wants 3 bars. Cap = 100 + 100*3 = 400. Pre-fill at 398 → 2 room.
-        $planet = $this->makePlanet(smelterLevel: 3, iron: 100, coal: 100);
-        $planet->getResource(ResourceType::IRON_BAR)->setAmount(398);
+        // T-177 Volume: base 5000 + IRON_SMELTER L3 (150) = 5150 m³.
+        // 10 iron (20m³) + 10 coal (18m³) + 3406 iron_bar (5109m³) = 5147 m³ used.
+        // Free = 3 m³ → max 2 bars (3/1.5=2). L3 wants 3 bars → 2 produced.
+        $planet = $this->makePlanet(smelterLevel: 3, iron: 10, coal: 10);
+        $planet->getResource(ResourceType::IRON_BAR)->setAmount(3406);
 
         $this->processor->process($planet);
 
-        // Only 2 bars produced (4 iron + 2 coal consumed)
-        self::assertSame(96, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
-        self::assertSame(98, $planet->getResource(ResourceType::COAL)->getAmount());
-        self::assertSame(400, $planet->getResource(ResourceType::IRON_BAR)->getAmount());
+        // 2 Bars produziert: 4 iron + 2 coal verbraucht
+        self::assertSame(6, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame(8, $planet->getResource(ResourceType::COAL)->getAmount());
+        self::assertSame(3408, $planet->getResource(ResourceType::IRON_BAR)->getAmount());
     }
 
     public function test_in_progress_smelter_does_not_refine(): void

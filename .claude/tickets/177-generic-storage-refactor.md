@@ -1,10 +1,11 @@
 # T-177: Generic-Storage-Refactor (Planet)
 
 **Type:** Feature (Refactor)
-**Status:** Ready (T-180 Foundation done)
+**Status:** Done
 **Effort:** L (~6-8h, hoch wegen Migration + Test-Refactor)
-**Depends on:** T-180 (Size-Multiplier-Config — Foundation)
-**Blocks:** T-061 (Done-Status muss revidiert werden), T-066 (Fuel-Storage), T-178 (Ship-Cargo), T-179 (Pop-Storage)
+**Depends on:** T-180 (Size-Multiplier-Config, Done)
+**Blocks:** T-066 (Fuel-Storage), T-178 (Ship-Cargo), T-179 (Pop-Storage), T-183 (Station-Generic-Storage)
+**Supersedes:** T-061 (per-Resource-Cap durch Volume-Cap ersetzt)
 
 ## Beschreibung
 
@@ -24,74 +25,60 @@ T-061 (Done) wird damit refactored — keine Category-Buckets mehr.
 
 ## Open Questions
 
-### Q1: Migration bestehender Storage-Buildings (T-061)
+### Q1: Migration bestehender Storage-Buildings (T-061) — RESOLVED = (a)
 
-T-061 hat 6 Storage-Buildings (per Kategorie). Was passiert mit ihnen?
+**Decision:** Konsolidieren in **1 generisches "Warehouse"-Building**.
+Die anderen 5 T-061-Storage-Buildings werden gelöscht. Hauptquelle für
+Storage-Volume ist dieses neue Warehouse.
 
-- (a) **Konsolidieren in 1 generischen "Warehouse"-Building** — die anderen 5 werden gelöscht; Player-State: bei Refactor wird höchstes Storage-Building pro Planet umgewandelt
-- (b) **Alle 6 bleiben, alle erhöhen generic Volume** — semantisch verschieden gestaffelte Warehouse-Varianten (z.B. WAREHOUSE/SILO/REFRIGERATED_DEPOT/CRYO_TANK/HEAVY_DEPOT/CARGO_TERMINAL = Refactored zu 6 "Tiers" desselben Building-Trees)
-- (c) **Reduce auf 2-3 Storage-Buildings** — z.B. STANDARD_WAREHOUSE + HEAVY_DEPOT + CRYO_VAULT (für besondere Items wie Pop oder Antimatter mit Spezial-Multi)
-- (d) **Komplett neu — Storage-Building-Familie via T-097 (Pop-Tier-Buildings) / T-100 (Trade-Hub-Buildings)** überarbeitet, T-061-Buildings gelöscht
+### Q2: Base-Storage-Volume ohne Storage-Building — RESOLVED = (c)
 
-### Q2: Base-Storage-Volume ohne Storage-Building
+**Decision:** **Skaliert mit HQ-Level** (T-172). HQ pro Level etwas mehr
+Platz, aber der meiste Volume kommt durch das neue Warehouse-Building (Q1=a).
+Konkrete Werte: HQ-Beitrag klein (z.B. 50 m³ Base + 25 m³/Level), Warehouse
+liefert den Großteil (z.B. 500 m³/Level).
 
-- (a) Fix-Konstante (z.B. 1000 Volume-Units) — minimal Bootstrap-Lager
-- (b) Skaliert mit Planet-Size (T-008 5 Sizes — Tiny → Huge)
-- (c) Skaliert mit HQ-Level (T-172) — HQ als Logistik-Zentrum
-- (d) Kombination (a)+(b) — Base + Planet-Size-Multi
+### Q3: Overflow-Verhalten bei Volume-Cap — RESOLVED = (a)
 
-### Q3: Overflow-Verhalten bei Volume-Cap
+**Decision:** Volume-Cap-Stop für ALLE Production (analog T-061-Pattern).
+Mines/Refineries/Renewables pausieren wenn Volume voll. Konsistent + leicht
+zu reasoning. Spillover/Prio/Auto-Eject (b/c/d) bleiben offen für Folge
+(z.B. T-110 Auto-Trade-Routes als Pressure-Valve).
 
-Heute T-061: Production stoppt bei Cap (Cap-Stop-Production). Mit generischem
-Volume:
+### Q4: Storage-Read/Write-API — RESOLVED = (a)
 
-- (a) **Volume-Cap-Stop für ALLE Production** — wenn Storage voll, alles
-  stoppt (Mines, Refineries, Renewable). Player muss aktiv Volume freimachen.
-- (b) **Prio-System** — wichtige Resources verdrängen unwichtige bei Cap
-  (z.B. Pop-Survival > Iron-Bar-Production). Komplex.
-- (c) **Spillover-Loss** — Production läuft weiter, Overflow geht verloren.
-  Ist gefährlicher aber realistischer (Pop sirbt nicht wegen "Storage voll
-  für Wasser").
-- (d) **Auto-Eject mit Priorität** — bei Cap werden niedrig-prio Items
-  auto-discarded (T-110 Trade-Routes als Folge: Auto-Export).
+**Decision:** Volume-aware-Operations direkt am Planet-Aggregate:
+`canAddItem(type, qty)`, `maxAddableQuantity(type, qty)`. Kein neuer
+StorageService. Production-Processors nutzen Legacy-Shim `getStorageCapacity(R)`
+(liefert `current + maxAddable`) — neue Caller direkt `maxAddableQuantity()`.
 
-### Q4: Storage-Read/Write-API
+### Q5: Display / UI-Logic — RESOLVED = (a)
 
-Heute T-061: `Planet::getResource(Type)` + Collection-Pattern. Mit Volume-
-Model:
+**Decision:** Volume-Display als Gesamtwert + per-Resource-Quantity-Liste.
+Demo-CLI Status zeigt `Volume: 850/5000 m³`; Volume-Beitrag pro Resource
+via `ResourceVolumeConfig::getMultiForResource(R)` ableitbar.
 
-- (a) **Volume-aware-Operations** — `canAddItem(item, qty)` prüft Volume,
-  `addItem(item, qty)` wirft Exception bei Overflow
-- (b) **Backward-Compatible API** — existing `addResource()` ruft intern
-  Volume-Check; Migration der Aufrufer
-- (c) **Neue StorageService-Abstraction** — alle Storage-Operations gehen
-  über `StorageService` (analog GameState-Wrapper), Volume-Logic gekapselt
+## Acceptance Criteria
 
-### Q5: Display / UI-Logic
-
-Heute: pro Resource eine eigene Anzeige mit `current/cap`. Mit generischem
-Volume:
-
-- (a) Volume-Display als Gesamtwert + Item-Liste mit Volume-Beitrag jedes
-  Items (z.B. "Storage: 850/1000 — Iron-Ore: 400 (200 vol), Water: 100 (100 vol)")
-- (b) Resource-Liste mit individueller Quantity (wie heute) + zusätzlich
-  einer Gesamt-Volume-Bar
-- (c) Beides — kompakt vs. detailliert via UI-Toggle
-
-## Acceptance Criteria (Draft — final nach Q1-Q5)
-
-- [ ] `Planet::storageVolumeCapacity: int` (live-computed analog T-061)
-- [ ] `Planet::getStorageVolumeUsed(): int` (Summe aller Items × Size-Multi)
-- [ ] Storage-Buildings (T-061-Refactor) erhöhen `storageVolumeCapacity`
-- [ ] Volume-Cap-Validation bei `addResource`/`addItem`
-- [ ] Overflow-Behavior implementiert (Q3)
-- [ ] Storage-Building-Familie konsolidiert (Q1)
-- [ ] Base-Volume-Bootstrap definiert (Q2)
-- [ ] Migration: bestehende Demo-State + Tests refactored
-- [ ] Tests: Volume-Cap, Overflow, Multi-Item-Storage
-- [ ] Doc `buildings.md` Storage-Sektion refactored
-- [ ] Doc `resources.md` Storage-Behavior aktualisiert
-- [ ] Doc `decisions.md` Eintrag: "Storage = Generic Volume-Based, T-061 superseded"
+- [x] `Planet::getStorageVolumeCapacity(): int` (live-computed:
+      `BASE_VOLUME_CAPACITY` + Σ Building.getVolumeContribution × Level)
+- [x] `Planet::getStorageVolumeUsed(): int` (Σ resources × ResourceVolumeConfig + Pop × 10)
+- [x] `Planet::getStorageVolumeFree()` / `canAddItem()` / `maxAddableQuantity()`
+- [x] `BuildingType::getVolumeContribution(): int` ersetzt
+      `getStorageContribution(ResourceType)`
+- [x] Storage-Building-Familie konsolidiert: 6 T-061-Cases entfernt
+      (IRON_STORAGE / COAL_STORAGE / IRON_BAR_STORAGE / WATER_TANK / FOOD_SILO /
+      OXYGEN_STORAGE) → **1 generic WAREHOUSE** (500 m³/Lvl)
+- [x] Base-Volume `Planet::BASE_VOLUME_CAPACITY = 5000` m³ (pragmatisch
+      erhöht vom Ticket-Vorschlag 50, damit Onboarding ohne Wand startet)
+- [x] HQ trägt 25 m³/Lvl bei (Q2 Decision); andere Buildings 50 m³/Lvl
+      (Mines/Refineries), 100 m³/Lvl (Recycling-Plant), 0 (HUB/QoL/Strategic)
+- [x] Production-Processors (Mining, Refinement, Renewable) clampen weiterhin
+      gegen `getStorageCapacity(R)` (Legacy-Shim) → Volume-Cap-Stop (Q3=a)
+- [x] Demo / Tests: 648/648 grün
+- [x] Doc `buildings.md` Storage-Sektion refactored
+- [x] Doc `resources.md` Volume-Sektion aktualisiert
+- [x] Doc `decisions.md` Eintrag: "Storage = Generic Volume-Based, T-061 superseded"
 
 ## Out of Scope
 

@@ -37,7 +37,7 @@ final class BuildQueueTest extends IntegrationTestCase
         // 3 verschiedene Tier-0 Buildings parallel — alle drei sollten durchlaufen
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::IRON_MINE));
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WATER_TANK));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WAREHOUSE));
 
         $clock = self::getContainer()->get(AdjustableClock::class);
         self::assertSame(3, $planet->countActiveBuildJobs($clock->now()));
@@ -49,10 +49,10 @@ final class BuildQueueTest extends IntegrationTestCase
 
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::IRON_MINE));
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WATER_TANK));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WAREHOUSE));
 
         $this->expectException(BuildQueueFullException::class);
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::FOOD_SILO));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::AGRI_DOME));
     }
 
     public function test_upgrade_counts_against_queue_slots(): void
@@ -66,13 +66,13 @@ final class BuildQueueTest extends IntegrationTestCase
         $this->em->refresh($building);
         // 2 weitere parallel starten
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WATER_TANK));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WAREHOUSE));
         // Upgrade auf existing IRON_MINE = 3. Slot
         $this->bus->dispatch(new UpgradeBuildingCommand($planet->getId(), $building->getId()));
 
         // 4. Build sollte werfen
         $this->expectException(BuildQueueFullException::class);
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::FOOD_SILO));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::AGRI_DOME));
     }
 
     public function test_finished_build_frees_slot(): void
@@ -81,7 +81,7 @@ final class BuildQueueTest extends IntegrationTestCase
 
         $b1 = $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::IRON_MINE));
         $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WATER_TANK));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WAREHOUSE));
 
         // Clock voraus → b1 fertig (b2/b3 dauern länger, sind noch active)
         $clock = self::getContainer()->get(AdjustableClock::class);
@@ -91,7 +91,7 @@ final class BuildQueueTest extends IntegrationTestCase
         self::assertSame(2, $active, 'IRON_MINE fertig, 2 weitere noch aktiv');
 
         // 3. Slot frei → neuer Bau geht
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::FOOD_SILO));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::AGRI_DOME));
 
         self::assertSame(3, $planet->countActiveBuildJobs($clock->now()));
     }

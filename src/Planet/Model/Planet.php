@@ -486,17 +486,107 @@ class Planet
     }
 
     /**
-     * Live-computed storage capacity for a resource type (T-061).
-     * Cap = ResourceCategory base + Σ(building.type.getStorageContribution × building.level)
+     * T-177 Base-Volume ohne Buildings. Ergänzt durch HQ + WAREHOUSE + andere
+     * Buildings via `BuildingType::getVolumeContribution()`. Decision Q2=(c).
+     *
+     * Foundation-Vorschlag aus T-177 sah 50 m³ vor; pragmatisch erhöht auf
+     * 5000 m³ damit Onboarding ohne Wand vorm 1. Mine-Tick beginnt (mit Demo-
+     * Buff 3000 IRON_ORE = 6000 m³ wäre Cap sonst sofort verletzt). HQ + Warehouse
+     * skalieren von dort weiter — Tuning-Knob für späteres Balancing.
      */
-    public function getStorageCapacity(ResourceType $resource): int
+    public const BASE_VOLUME_CAPACITY = 5000;
+
+    /**
+     * T-177 Generic Volume-Storage. Ersetzt T-061 per-Resource-Cap.
+     *
+     * `cap = BASE_VOLUME_CAPACITY + Σ(building.type.getVolumeContribution × building.level)`
+     *
+     * Beispiel: Frischer Planet (HQ L1, WAREHOUSE L1) →
+     *   50 (base) + 25 (HQ) + 500 (Warehouse) = 575 m³.
+     */
+    public function getStorageVolumeCapacity(): int
     {
-        $cap = $resource->getCategory()->getBaseCap();
+        $cap = self::BASE_VOLUME_CAPACITY;
         foreach ($this->buildings as $building) {
-            $cap += $building->getType()->getStorageContribution($resource) * $building->getLevel();
+            $cap += $building->getType()->getVolumeContribution() * $building->getLevel();
         }
 
         return $cap;
+    }
+
+    /**
+     * T-177 Live-Sum aller Items × m³-Multi (via `ResourceVolumeConfig`).
+     * Pop wird ebenfalls als Volume-Belegung gewertet (T-179-Vorbereitung;
+     * Pop wandert in T-179 final in den Storage-Bucket).
+     */
+    public function getStorageVolumeUsed(): int
+    {
+        $volume = 0.0;
+        foreach ($this->resources as $resource) {
+            if ($resource->getAmount() <= 0) {
+                continue;
+            }
+            $volume += $resource->getAmount() * \App\Resource\Service\ResourceVolumeConfig::getMultiForResource($resource->getType());
+        }
+        $volume += $this->population->getTotal() * \App\Resource\Service\ResourceVolumeConfig::getPopMulti();
+
+        return (int) ceil($volume);
+    }
+
+    /**
+     * T-177 freier Volume-Platz (clamp ≥ 0).
+     */
+    public function getStorageVolumeFree(): int
+    {
+        return max(0, $this->getStorageVolumeCapacity() - $this->getStorageVolumeUsed());
+    }
+
+    /**
+     * T-177 prüft ob `quantity` weitere Einheiten einer Resource ins Lager passen.
+     * Returns max einlegbare Quantity (kann < `quantity` sein bei knappem Platz).
+     */
+    public function maxAddableQuantity(ResourceType $type, int $quantity): int
+    {
+        if ($quantity <= 0) {
+            return 0;
+        }
+        $multi = \App\Resource\Service\ResourceVolumeConfig::getMultiForResource($type);
+        if ($multi <= 0) {
+            return $quantity; // 0-Volume-Items (theoretisch) immer einlegbar
+        }
+        $free = $this->getStorageVolumeFree();
+        $maxByVolume = (int) floor($free / $multi);
+
+        return min($quantity, max(0, $maxByVolume));
+    }
+
+    public function canAddItem(ResourceType $type, int $quantity): bool
+    {
+        return $this->maxAddableQuantity($type, $quantity) >= $quantity;
+    }
+
+    /**
+     * T-177 deprecated: alte per-Resource-Cap-API für Production-Processors.
+     * Liefert die maximale Anzahl der Ressource die der Planet noch fassen
+     * könnte gegeben alle anderen Items bereits im Storage sind:
+     * `current + floor(volumeFree / multi)`.
+     */
+    public function getStorageCapacity(ResourceType $resource): int
+    {
+        $multi = \App\Resource\Service\ResourceVolumeConfig::getMultiForResource($resource);
+        if ($multi <= 0) {
+            return PHP_INT_MAX;
+        }
+        $current = 0;
+        foreach ($this->resources as $r) {
+            if ($r->getType() === $resource) {
+                $current = $r->getAmount();
+                break;
+            }
+        }
+        $maxAddable = (int) floor($this->getStorageVolumeFree() / $multi);
+
+        return $current + $maxAddable;
     }
 
     /**

@@ -9,8 +9,11 @@ use App\Building\ValueObject\BuildingType;
 /**
  * T-170 Mapping BuildingType → required Research-Level zum Bauen.
  *
- * Tier-0 (frei): IRON_MINE, HUB, RESEARCH_LAB, WATER_TANK, FOOD_SILO, OXYGEN_STORAGE.
+ * Tier-0 (frei): IRON_MINE, HUB, RESEARCH_LAB, WAREHOUSE, Renewable-Producer.
  * Alle anderen Buildings sind hinter Forschung versteckt.
+ *
+ * T-177: WAREHOUSE (konsolidierte Storage-Foundation) ist Tier-0; alle alten
+ * 6 T-061-Storage-Buildings gelöscht.
  *
  * `null` aus `requiredResearch()` = no lock (Tier-0 oder noch ungated).
  */
@@ -27,12 +30,9 @@ class BuildingUnlockConfig
             // basic_mining unlocks
             BuildingType::COAL_MINE->value => ['slug' => 'basic_mining', 'level' => 1],
             BuildingType::COPPER_MINE->value => ['slug' => 'basic_mining', 'level' => 1],
-            BuildingType::IRON_STORAGE->value => ['slug' => 'basic_mining', 'level' => 1],
-            BuildingType::COAL_STORAGE->value => ['slug' => 'basic_mining', 'level' => 1],
 
             // metallurgy unlocks
             BuildingType::IRON_SMELTER->value => ['slug' => 'metallurgy', 'level' => 1],
-            BuildingType::IRON_BAR_STORAGE->value => ['slug' => 'metallurgy', 'level' => 1],
 
             // astronomy unlocks
             BuildingType::TELESCOPE->value => ['slug' => 'astronomy', 'level' => 1],

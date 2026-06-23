@@ -78,27 +78,28 @@ final class ResourceProductionProcessorTest extends TestCase
 
     public function test_storage_cap_stops_extraction_when_full(): void
     {
-        // Cap = 100 base + 100 (mine L1) = 200. Pre-fill resource at 200.
-        $planet = $this->makePlanet(buildingLevel: 1, depositAmount: 1000);
-        $planet->getResource(ResourceType::IRON_ORE)->setAmount(200);
+        // T-177 Volume: base 5000 + IRON_MINE L1 (50) = 5050 m³.
+        // IRON_ORE multi = 2 m³ → max 2525 Einheiten. Pre-fill 2525 → kein Platz.
+        $planet = $this->makePlanet(buildingLevel: 1, depositAmount: 10_000);
+        $planet->getResource(ResourceType::IRON_ORE)->setAmount(2525);
 
         $this->processor->process($planet);
 
-        // No extraction — full
-        self::assertSame(1000, $planet->getResourceDeposit(ResourceType::IRON_ORE)->getAmount());
-        self::assertSame(200, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame(10_000, $planet->getResourceDeposit(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame(2525, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
     }
 
     public function test_storage_cap_partially_clamps_extraction(): void
     {
-        // Cap = 200, current = 195 → only 5 room. Mine wants 10.
-        $planet = $this->makePlanet(buildingLevel: 1, depositAmount: 1000);
-        $planet->getResource(ResourceType::IRON_ORE)->setAmount(195);
+        // T-177 Volume: 5050 m³ cap, IRON_ORE multi=2. Pre-fill 2520 → 10 m³ frei
+        // → 5 IRON_ORE addable. Mine L1 produziert 10 desired → nur 5 extracted.
+        $planet = $this->makePlanet(buildingLevel: 1, depositAmount: 10_000);
+        $planet->getResource(ResourceType::IRON_ORE)->setAmount(2520);
 
         $this->processor->process($planet);
 
-        self::assertSame(995, $planet->getResourceDeposit(ResourceType::IRON_ORE)->getAmount());
-        self::assertSame(200, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame(9_995, $planet->getResourceDeposit(ResourceType::IRON_ORE)->getAmount());
+        self::assertSame(2525, $planet->getResource(ResourceType::IRON_ORE)->getAmount());
     }
 
     public function test_in_progress_mine_does_not_produce(): void

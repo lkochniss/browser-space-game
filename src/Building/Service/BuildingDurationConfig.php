@@ -42,13 +42,8 @@ class BuildingDurationConfig
         // T-025: Research-Lab (45min)
         BuildingType::RESEARCH_LAB->value => 2700,
 
-        // Storage (15min — moderate)
-        BuildingType::IRON_STORAGE->value => 900,
-        BuildingType::COAL_STORAGE->value => 900,
-        BuildingType::IRON_BAR_STORAGE->value => 900,
-        BuildingType::WATER_TANK->value => 900,
-        BuildingType::FOOD_SILO->value => 900,
-        BuildingType::OXYGEN_STORAGE->value => 900,
+        // T-177: WAREHOUSE konsolidiert T-061 (6 Storage-Buildings gelöscht; 15min)
+        BuildingType::WAREHOUSE->value => 900,
 
         // T-097a: Renewable-Producer (15min — analog Storage)
         BuildingType::WATER_RECLAIMER->value => 900,

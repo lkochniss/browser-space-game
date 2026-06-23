@@ -105,19 +105,51 @@ Tier-Mapping: research.md.
 | `RECYCLING_PLANT` | DEBRIS-Konversion | (über `RecyclingProcessor` ausgewertet) | T-021, resources.md |
 | `RESEARCH_LAB` | Forschungs-Voraussetzung + Speed-Multiplier | `Planet::getResearchLabLevel($now)` | T-025, research.md |
 
-## Storage (T-061)
+## Storage (T-177 Generic-Volume — supersedes T-061)
 
-Jedes Building bringt via `BuildingType::getStorageContribution(ResourceType)` eine Cap-Beitrag pro Level:
+Pro Planet existiert **ein einheitliches Volume-Storage in m³**. Jede Item-
+Quantity belegt Volume via `ResourceVolumeConfig` (Pop = 10 m³, Wasser = 1 m³,
+IRON_ORE = 2 m³, etc.). Per-Resource-Caps gibt es nicht mehr — alles teilt
+sich einen Pool.
 
-- Mining-Mines: +100 für eigene Resource (kleiner Pre-Lager)
-- IRON_SMELTER: +100 für IRON_BAR
-- HUB: +200 für W/F/O (Lebensraum-Bonus)
-- Storage-Buildings: +1000 (Erze/Bars), +2000 (Renewables)
+### Volume-Capacity-Formel
 
-`Planet::getStorageCapacity(ResourceType)` live-computed:
-`cap = ResourceCategory.baseCap + Σ(building.type.contribution × building.level)`
+```
+cap = Planet::BASE_VOLUME_CAPACITY (5000)
+    + Σ (building.type.getVolumeContribution × building.level)
+```
 
-Production/Refinement clampen Output am Cap. Volles Lager → Produktion pausiert (Stop-Strategie, kein Verfall). Inputs nur anteilig zur tatsächlichen Output-Menge debitiert.
+| Building | m³/Lvl | Rolle |
+|----------|--------|-------|
+| `WAREHOUSE` (T-177) | 500 | Hauptquelle Volume (Tier-0, non-unique) |
+| `HQ` (T-172) | 25 | Verwaltungs-Buffer |
+| Mines (alle 9) | 50 | Per-Mine kleiner Buffer für Output |
+| Refineries (alle 9 inkl. IRON_SMELTER) | 50 | Per-Refinery Output-Buffer |
+| `RECYCLING_PLANT` | 100 | Voluminöses Debris-Handling |
+| `HUB` / QoL / Strategic-Buildings | 0 | Kein Storage-Beitrag |
+
+### Planet-Storage-API
+
+| Methode | Zweck |
+|---------|-------|
+| `getStorageVolumeCapacity(): int` | Gesamt-Cap in m³ |
+| `getStorageVolumeUsed(): int` | Σ items × multi + pop × 10 |
+| `getStorageVolumeFree(): int` | clamp(cap - used, ≥ 0) |
+| `canAddItem(R, qty): bool` | Volume-Check für `qty × multi(R)` |
+| `maxAddableQuantity(R, qty): int` | min(qty, floor(free / multi(R))) |
+| `getStorageCapacity(R): int` *(legacy shim)* | `current(R) + maxAddable(R)` — Production-Processors |
+
+### Cap-Stop-Verhalten (Q3 = a)
+
+Volume-Cap-Stop für ALLE Production. Mines/Refineries/Renewables clampen
+Output gegen `getStorageCapacity(R)`. Volles Lager → Produktion pausiert (kein
+Verfall). Inputs nur anteilig zur tatsächlich addierten Output-Menge debitiert.
+
+### T-061-Migration (Q1 = a)
+
+Die 6 alten Storage-Buildings (IRON_STORAGE / COAL_STORAGE / IRON_BAR_STORAGE /
+WATER_TANK / FOOD_SILO / OXYGEN_STORAGE) sind **gelöscht**. WAREHOUSE ist
+ihre einzige Konsolidierung — non-unique, beliebig stapelbar.
 
 ## Tick-Reihenfolge
 

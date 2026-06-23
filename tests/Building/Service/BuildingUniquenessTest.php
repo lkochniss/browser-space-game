@@ -93,7 +93,7 @@ final class BuildingUniquenessTest extends IntegrationTestCase
         self::assertSame(18, $planet->getBuildingSlotCap());
 
         $this->expectException(PlanetSlotsFullException::class);
-        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::FOOD_SILO));
+        $this->bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WAREHOUSE));
     }
 
     public function test_unique_strategic_buildings_are_unique(): void
@@ -109,7 +109,7 @@ final class BuildingUniquenessTest extends IntegrationTestCase
             self::assertTrue($bt->isUnique(), $bt->value . ' soll unique sein');
         }
         foreach ([BuildingType::HUB, BuildingType::IRON_MINE, BuildingType::COAL_MINE,
-                  BuildingType::WATER_TANK, BuildingType::WATER_RECLAIMER,
+                  BuildingType::WAREHOUSE, BuildingType::WATER_RECLAIMER,
                   BuildingType::IRON_SMELTER] as $bt) {
             self::assertFalse($bt->isUnique(), $bt->value . ' soll non-unique sein');
         }

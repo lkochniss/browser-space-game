@@ -115,7 +115,7 @@ final class PlayerStatsCountersTest extends IntegrationTestCase
         // Tier-0 Buildings ohne Research-Lock
         $bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::HUB));
         $bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::IRON_MINE));
-        $bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WATER_TANK));
+        $bus->dispatch(new BuildBuildingCommand($planet->getId(), BuildingType::WAREHOUSE));
 
         $this->em->clear();
         $reloaded = $this->em->find(Player::class, $player->getId());
