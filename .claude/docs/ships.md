@@ -24,6 +24,67 @@ Bauzeit +Cargo via `ShipCostConfig`.
 - `finishedAt = now + duration`; Ship docked auf Planet
 - Schiff isReady analog Building (T-062)
 
+## Combat-Ship-Klassen (T-102)
+
+5 Familien × 3 Mark-Tiers = 15 Combat-Klassen. Parallel zu `ShipType` (das die
+Spezial-Schiffe abbildet) — Combat-Schiffe haben `ShipType::GENERIC` und
+`Ship.shipClass != null`. Stats kommen aus `ShipBlueprintRegistry`.
+
+### Base-Stats (Mk I)
+
+| Familie | HP | Damage | Schild | Pop | Build (h) | Cost (Top-Items) |
+|---------|----|--------|--------|-----|-----------|------------------|
+| Frigate | 1000 | 200 | 300 | 30 | 6 | 500 Steel + 200 IB |
+| Destroyer | 2500 | 400 | 800 | 60 | 12 | 1500 Steel + 500 IB + 50 Chip |
+| Cruiser | 5000 | 800 | 1500 | 120 | 36 | 4000 Steel + 1500 IB + 200 Chip + 50 Composite |
+| Battleship | 12000 | 1500 | 3000 | 250 | 72 | 10000 Steel + 3000 IB + 500 Chip + 200 Composite + 50 Hull-Plate |
+| Carrier | 8000 | 1800 | 1800 | 180 | 60 | 7000 Steel + 2500 IB + 400 Chip + 150 Composite + 30 Hull-Plate |
+
+Mk II = Mk I × 1.5 Stats × 3× Cost. Mk III = Mk II × 1.5 × 3 → Mk III ≈ 2.25×
+Stats / 9× Cost vs. Mk I.
+
+### Build-Gates
+
+| Gate | Anforderung |
+|------|-------------|
+| Shipyard-Level | Frigate ≥ 1 / Destroyer ≥ 3 / Cruiser ≥ 5 / Battleship ≥ 8 / Carrier ≥ 10 |
+| Mark-Research | Mk II/III braucht `<family>_mk<tier>` Research-Node Lvl 1 |
+| Captain (T-104a) | Alle Combat-Klassen brauchen IDLE-Captain auf Player |
+| Resources + Pop | Wie Blueprint-Cost |
+
+`MissingShipyardLevelException` / `ShipClassResearchNotMetException` /
+`MissingCaptainException` werfen bei Verletzung.
+
+### Escape-Pod-Survival-Chance (Q3)
+
+Für T-104a Captain-Permadeath. Bei Schiff-Verlust roll'd Battle-Resolver
+diesen Wert.
+
+| Familie | Pod-Chance |
+|---------|------------|
+| Frigate | 30% |
+| Destroyer | 50% |
+| Cruiser | 65% |
+| Battleship | 80% |
+| Carrier | 70% |
+
+`Ship::getEscapePodSurvivalChance()` liefert ShipClass-Wert wenn gesetzt,
+sonst ShipType-Stub (0 für alle existing non-combat).
+
+### Carrier-Squadrons (Q4)
+
+Stats-only. Carrier hat höheren Damage-Stat als balanced peers (1800 vs.
+Battleship 1500). Keine separate Fighter-Entity, kein Squadron-Management.
+
+### Research-Branch (Q5)
+
+10 Mark-Tier-Nodes (5 Familien × {mk2, mk3}) registriert in `ResearchTree`:
+- `frigate_mk2` … `carrier_mk2` (Lab-Lvl 2, prereq `shipbuilding` 1)
+- `frigate_mk3` … `carrier_mk3` (Lab-Lvl 3, prereq `<family>_mk2` 1)
+
+T-128 Schiffbau-Branch wird zusätzliche Bonus-Nodes (Cost-Mult, Speed-Boost)
+draufpacken.
+
 ## Propulsion (T-026c)
 
 Jedes Ship hat einen `PropulsionType`. Default = HYDROGEN (Foundation-Antrieb,
@@ -105,12 +166,17 @@ Aktiv-Salvage Polymorph (T-021):
 | `CargoCapacityExceededException` | Load > free units |
 | `ShipNotFoundException` / `ShipNotReadyException` / `ShipNotDockedException` | Ship-State |
 | `PropulsionResearchNotMetException` | Build mit Antriebs-Typ, dessen Required-Research dem Player fehlt (T-026c) |
+| `MissingShipyardLevelException` | Combat-Schiff-Build unter dem nötigen Shipyard-Level (T-102) |
+| `ShipClassResearchNotMetException` | Combat-Mk-II/III-Build ohne `<family>_mk<n>` Research (T-102) |
+| `MissingCaptainException` | Combat-Build ohne IDLE-Captain (T-102 × T-104a) |
+| `ShipBlueprintNotFoundException` | ShipBlueprintRegistry hat keinen Eintrag für die ShipClass |
 
 ## Files
 
-- `src/Ship/Model/Ship.php` (Entity, finishedAt, supplies, cargo, salvage-state, propulsion)
-- `src/Ship/ValueObject/{ShipId,ShipType,CargoManifest,PropulsionType}.php`
-- `src/Ship/Service/ShipCostConfig.php` (Cost/Cargo/Duration je Type)
+- `src/Ship/Model/Ship.php` (Entity, finishedAt, supplies, cargo, salvage-state, propulsion, shipClass)
+- `src/Ship/ValueObject/{ShipId,ShipType,CargoManifest,PropulsionType,ShipClass,ShipBlueprint}.php`
+- `src/Ship/Service/ShipCostConfig.php` (Cost/Cargo/Duration je Type — non-combat)
+- `src/Ship/Service/ShipBlueprintRegistry.php` (T-102 Combat-Class Stats)
 - `src/Ship/Service/{Build,LoadCargo,UnloadCargo,StartSalvage,StopSalvage}CommandService.php`
 - `src/Ship/Service/SalvageProcessor.php` (global, vom Tick-Loop gerufen)
 - `src/Tick/Processor/ShipSupplyProcessor.php` (T-012 Life-Support)

@@ -281,6 +281,46 @@ class ResearchTree
             ],
             requiredLabLevel: 3,
         ));
+
+        // T-102: Mark-Tier-Research für Combat-Schiff-Klassen (5 Familien × 2
+        // Mk-Tiers = 10 Nodes). Mk I ist ohne Research baubar; Mk II/III brauchen
+        // jeweils das eine Tier tiefere Node + `shipbuilding`. Cost/Lab-Level
+        // skaliert mit Mk-Tier. T-128 wird die Branch zusätzlich orchestrieren
+        // (Building-Bonuses etc.); T-102 registriert die Nodes als Foundation.
+        $shipMarkFamilies = ['frigate', 'destroyer', 'cruiser', 'battleship', 'carrier'];
+        foreach ($shipMarkFamilies as $family) {
+            $this->register(new ResearchNode(
+                slug: $family . '_mk2',
+                name: sprintf('%s Mk II', ucfirst($family)),
+                description: sprintf('Schaltet %s Mk II frei (T-102 Combat-Klasse).', ucfirst($family)),
+                baseDurationSeconds: 720,
+                maxLevel: 1,
+                prerequisites: [
+                    new ResearchLevelPrerequisite('shipbuilding', 1),
+                ],
+                resourceCostBase: [
+                    ResourceType::IRON_BAR->value => 200,
+                    ResourceType::CHIP->value => 50,
+                ],
+                requiredLabLevel: 2,
+            ));
+            $this->register(new ResearchNode(
+                slug: $family . '_mk3',
+                name: sprintf('%s Mk III', ucfirst($family)),
+                description: sprintf('Schaltet %s Mk III frei (T-102 Combat-Klasse, Endgame).', ucfirst($family)),
+                baseDurationSeconds: 1800,
+                maxLevel: 1,
+                prerequisites: [
+                    new ResearchLevelPrerequisite($family . '_mk2', 1),
+                ],
+                resourceCostBase: [
+                    ResourceType::IRON_BAR->value => 600,
+                    ResourceType::CHIP->value => 200,
+                    ResourceType::COMPOSITE->value => 50,
+                ],
+                requiredLabLevel: 3,
+            ));
+        }
     }
 
     private function register(ResearchNode $node): void

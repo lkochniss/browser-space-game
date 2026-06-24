@@ -14,8 +14,9 @@ final class ResearchTreeTest extends TestCase
     {
         $tree = new ResearchTree();
 
-        // T-170 Tier-1 (6) + T-026 Antrieb (7) + T-064 Bauzeit-Boost (1) + T-094d Logistics (1) = 15
-        self::assertCount(15, $tree->all());
+        // T-170 Tier-1 (6) + T-026 Antrieb (7) + T-064 Bauzeit-Boost (1) + T-094d Logistics (1)
+        // + T-102 Ship-Mark-Tiers (5 × 2 = 10) = 25
+        self::assertCount(25, $tree->all());
         self::assertTrue($tree->has('logistics_1'));
 
         // T-170

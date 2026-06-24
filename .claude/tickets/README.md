@@ -125,7 +125,7 @@
 | 100-trade-hub-buildings.md | Feature | Trade & Economy | Building | Blocked | T-110, T-111, T-112, T-177 | MARKETPLACE/SPACEPORT/CUSTOMS_HOUSE/WAREHOUSE/BAZAAR; blocked by T-177 |
 | 101-planet-cap-per-player.md | Feature | Game Balance | Planet | Done | T-014, T-094d | Planet-Cap Foundation: BASE 5 + logistics_1 Bonus, HARD_CAP 10; Colonize-Cap-Check; Demo-Status N/M |
 | 101b-planet-abandon-mechanic.md | Feature | Game Balance | Planet | Draft | T-101 | Planet-Abandon-Mechanik (Folge zu T-101) — Resources/Buildings reset + Slot frei |
-| 102-ship-classes-foundation.md | Feature | Combat & Battle | Ship | Ready | T-011, T-012, T-067, T-104a | 5 Combat × 3 Mk + 4 Spezial-Klassen, hohe Cost, Captain-Required |
+| 102-ship-classes-foundation.md | Feature | Combat & Battle | Ship | Done | T-011, T-012, T-067, T-104a | 5 Combat × 3 Mk + 4 Spezial-Klassen, hohe Cost, Captain-Required |
 | 103-battle-resolution-engine.md | Feature | Combat & Battle | Ship | Ready | T-102, T-068 | Round-based Auto-Resolution + Tactic-Counter (RPS-light) |
 | 103b-tactic-rps-system.md | Feature | Combat & Battle | Ship | Draft | T-103 | — |
 | 103c-npc-ai-tactic-heuristik.md | Feature | Combat & Battle | Ship | Draft | T-103b | — |

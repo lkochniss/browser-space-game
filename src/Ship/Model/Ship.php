@@ -12,6 +12,7 @@ use App\Resource\ValueObject\ResourceType;
 use App\Ship\Repository\ShipRepository;
 use App\Ship\ValueObject\CargoManifest;
 use App\Ship\ValueObject\PropulsionType;
+use App\Ship\ValueObject\ShipClass;
 use App\Ship\ValueObject\ShipId;
 use App\Ship\ValueObject\ShipType;
 use DateTimeImmutable;
@@ -73,6 +74,13 @@ class Ship
 
     #[ORM\Column(name: 'salvage_last_tick_at', type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $salvageLastTickAt = null;
+
+    /**
+     * T-102 Combat-Klasse. NULL für non-combat (Spezial-Schiffe via ShipType).
+     * Wenn gesetzt liefert `ShipBlueprintRegistry` Stats (hp/damage/shield/etc).
+     */
+    #[ORM\Column(name: 'ship_class', type: 'string', length: 32, enumType: ShipClass::class, nullable: true)]
+    private ?ShipClass $shipClass = null;
 
     public function __construct(
         #[ORM\Id]
@@ -336,5 +344,33 @@ class Ship
         $this->salvageTargetPoiId = null;
         $this->salvageResourceType = null;
         $this->salvageLastTickAt = null;
+    }
+
+    public function getShipClass(): ?ShipClass
+    {
+        return $this->shipClass;
+    }
+
+    public function setShipClass(?ShipClass $class): void
+    {
+        $this->shipClass = $class;
+    }
+
+    public function isCombatShip(): bool
+    {
+        return $this->shipClass !== null;
+    }
+
+    /**
+     * T-102 + T-104a Captain-Permadeath. Prefers ShipClass-Pod-Chance (Combat)
+     * über ShipType-Stub (legacy = 0 für alle existing types).
+     */
+    public function getEscapePodSurvivalChance(): int
+    {
+        if ($this->shipClass !== null) {
+            return $this->shipClass->getEscapePodSurvivalChance();
+        }
+
+        return $this->type->getEscapePodSurvivalChance();
     }
 }

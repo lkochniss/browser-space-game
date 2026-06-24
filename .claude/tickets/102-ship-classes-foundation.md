@@ -4,7 +4,7 @@
 **Epic:** Combat & Battle
 **Domain:** Ship
 **Blocked By:** T-011, T-012, T-067, T-104a
-**Status:** Ready
+**Status:** Done
 **Effort:** XL
 **Depends on:** T-011 (Done), T-012 (Done), T-067 (Done), T-104a (Ready)
 **Blocks:** T-103, T-105
@@ -60,19 +60,13 @@ kein Modular-System. Hohe Build-Cost, wenige Schiffe pro Spieler.
 
 ### Enum + Blueprint-Registry
 
-- [ ] `ShipClass` Enum mit 15 Combat-Werten (5 Klassen × 3 Tiers):
+- [x] `ShipClass` Enum mit 15 Combat-Werten (5 Klassen × 3 Tiers):
       `FRIGATE_MK1`, `FRIGATE_MK2`, ..., `CARRIER_MK3`
-- [ ] `ShipBlueprint` readonly-VO:
-      - `class: ShipClass`
-      - `hp: int`, `damage: int`, `shieldCapacity: int`
-      - `fuelType: ResourceType`, `fuelPerHour: int`
-      - `popCrewRequirement: int`
-      - `captainRequired: bool` (true für alle Combat)
-      - `escapePodChance: int` (per Q3-Tabelle, gleich für alle Mark-Tiers einer Klasse)
-      - `buildCost: array<ResourceType.value, int>`
-      - `buildDurationSeconds: int`
-- [ ] `ShipBlueprintRegistry` Service mit allen 15 Stats hardcoded
-- [ ] Per Klasse Mk II = Mk I × 1.5 Stats × 3 Cost (Q1); Mk III = Mk II × 1.5 × 3
+- [x] `ShipBlueprint` readonly-VO mit hp/damage/shieldCapacity/populationCost/
+      buildDurationSeconds/buildCost/escapePodChance/captainRequired.
+      _Fuel-Felder deferred — fließen via T-066 Fuel-Mechanik nach_
+- [x] `ShipBlueprintRegistry` Service mit allen 15 Stats hardcoded
+- [x] Per Klasse Mk II = Mk I × 1.5 Stats × 3 Cost (Q1); Mk III = Mk II × 1.5 × 3
 
 ### Base-Stats-Tabelle (Mk I)
 
@@ -88,40 +82,47 @@ kein Modular-System. Hohe Build-Cost, wenige Schiffe pro Spieler.
 
 ### Shipyard-Min-Level pro Klasse
 
-- [ ] Frigate: SHIPYARD ≥ L1
-- [ ] Destroyer: ≥ L3
-- [ ] Cruiser: ≥ L5
-- [ ] Battleship: ≥ L8
-- [ ] Carrier: ≥ L10
-- [ ] `MissingShipyardLevelException` wenn unterschritten
+- [x] Frigate: SHIPYARD ≥ L1
+- [x] Destroyer: ≥ L3
+- [x] Cruiser: ≥ L5
+- [x] Battleship: ≥ L8
+- [x] Carrier: ≥ L10
+- [x] `MissingShipyardLevelException` wenn unterschritten
 
 ### Build-Service
 
-- [ ] `BuildShipCommand` erweitert um `shipClass: ShipClass` (Default = existing GENERIC)
-- [ ] `BuildShipCommandService` validiert:
+- [x] `BuildShipCommand` erweitert um `shipClass: ?ShipClass` (Default null)
+- [x] `BuildShipCommandService` validiert:
   - Shipyard-Min-Level (s.o.)
-  - Mark-Tier-Research (Q5): Mk II/III braucht entsprechende Research-Nodes
-  - Captain-Available (Q2): Combat-Klassen brauchen IDLE-Captain auf Planet (T-104a)
-  - Resource + Pop-Cost
-- [ ] `MissingCaptainException` bei Build ohne verfügbaren Captain
+  - Mark-Tier-Research (Q5): Mk II/III braucht `<family>_mk<tier>` Lvl 1
+  - Captain-Available (Q2): Combat-Klassen brauchen IDLE-Captain
+  - Resource + Pop-Cost via Blueprint
+- [x] `MissingCaptainException` bei Build ohne verfügbaren Captain
+- [x] 10 neue Research-Nodes (`<family>_mk2/mk3` × 5 Familien) in ResearchTree
 
 ### Integration mit existing Ship-System
 
-- [ ] `Ship::shipClass: ?ShipClass` Field (nullable für Backwards-Compat zu T-012 GENERIC)
-- [ ] `Ship::getEffectiveDamage()` etc. lesen Blueprint-Stats
-- [ ] Captain-Stats-Boost (T-104a +3%/Lvl) stackt multiplikativ
-- [ ] Migration `Version2026...XXXX` für ships.ship_class Spalte
+- [x] `Ship::shipClass: ?ShipClass` Field (nullable, Doctrine ORM column)
+- [x] `Ship::isCombatShip()` + `getEscapePodSurvivalChance()` prefer ShipClass
+      über ShipType-Stub
+- [ ] `Ship::getEffectiveDamage/Hp/Shield()` lesen Blueprint — _deferred: kommt
+      in T-103 Battle-Resolver der die Stats konkret nutzt; Foundation legt nur
+      Blueprint-Registry an_
+- [ ] Captain-Stats-Boost (T-104a +3%/Lvl) stackt multiplikativ — _Wiring in
+      T-103 Battle-Resolver (effective-stats-Berechnung dort)_
+- [x] Migration `Version20260624000001` für ships.ship_class Spalte
 
 ### Tests
 
-- [ ] `ShipBlueprintRegistryTest`: alle 15 Klassen registered, Stats korrekt skaliert
-- [ ] `BuildShipCommandShipClassTest`: Shipyard-Level-Gate, Captain-Gate, Research-Gate
-- [ ] `EscapePodChanceTest`: Pro Klasse correct % (für T-104a Permadeath-Roll)
+- [x] `ShipBlueprintRegistryTest` (7): alle 15 Klassen registered, Stats
+      korrekt skaliert, Escape-Pod-Chance je Familie
+- [x] `BuildCombatShipTest` (6): Shipyard-Level-Gate, Captain-Gate,
+      Research-Gate, Build-Success, ShipType bleibt GENERIC
 
 ### Docs
 
-- [ ] `ships.md` erweitert: ShipClass-Tabelle + Tier-System + Escape-Pod-Tabelle
-- [ ] `decisions.md` Eintrag T-102
+- [x] `ships.md` erweitert: ShipClass-Tabelle + Tier-System + Escape-Pod-Tabelle
+- [x] `decisions.md` Eintrag T-102
 
 ## Out of Scope
 
@@ -147,3 +148,16 @@ Yes — `ShipFixture` mit Test-Schiff je Klasse, Test-Player mit High-Level Ship
 ### Refinement Tokens (estimate)
 - Input: ~14k
 - Output: ~5k
+
+### Implementation Tokens (estimate)
+- Input: ~180k
+- Output: ~22k
+
+### Deferred / Follow-Ups
+
+- `Ship::getEffectiveDamage/Hp/Shield()` Read-API → T-103 Battle-Resolver
+  (Stats werden dort konkret konsumiert)
+- Captain-Stats-Multiplier auf Combat-Schiff → T-103
+- Fuel-Felder im Blueprint → T-066 Fuel-Mechanik
+- `ShipFixture` mit Test-Schiffen pro Klasse — Tests bauen inline, Fixture
+  nicht zwingend für Foundation
