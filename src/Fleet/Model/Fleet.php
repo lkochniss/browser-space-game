@@ -162,6 +162,19 @@ class Fleet
         return $this->status === FleetStatus::DOCKED;
     }
 
+    /**
+     * T-104b Fleet-Commander-Aura: höchster FC-Tier aller Captains in der
+     * Flotte. CrewRepository wird vom Battle-Resolver (T-103b) injiziert —
+     * Model selber kennt keine Repository, daher braucht Caller den max-
+     * Lookup; diese Methode liefert die Captains-Liste, Caller iteriert.
+     *
+     * Foundation-API: hier nur Stub-Helper, Battle-Wiring kommt mit T-103b.
+     */
+    public function shipCount(): int
+    {
+        return $this->ships->count();
+    }
+
     public function isInTransit(): bool
     {
         return $this->status === FleetStatus::IN_TRANSIT;

@@ -61,6 +61,16 @@ class Crew
 
         #[ORM\Column(name: 'last_boost_at', type: 'datetime_immutable', nullable: true)]
         private ?DateTimeImmutable $lastBoostAt = null,
+
+        /**
+         * T-104b Captain-Skill-Tree-Allocation. JSON-Map<TreeName.value, int>.
+         * Hydration über Doctrine `json`-Type; Domain-Logic wraps in
+         * `SkillAllocation`-VO (s. getSkillAllocation).
+         *
+         * @var array<string,int>
+         */
+        #[ORM\Column(name: 'skill_allocation', type: 'json', options: ['default' => '{}'])]
+        private array $skillAllocationRaw = [],
     ) {
     }
 
@@ -178,6 +188,61 @@ class Crew
     public function recordBoost(DateTimeImmutable $now): void
     {
         $this->lastBoostAt = $now;
+    }
+
+    public function getSkillAllocation(): \App\Crew\ValueObject\SkillAllocation
+    {
+        return new \App\Crew\ValueObject\SkillAllocation($this->skillAllocationRaw);
+    }
+
+    /**
+     * T-104b verfügbare Skill-Punkte: 1 pro Captain-Level minus bereits
+     * allokierte. Eingabe für Allocate-Command.
+     */
+    public function availableSkillPoints(): int
+    {
+        return $this->level - $this->getSkillAllocation()->totalPoints();
+    }
+
+    /**
+     * T-104b: allokiert 1 Punkt in den angegebenen Tree. Tier-Lock ist
+     * implizit (sequentiell — Tier-N braucht (N-1) Vorgänger-Punkte).
+     * Caller (Service) prüft `availableSkillPoints` + Max-Tier vorab.
+     */
+    public function applySkillAllocation(\App\Crew\ValueObject\SkillAllocation $allocation): void
+    {
+        $this->skillAllocationRaw = $allocation->toArray();
+    }
+
+    /**
+     * T-104b Read-API für T-103b Battle-Tactic-Wiring. Foundation: keine
+     * Battle-Resolver-Konsum — T-104b liefert nur die Multiplier-Lookups.
+     */
+    public function getSkillTier(\App\Crew\ValueObject\CaptainSkillTree $tree): int
+    {
+        return $this->getSkillAllocation()->getTier($tree);
+    }
+
+    /**
+     * T-104b: Beam-Master ODER Missile-Specialist Damage-Multi gegeben
+     * Tactic-Match-Flag. Caller (Battle-Resolver) decided welcher Tree für
+     * die aktuelle Tactic gilt.
+     */
+    public function getDamageMultiplier(\App\Crew\ValueObject\CaptainSkillTree $tree): float
+    {
+        return $tree->getDamageMultiplierAtTier($this->getSkillTier($tree));
+    }
+
+    public function getShieldMultiplier(): float
+    {
+        $tree = \App\Crew\ValueObject\CaptainSkillTree::SHIELD_TACTICIAN;
+
+        return $tree->getShieldMultiplierAtTier($this->getSkillTier($tree));
+    }
+
+    public function getFleetCommanderTier(): int
+    {
+        return $this->getSkillTier(\App\Crew\ValueObject\CaptainSkillTree::FLEET_COMMANDER);
     }
 
     /**

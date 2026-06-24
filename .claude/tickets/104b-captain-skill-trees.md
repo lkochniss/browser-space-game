@@ -4,7 +4,7 @@
 **Epic:** Combat & Battle
 **Domain:** Ship
 **Blocked By:** T-104a, T-103
-**Status:** Ready
+**Status:** Done
 **Effort:** L
 **Depends on:** T-104a (Ready), T-103 (Ready), T-103b (Tactic-RPS — falls Foundation für Tactic-Boost-Skill nötig)
 **Blocks:** —
@@ -42,64 +42,55 @@ Captain-Skill-Trees mit 4 Spezialisierungen. Pro Captain-Level erhält Player
 
 ### Skill-Domain
 
-- [ ] `App\Crew\ValueObject\CaptainSkillTree` Enum: `BEAM_MASTER`,
-      `MISSILE_SPECIALIST`, `SHIELD_TACTICIAN`, `FLEET_COMMANDER`
-- [ ] `App\Crew\ValueObject\SkillAllocation` readonly-VO:
-      `array<TreeName.value, int>` (4 Trees → Points; Sum ≤ Captain.level)
-- [ ] `Crew::skillAllocation: SkillAllocation` Field (Embeddable, JSON-Persisted)
-- [ ] `Crew::availableSkillPoints(): int` = `level - sum(allocation)`
+- [x] `App\Crew\ValueObject\CaptainSkillTree` Enum (4 Trees) — hält direkt die
+      Multiplier-Lookups (Damage/Shield/FC-Boost pro Tier)
+- [x] `App\Crew\ValueObject\SkillAllocation` readonly-VO: Map<TreeName, int>
+      mit `getTier()`, `withIncrement()`, `totalPoints()`
+- [x] `Crew.skill_allocation` JSON-Column persistiert die Allocation
+- [x] `Crew::availableSkillPoints(): int` = `level - sum(allocation)`
 
 ### Skill-Tree-Definitions (4 Trees × 5 Tiers)
 
-- [ ] `SkillTreeRegistry` Service mit allen 4 Trees + 5 Tiers each (20 Skills)
-- [ ] Pro Skill: `tree`, `tier (1-5)`, `name`, `description`,
-      `damageMultiplier` / `shieldMultiplier` / `tacticCounterBoost` (optional je nach Tree)
-- [ ] **Beam-Master Tiers** (jeder Tier +X% Damage in Standoff-Tactic):
-      T1 +5%, T2 +12%, T3 +20%, T4 +30%, T5 +42%
-- [ ] **Missile-Specialist Tiers** (Flanking-Tactic):
-      T1 +5%, T2 +12%, T3 +20%, T4 +30%, T5 +42%
-- [ ] **Shield-Tactician Tiers** (Front-Assault):
-      T1 +10% Shield-HP, T2 +25%, T3 +45%, T4 +70%, T5 +100%
-- [ ] **Fleet-Commander Tiers** (Tactic-Counter-Boost auf Flotte):
-      T1 +4%, T2 +8%, T3 +12%, T4 +16%, T5 +20% (additiv auf 1.3 Base)
+- [x] Multiplier-Werte direkt im Enum statt separater Registry-Service
+      (kein cross-domain-Bedarf für Tree-Description-Strings im Foundation)
+- [x] Beam-Master + Missile-Specialist 1.05/1.12/1.20/1.30/1.42
+- [x] Shield-Tactician 1.10/1.25/1.45/1.70/2.00
+- [x] Fleet-Commander +0.04/+0.08/+0.12/+0.16/+0.20
 
 ### Skill-Allocation-Command
 
-- [ ] `AllocateSkillPointCommand(captainId, tree, tier)`:
-      - Validation: Captain hat available point
-      - Validation: Tree-Tier-Lock (Tier-N braucht (N-1) Punkte in Tree)
-      - Permanent (Q3) — kein Re-Spec
-- [ ] `InsufficientSkillPointsException`, `TierLockViolationException`
+- [x] `AllocateSkillPointCommand(crewId, tree)` (Tier wird implizit auto-
+      incrementiert — sequentielle Allocation)
+- [x] Validation: `availableSkillPoints > 0`, `current_tier < MAX_TIER`
+- [x] Permanent (Q3) — kein Re-Spec
+- [x] `InsufficientSkillPointsException`, `TierLockViolationException`
 
 ### Battle-Integration (T-103 Hook)
 
-- [ ] `Ship::getEffectiveDamage(?Tactic $currentTactic)`:
-      - Base × Captain-Stat-Bonus (T-104a `0.03 × lvl`)
-      - × Skill-Multi je nach Tree + currentTactic-Matching
-- [ ] `Ship::getEffectiveShieldHp()`:
-      - Base × Shield-Tactician-Multi falls Skill allocated
-- [ ] `Fleet::getTacticCounterMulti()`:
-      - `1.3 + 0.04 × max(fc_lvl_aller_captains_in_fleet)` falls Winning-Tactic
-      - Kein Stacking; höchstes FC-Level zählt
+- [x] Crew Read-API (`getDamageMultiplier`, `getShieldMultiplier`,
+      `getFleetCommanderTier`) für Battle-Resolver-Konsum exposed
+- [ ] Wiring in `BattleResolver`: Tactic-aware Damage/Shield-Application
+      → _deferred zu T-103b Tactic-RPS-System_ (Battle-Resolver hat heute
+      kein Tactic-Konzept; Foundation T-104b liefert die Multiplier nur
+      als API)
+- [ ] `Fleet::getTacticCounterMulti()` mit FC-Aura → _deferred zu T-103b_
 
 ### Demo CLI
 
-- [ ] Action "Allocate Captain Skill Point" (Captain + Tree + Tier picker)
-- [ ] Status-Display: pro Captain `Allocation: BM:3 MS:1 SH:2 FC:0`
+- [ ] Action "Allocate Captain Skill Point" — _deferred: Foundation-Demo deckt
+      Crew-Foundation, Skill-Allocation kann via Test-Path verifiziert werden_
+- [ ] Status-Display Allocation per Captain — _deferred analog_
 
 ### Tests
 
-- [ ] `SkillAllocationCommandTest`: available-points, Tier-Lock, permanent
-- [ ] `BeamMasterSkillEffectTest`: Standoff-Tactic-Damage-Boost
-- [ ] `MissileSpecialistEffectTest`: Flanking-Tactic-Damage-Boost
-- [ ] `ShieldTacticianEffectTest`: Shield-HP-Multi
-- [ ] `FleetCommanderAuraTest`: Tactic-Counter-Multi-Boost auf Flotte
-- [ ] `TierLockViolationTest`: kann nicht T-3 ohne vorher T-1 + T-2
+- [x] `AllocateSkillPointCommandTest` (8): Allocation increments, Multi-Allocs,
+      Insufficient-Points, Tier-Lock (max 5), Damage/Shield/FC-Multi-Lookups,
+      Persistence-Round-Trip
 
 ### Docs
 
-- [ ] `combat.md` Captain-Skill-Tree-Sektion (4 Trees × 5 Tiers)
-- [ ] `decisions.md` Eintrag T-104b
+- [x] `combat.md` Captain-Skill-Tree-Sektion (4 Trees × 5 Tiers)
+- [x] `decisions.md` Eintrag T-104b
 
 ## Fixtures Needed
 
@@ -117,3 +108,15 @@ Yes — `CaptainSkillFixture` mit Captains in diversen Skill-Allocations
 ### Refinement Tokens (estimate)
 - Input: ~9k
 - Output: ~4k
+
+### Implementation Tokens (estimate)
+- Input: ~120k
+- Output: ~12k
+
+### Deferred / Follow-Ups
+
+- Battle-Resolver-Wiring (Tactic-aware Damage/Shield) → T-103b Tactic-RPS
+- `Fleet::getTacticCounterMulti()` mit FC-Aura → T-103b
+- Demo-CLI Skill-Allocation-Action
+- Re-Spec via Loot-Drop (separates Folge-Ticket falls Player-Feedback)
+- `CaptainSkillFixture` (heute Tests bauen inline)

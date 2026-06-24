@@ -84,6 +84,55 @@ Replay) kann das ergänzen.
 - Persist Battle-Entity (status=RUNNING)
 - Synchron `BattleResolver::resolve($battle)` aufrufen
 
+## Captain-Skill-Trees (T-104b)
+
+4 Spezialisierungen × 5 Tiers (20 Skills total). Captain bekommt 1 Skill-Punkt
+pro Level (max 10), Player allokiert frei. Strikt sequenzielle Tier-Lock:
+Tier-N braucht (N-1) Punkte im selben Tree. Permanent — kein Re-Spec.
+
+| Tree | Effekt | Tier-1..5 Multi |
+|------|--------|------------------|
+| `BEAM_MASTER` | Damage in Standoff-Tactic (T-103b) | 1.05 / 1.12 / 1.20 / 1.30 / 1.42 |
+| `MISSILE_SPECIALIST` | Damage in Flanking-Tactic | 1.05 / 1.12 / 1.20 / 1.30 / 1.42 |
+| `SHIELD_TACTICIAN` | Shield-HP in Front-Assault | 1.10 / 1.25 / 1.45 / 1.70 / 2.00 |
+| `FLEET_COMMANDER` | Tactic-Counter-Boost auf Flotte | +0.04 / +0.08 / +0.12 / +0.16 / +0.20 |
+
+### Storage
+
+`Crew.skill_allocation` JSON-Column `Map<TreeName.value, int>`. Default `{}`.
+Domain-Wrapper `SkillAllocation`-VO mit `getTier()`, `withIncrement()`,
+`totalPoints()`.
+
+### Allocate-Command
+
+`AllocateSkillPointCommand(crewId, tree)`:
+
+- `Crew.availableSkillPoints() = level - sum(allocation)` > 0
+- `allocation[tree] < MAX_TIER (5)`
+- Permanent
+
+Wirft `InsufficientSkillPointsException` / `TierLockViolationException`.
+
+### Read-API (Battle-Konsum, Foundation noch nicht gewired)
+
+- `Crew::getSkillTier(tree): int`
+- `Crew::getDamageMultiplier(tree): float` — Caller (T-103b) entscheidet welcher
+  Tree zur aktuellen Tactic passt
+- `Crew::getShieldMultiplier(): float` — Shield-Tactician
+- `Crew::getFleetCommanderTier(): int`
+
+T-103b/T-103-Folge wiring: BattleResolver iteriert Crew assigned to Ship,
+multipliziert `getDamageMultiplier(matchingTree)` mit Ship-Damage. Foundation
+T-104b expose nur die API.
+
+### Fleet-Commander-Aura
+
+Pro Flotte zählt EIN FC-Effekt: höchster `getFleetCommanderTier` aller Captains
+in der Fleet. Tactic-Counter wird `×(1.3 + 0.04 × maxFcTier)`. Stacking
+ausgeschlossen — Foundation Cap 5 Ships/Fleet.
+
+Wiring in T-103b Tactic-RPS.
+
 ## Out of Scope (Folge-Tickets)
 
 | Ticket | Scope |
@@ -93,7 +142,7 @@ Replay) kann das ergänzen.
 | T-103d | Battle-Replay-Log-Persistence (Round-by-Round Events) |
 | T-103e | Loot-Drop-Trigger (T-080 Integration) |
 | T-088 | Munition-Verbrauch (BALLISTIC_AMMO/WARHEAD/PLASMA_CHARGE) |
-| T-104b | Captain-Skill-Trees (Beam-Master/Missile-Spec/Shield-Tactician) |
+| T-104b | _DONE Foundation: Allocation + Read-API; Battle-Wiring T-103b-Folge_ |
 
 ## Files
 
