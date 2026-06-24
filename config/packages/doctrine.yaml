@@ -23,6 +23,7 @@ doctrine:
             research_id: App\Common\Doctrine\Type\ResearchIdType
             crew_id: App\Common\Doctrine\Type\CrewIdType
             battle_id: App\Common\Doctrine\Type\BattleIdType
+            trade_route_id: App\Common\Doctrine\Type\TradeRouteIdType
     orm:
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true

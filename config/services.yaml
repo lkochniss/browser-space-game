@@ -87,6 +87,14 @@ services:
     App\Battle\Service\BattleResolver:
         public: true
 
+    # T-110: TradeRouteProcessor globaler Tick-Service (analog FleetArrivalService).
+    App\Trade\Service\TradeRouteProcessor:
+        public: true
+
+    # T-110: TradeRouteRepository public für Demo-CLI + Tests.
+    App\Trade\Repository\TradeRouteRepository:
+        public: true
+
     # T-025: ResearchTree als public Singleton (StartResearchCommandService + Demo-CLI).
     App\Research\Service\ResearchTree:
         public: true

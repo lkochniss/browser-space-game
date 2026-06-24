@@ -139,7 +139,7 @@
 | 107-manufacturing-buildings.md | Feature | Resources Tier-2/3 | Building | Draft | T-067, T-088, T-089, T-090, T-091, T-115 | Bündel: ~20 Manufacturing-Buildings (Munition/Civilian/Bio/Tier-3-Combat/Tier-3-Resources) |
 | 108-specialty-mining-buildings.md | Feature | Resources Tier-2/3 | Building | Draft | T-002, T-019, T-020, T-066 | ASTEROID_DRONE/DEEP_DRILL/ATMOSPHERIC_HARVESTER/ICE_DRILLER/VOLCANIC_TAPPER/LUNAR_PROCESSOR |
 | 109-tier3-containment-storage.md | Feature | Storage Vision | Building | Blocked | T-115, T-092, T-177, T-061 | ANTIMATTER_CONTAINMENT/AI_CORE_VAULT/ADAMANTIUM_DEPOT/VOID_CONTAINER/ARTIFACT_VAULT; blocked by T-177 |
-| 110-trade-routes.md | Feature | Trade & Economy | Trade | Ready | T-015, T-014 | Auto-Transport eigene Planeten — Schiff-bound Routes |
+| 110-trade-routes.md | Feature | Trade & Economy | Trade | Done | T-015, T-014 | Auto-Transport eigene Planeten — Schiff-bound Routes |
 | 110b-route-refill-logic.md | Feature | Trade & Economy | Trade | Draft | T-110, T-088, T-105 | — |
 | 111-auction-house.md | Feature | Trade & Economy | Trade | Draft | T-110, T-073 | Galaxy-weit Auction + Lieferzeit via Transportschiff |
 | 112-hybrid-pricing.md | Feature | Trade & Economy | Trade | Draft | T-111, T-073, T-007, T-023 | Need-Based-Pricing + Statische Handelsposten (Inventory-bound, nicht-übernehmbar) |

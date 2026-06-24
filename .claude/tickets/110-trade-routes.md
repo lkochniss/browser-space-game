@@ -4,7 +4,7 @@
 **Epic:** Trade & Economy
 **Domain:** Trade
 **Blocked By:** T-015, T-014
-**Status:** Ready
+**Status:** Done
 **Effort:** L (~6-8h)
 **Depends on:** T-015 (Done), T-014 (Done)
 **Blocks:** T-095 (Auto-Routing-Folge), T-111 (Auction-House), T-104c (Crew-Role-Diplomat)
@@ -39,67 +39,57 @@ Refill-Logik (Munition/Supplies während Fixed-Route) → **T-110b Folge-Ticket*
 
 ### Domain
 
-- [ ] `App\Trade\` Domain-Folder (neu): Model/TradeRoute, ValueObject/TradeRouteId,
-      Repository/TradeRouteRepository, Service
-- [ ] `TradeRoute` Entity:
-  - `id: TradeRouteId`
-  - `owner: Player`
-  - `sourcePlanet: Planet`, `targetPlanet: Planet`
-  - `outboundResource: ResourceType`, `outboundQty: int` (laden auf Hinflug)
-  - `returnResource: ?ResourceType`, `returnQty: ?int` (NULL = One-Way ohne Return)
-  - `boundShip: Ship`
-  - `status: TradeRouteStatus` (ACTIVE / PAUSED / CANCELLED / SINGLE_TRIP)
-  - `lastTripAt: ?DateTimeImmutable`, `tripCounter: int`
-- [ ] `TradeRouteStatus` Enum
-- [ ] Migration + ORM-Mapping
+- [x] `App\Trade\` Domain-Folder (neu)
+- [x] `TradeRoute` Entity mit allen Feldern (owner / source / target /
+      boundShip / outboundResource+qty / returnResource?+qty? / status /
+      currentLeg / lastTripAt / tripCounter)
+- [x] `TradeRouteStatus` Enum (ACTIVE / SINGLE_TRIP / PAUSED / CANCELLED)
+- [x] `TradeRouteLeg` Enum (4-State-Machine)
+- [x] Migration `Version20260624000005` + ORM-Mapping + Repository
 
 ### Commands
 
-- [ ] `CreateFixedRouteCommand(playerId, shipId, sourceId, targetId, outboundResource, outboundQty, ?returnResource, ?returnQty)`
-- [ ] `CreateSingleTripCommand(playerId, shipId, sourceId, targetId, resource, qty)`
-- [ ] `PauseRouteCommand(routeId)` / `ResumeRouteCommand(routeId)`
-- [ ] `CancelRouteCommand(routeId)` (löscht Route + gibt Ship frei)
+- [x] `CreateFixedRouteCommand` + Handler + Service
+- [x] `CreateSingleTripCommand` + Handler
+- [x] `PauseRouteCommand` + `ResumeRouteCommand` + Handler
+- [x] `CancelRouteCommand` (detached Ship + löscht Solo-Fleet)
 
 ### Trip-Cycle (Tick-Service)
 
-- [ ] `TradeRouteProcessor` (global, vom Tick-Loop gerufen, kein Per-Planet-Tick):
-  - Pro ACTIVE Fixed-Route: prüft `boundShip.status` / `boundShip.planet`
-  - Wenn Ship docked an `sourcePlanet`: lädt `outboundResource` × `outboundQty`
-    (T-015 LoadCargoCommand intern) + dispatcht `MoveFleetCommand` zu `target`
-  - Wenn Ship docked an `targetPlanet`: entlädt outboundCargo +
-    falls returnResource gesetzt → lädt return + zurück zu source
-  - Single-Trip: nach erstem unload → status=CANCELLED (Auto-Cleanup); Ship frei
-- [ ] Trip-Time = Movement-Time (T-017 `FleetMovementConfig`)
-- [ ] Stops gracefully bei: Source-Resource leer / Target-Volume voll
-  (T-177 canAddItem)
+- [x] `TradeRouteProcessor` globaler Tick-Service (analog FleetArrival)
+- [x] State-Machine über `TradeRouteLeg`: AT_SOURCE → GOING_TO_TARGET →
+      AT_TARGET → GOING_TO_SOURCE → AT_SOURCE-Loop
+- [x] Inner-Loop max 5 Iterations/Route — erlaubt mehrere Transitions
+      pro Tick (Arrival → Unload → Move-Next direkt)
+- [x] Single-Trip: nach AT_TARGET-Unload → CANCEL
+- [x] Trip-Time via FleetMovementConfig (geerbt via MoveFleetCommand)
+- [x] Graceful stops bei Source-leer / Target-Volume-voll
 
 ### Validation
 
-- [ ] Both Planets gehören Player (T-110 ist intra-player; T-111 deckt
-      Cross-Player-Trade ab)
-- [ ] Ship existiert + isReady + nicht bereits in andere Route gebunden
-- [ ] Ship.cargoCapacity ≥ outboundQty × multi (T-177 Volume)
+- [x] Both Planets player-owned + Source ≠ Target
+- [x] Ship vorhanden + nicht in anderer Fleet/Route gebunden
+- [x] Ship docked an Source-Planet
+- [x] Ship.cargoCapacity ≥ outboundQty
 
 ### Demo CLI
 
-- [ ] Action "Create Fixed Route"
-- [ ] Action "Create Single Trip"
-- [ ] Action "Pause/Resume/Cancel Route"
-- [ ] Status-Display: pro Player aktive Routes mit Trip-Counter, lastTripAt
+- [ ] Action "Create Fixed Route" / "Single Trip" / "Pause/Resume/Cancel"
+      — _deferred: Foundation-Demo deckt's nicht; Trade ist Phase-2-Player-Feature_
+- [ ] Status-Display Route-Liste — _deferred analog_
 
 ### Tests
 
-- [ ] `FixedRouteCycleTest` (IT): Schiff source→target→source, repeats
-- [ ] `SingleTripTest`: One-way, Ship bleibt am Target
-- [ ] `RouteShipLockTest`: Schiff in Route nicht für Manual-Move pickbar
-- [ ] `PauseResumeTest`: Pause hält Trip-Loop, Resume reaktiviert
-- [ ] `CancelTest`: Ship freigegeben, Route deleted
-- [ ] `EmptySourceStopsTest`: Source-Resource leer → Route pausiert/wartet
+- [x] `TradeRouteTest` (11): Create-Fixed + Single-Trip, Bind-Block,
+      Same-Source-Target-Throw, Processor-AT_SOURCE→GOING_TO_TARGET,
+      Single-Trip-Completion (incl. Cancel), Fixed-Route-Full-Loop mit
+      Return-Cargo, Pause+Resume, Cancel-Releases-Ship, Empty-Source-Graceful
 
 ### Docs
 
-- [ ] `trade.md` (neu) — Trade-Domain-Doku
-- [ ] `decisions.md` Eintrag T-110
+- [x] `trade.md` (neu) — Trade-Domain-Doku
+- [x] `decisions.md` Eintrag T-110
+- [x] `README.md` (docs) Eintrag trade.md
 
 ## Out of Scope (Folge-Tickets)
 
@@ -123,3 +113,17 @@ Route-Konfigurationen (bidirektional, one-way, paused).
 ### Refinement Tokens (estimate)
 - Input: ~8k
 - Output: ~3k
+
+### Implementation Tokens (estimate)
+- Input: ~220k
+- Output: ~24k
+
+### Deferred / Follow-Ups
+
+- Demo-CLI Trade-Actions (Create / Pause / Resume / Cancel + Status-Display)
+- `TradeRouteFixture` für T-110-Folge-Tests (heute Tests bauen inline)
+- Manual-Move/Cargo-Picker-Integration: filter `ship.getFleet() !== null` —
+  heute kein explizites Picker-Service. Wenn Player das aushebelt
+  würde, ergänzt T-110-Folge eine `ship.tradeRoute`-Read-API in den
+  Picker-Validators.
+- T-110b Refill-Logic (Munition/Supplies am Source-Planet, T-088-Hook)
