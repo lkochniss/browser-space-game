@@ -66,4 +66,15 @@ enum ShipType: string
             default => 0,
         };
     }
+
+    /**
+     * T-104a / T-102 Captain-Permadeath-Roll: bei Schiff-Verlust hat der Captain
+     * `X%`-Chance, in einer Escape-Pod zu überleben. Foundation = 0 für alle
+     * existing ShipTypes (Cargo/Salvage/Generic). T-102 ShipClasses füllen
+     * Werte je Combat-Klasse (Frigate 30 ... Battleship 80).
+     */
+    public function getEscapePodSurvivalChance(): int
+    {
+        return 0;
+    }
 }

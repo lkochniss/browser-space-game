@@ -243,6 +243,22 @@ class BuildingCostConfig
                 ],
                 populationCost: 25,
             ),
+
+            // T-104a Crew-Foundation
+            BuildingType::ACADEMY->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 300,
+                    ResourceType::SILICON->value => 80,
+                ],
+                populationCost: 30,
+            ),
+            BuildingType::OFFICER_QUARTERS->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 200,
+                    ResourceType::COPPER_ORE->value => 50,
+                ],
+                populationCost: 20,
+            ),
         ];
     }
 

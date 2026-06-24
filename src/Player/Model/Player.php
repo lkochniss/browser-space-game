@@ -151,4 +151,48 @@ class Player
     {
         ++$this->statsShipsBuilt;
     }
+
+    /**
+     * T-104a Crew-Cap pro Player. Officer-Quarters: 5 Crew-Slots pro Level
+     * pro Instance. Summe über alle Planeten + alle Instances.
+     * Cap zählt Crew aller Types (Captain heute, später Engineer/Diplomat T-104c).
+     */
+    public function getCrewCap(?\DateTimeImmutable $now = null): int
+    {
+        $cap = 0;
+        foreach ($this->planets as $planet) {
+            foreach ($planet->getBuildings() as $building) {
+                if ($building->getType() !== \App\Building\ValueObject\BuildingType::OFFICER_QUARTERS) {
+                    continue;
+                }
+                if ($now !== null && !$building->isReady($now)) {
+                    continue;
+                }
+                $cap += $building->getLevel() * 5;
+            }
+        }
+
+        return $cap;
+    }
+
+    /**
+     * T-104a Crew-Training-Service nutzt das, um den nächsten Training-Slot
+     * zu errechnen (Captain-Anzahl bestimmt Wallclock-Duration).
+     * Nimmt einen `CrewRepository` als Source.
+     */
+    public function hasAnyAcademy(?\DateTimeImmutable $now = null): bool
+    {
+        foreach ($this->planets as $planet) {
+            foreach ($planet->getBuildings() as $building) {
+                if ($building->getType() !== \App\Building\ValueObject\BuildingType::ACADEMY) {
+                    continue;
+                }
+                if ($now === null || $building->isReady($now)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

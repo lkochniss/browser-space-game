@@ -125,6 +125,8 @@ class InteractiveDemoCommand extends Command
         private readonly ResearchDurationConfig $researchDurationConfig,
         private readonly \App\Research\Service\StartResearchCommandService $startResearchService,
         private readonly ResearchCompletionService $researchCompletion,
+        private readonly \App\Crew\Service\CrewTrainingCompletionService $crewTrainingCompletion,
+        private readonly \App\Crew\Repository\CrewRepository $crewRepository,
         private readonly PlayerResearchRepository $playerResearchRepository,
         private readonly ActiveResearchRepository $activeResearchRepository,
         private readonly BuildBuildingCommandService $buildService,
@@ -229,6 +231,9 @@ class InteractiveDemoCommand extends Command
                     'Colonize Planet' => $this->colonizePlanet($io, $player),
                     'Tick Forward (advance time)' => $this->tickForward($io, $player),
                     'Forschung' => $this->doResearch($io, $player),
+                    'Crew: Train Captain' => $this->trainCaptain($io, $player),
+                    'Crew: Assign to Ship' => $this->assignCaptain($io, $player),
+                    'Crew: Boost' => $this->boostCaptain($io, $player),
                     'Set Background' => $this->setBackground($io, $player),
                     'Reset Demo' => $this->resetSession($io, $player),
                     'Quit' => false,
@@ -304,6 +309,9 @@ class InteractiveDemoCommand extends Command
             'Colonize Planet',
             'Tick Forward (advance time)',
             'Forschung',
+            'Crew: Train Captain',
+            'Crew: Assign to Ship',
+            'Crew: Boost',
             'Set Background',
             'Reset Demo',
             'Quit',
@@ -1098,6 +1106,7 @@ class InteractiveDemoCommand extends Command
         $salvaged = $this->salvageProcessor->runTick();
         $discovered = $this->telescopeDiscovery->runTickForPlayer($player);
         $researchDone = $this->researchCompletion->runTickForPlayer($player);
+        $crewTrained = $this->crewTrainingCompletion->runTick();
 
         $this->lastActionParams = [
             'advance_seconds' => $seconds,
@@ -1105,16 +1114,18 @@ class InteractiveDemoCommand extends Command
             'salvages_processed' => $salvaged,
             'systems_discovered' => $discovered,
             'research_completed' => $researchDone,
+            'crew_trained' => $crewTrained,
         ];
 
         $io->success(sprintf(
-            'Tick advanced by %ds — Clock: %s | Fleets arrived: %d | Salvages: %d | Discovered: %d | Research-done: %d',
+            'Tick advanced by %ds — Clock: %s | Fleets arrived: %d | Salvages: %d | Discovered: %d | Research-done: %d | Crew-trained: %d',
             $seconds,
             $this->clock->now()->format('Y-m-d H:i:s'),
             $arrived,
             $salvaged,
             $discovered,
             $researchDone,
+            $crewTrained,
         ));
 
         return true;
@@ -1291,6 +1302,140 @@ class InteractiveDemoCommand extends Command
         $io->success(sprintf('Forschung gestartet: %s', $slug));
 
         return true;
+    }
+
+    private function trainCaptain(SymfonyStyle $io, Player $player): bool
+    {
+        $io->section('Captain-Training starten (Akademie)');
+
+        $crewList = $this->crewRepository->findByPlayer($player);
+        $aliveCount = 0;
+        foreach ($crewList as $c) {
+            if ($c->getStatus() !== \App\Crew\ValueObject\CrewStatus::DEAD) {
+                ++$aliveCount;
+            }
+        }
+        $cap = $player->getCrewCap($this->clock->now());
+        $io->text(sprintf('Crew: <info>%d/%d</info>', $aliveCount, $cap));
+
+        if ($aliveCount >= $cap) {
+            $io->warning('Cap erreicht — baue Officer-Quarters für mehr Slots.');
+            return true;
+        }
+        if (!$player->hasAnyAcademy($this->clock->now())) {
+            $io->warning('Keine fertige ACADEMY — erst eine bauen.');
+            return true;
+        }
+
+        $crew = $this->bus->dispatch(new \App\Crew\Command\StartCrewTrainingCommand($player->getId()));
+        $this->lastActionParams = ['crew_id' => (string) $crew->getId()];
+        $io->success(sprintf(
+            'Training gestartet: %s — fertig %s',
+            $crew->getId(),
+            $crew->getTrainingFinishedAt()->format('Y-m-d H:i:s'),
+        ));
+
+        return true;
+    }
+
+    private function assignCaptain(SymfonyStyle $io, Player $player): bool
+    {
+        $io->section('Captain assignen');
+
+        $idleCrew = $this->crewRepository->findIdleByPlayer($player);
+        if ($idleCrew === []) {
+            $io->warning('Kein IDLE-Captain verfügbar.');
+            return true;
+        }
+        $ships = [];
+        foreach ($player->getPlanets() as $planet) {
+            foreach ($planet->getResources() as $_) {
+                // nutze nicht resources, sondern ships — siehe unten
+            }
+        }
+        $ships = $this->collectPlayerShips($player);
+        if ($ships === []) {
+            $io->warning('Kein eigenes Schiff verfügbar.');
+            return true;
+        }
+
+        $crewChoices = [];
+        foreach ($idleCrew as $c) {
+            $crewChoices[(string) $c->getId()] = sprintf('%s L%d', substr((string) $c->getId(), 0, 8), $c->getLevel());
+        }
+        $crewKey = $io->choice('Captain', $crewChoices);
+        $crewResolved = array_search($crewKey, $crewChoices, true);
+        $crewId = (string) ($crewResolved !== false ? $crewResolved : $crewKey);
+
+        $shipChoices = [];
+        foreach ($ships as $s) {
+            $shipChoices[(string) $s->getId()] = sprintf(
+                '%s [%s]',
+                substr((string) $s->getId(), 0, 8),
+                $s->getType()->value,
+            );
+        }
+        $shipKey = $io->choice('Schiff', $shipChoices);
+        $shipResolved = array_search($shipKey, $shipChoices, true);
+        $shipId = (string) ($shipResolved !== false ? $shipResolved : $shipKey);
+
+        $this->bus->dispatch(new \App\Crew\Command\AssignCrewCommand(
+            new \App\Crew\ValueObject\CrewId($crewId),
+            new \App\Ship\ValueObject\ShipId($shipId),
+        ));
+        $io->success('Captain assigned.');
+
+        return true;
+    }
+
+    private function boostCaptain(SymfonyStyle $io, Player $player): bool
+    {
+        $io->section('Captain-Boost (500 IRON_BAR + 100 CHIP → +500 XP, 24h Cooldown)');
+
+        $crewList = $this->crewRepository->findByPlayer($player);
+        $eligible = array_values(array_filter(
+            $crewList,
+            fn ($c) => $c->getStatus() !== \App\Crew\ValueObject\CrewStatus::DEAD
+                   && $c->getStatus() !== \App\Crew\ValueObject\CrewStatus::TRAINING,
+        ));
+        if ($eligible === []) {
+            $io->warning('Keine boost-fähige Crew (IDLE/ASSIGNED required).');
+            return true;
+        }
+
+        $choices = [];
+        foreach ($eligible as $c) {
+            $choices[(string) $c->getId()] = sprintf(
+                '%s L%d xp=%d [%s]',
+                substr((string) $c->getId(), 0, 8),
+                $c->getLevel(),
+                $c->getXp(),
+                $c->getStatus()->value,
+            );
+        }
+        $key = $io->choice('Captain boosten', $choices);
+        $resolved = array_search($key, $choices, true);
+        $crewId = (string) ($resolved !== false ? $resolved : $key);
+
+        $this->bus->dispatch(new \App\Crew\Command\BoostCrewCommand(
+            new \App\Crew\ValueObject\CrewId($crewId),
+        ));
+        $io->success('Boost angewendet: +500 XP, 24h Cooldown.');
+
+        return true;
+    }
+
+    /**
+     * @return list<\App\Ship\Model\Ship>
+     */
+    private function collectPlayerShips(Player $player): array
+    {
+        $result = [];
+        foreach ($player->getPlanets() as $planet) {
+            $result = array_merge($result, $this->shipRepository->findByPlanet($planet));
+        }
+
+        return $result;
     }
 
     private function setBackground(SymfonyStyle $io, Player $player): bool

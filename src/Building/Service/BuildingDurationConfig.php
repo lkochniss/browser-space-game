@@ -71,6 +71,10 @@ class BuildingDurationConfig
         BuildingType::COMPOSITE_PLANT->value => 2100,  // 35min
         BuildingType::HULL_FOUNDRY->value => 3600,     // 60min — Heavy
         BuildingType::SHIELD_ASSEMBLER->value => 2700, // 45min
+
+        // T-104a Crew-Foundation
+        BuildingType::ACADEMY->value => 3600,           // 60min — heavy-Infrastructure
+        BuildingType::OFFICER_QUARTERS->value => 2400,  // 40min
     ];
 
     /**

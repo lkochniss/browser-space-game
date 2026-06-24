@@ -76,6 +76,13 @@ enum BuildingType: string
     case HULL_FOUNDRY = 'hull_foundry';
     case SHIELD_ASSEMBLER = 'shield_assembler';
 
+    // T-104a Crew-Foundation:
+    //  - ACADEMY trainiert Crew (Captains, später Engineer/Diplomat via T-104c)
+    //  - OFFICER_QUARTERS bietet Wohnraum-Cap (max 5 Crew/Level pro Instance)
+    // Beide non-unique, Slot-Size 2 (heavy-Infrastructure).
+    case ACADEMY = 'academy';
+    case OFFICER_QUARTERS = 'officer_quarters';
+
     public function getPopulationCapBonusPerLevel(): int
     {
         return match ($this) {
@@ -116,7 +123,9 @@ enum BuildingType: string
             self::PROBE_LAB,
             self::RECYCLING_PLANT,
             self::TELESCOPE,
-            self::CONSTRUCTION_YARD => 2,
+            self::CONSTRUCTION_YARD,
+            self::ACADEMY,
+            self::OFFICER_QUARTERS => 2,
             default => 1,
         };
     }
@@ -163,3 +172,4 @@ enum BuildingType: string
         };
     }
 }
+

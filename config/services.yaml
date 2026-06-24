@@ -75,6 +75,14 @@ services:
     App\Research\Service\ResearchCompletionService:
         public: true
 
+    # T-104a: CrewTrainingCompletionService globaler Tick-Service (analog FleetArrival).
+    App\Crew\Service\CrewTrainingCompletionService:
+        public: true
+
+    # T-104a: CrewRepository public für Demo-CLI + Tests direct lookup.
+    App\Crew\Repository\CrewRepository:
+        public: true
+
     # T-025: ResearchTree als public Singleton (StartResearchCommandService + Demo-CLI).
     App\Research\Service\ResearchTree:
         public: true

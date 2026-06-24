@@ -131,7 +131,7 @@
 | 103c-npc-ai-tactic-heuristik.md | Feature | Combat & Battle | Ship | Draft | T-103b | — |
 | 103d-battle-replay-persistence.md | Feature | Combat & Battle | Ship | Draft | T-103 | — |
 | 103e-loot-trigger-hook.md | Feature | Combat & Battle | Ship | Draft | T-103, T-080 | — |
-| 104a-crew-foundation.md | Feature | Combat & Battle | Ship | Ready | T-009, T-070 | Akademie + Officer-Quarters + Captain-Crew-Type |
+| 104a-crew-foundation.md | Feature | Combat & Battle | Ship | Done | T-009, T-070 | Akademie + Officer-Quarters + Captain-Crew-Type |
 | 104b-captain-skill-trees.md | Feature | Combat & Battle | Ship | Ready | T-104a, T-103 | Beam-Master/Missile-Spec/Shield-Tactician/Fleet-Commander |
 | 104c-other-crew-roles.md | Feature | Combat & Battle | Ship | Ready | T-104a, T-110 | Forscher/Engineer/Diplomat (Lab-Boost/Maintenance/Reputation) |
 | 105-ship-maintenance.md | Feature | Ships & Fleet | Ship | Blocked | T-066, T-102, T-005, T-178, T-179 | Treibstoff + Crew-Versorgung; Stranding bei Mangel; blocked by T-178 |
