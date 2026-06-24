@@ -373,4 +373,22 @@ class Ship
 
         return $this->type->getEscapePodSurvivalChance();
     }
+
+    /**
+     * T-103 Battle-Engine HP-State. NULL = "noch nie im Battle", BattleResolver
+     * resetted das via Initial-Stats-Lookup. Damage in Battle persistiert
+     * zwischen Rounds; Schiff stirbt bei HP <= 0.
+     */
+    #[ORM\Column(name: 'battle_current_hp', type: 'integer', nullable: true)]
+    private ?int $battleCurrentHp = null;
+
+    public function getBattleCurrentHp(): ?int
+    {
+        return $this->battleCurrentHp;
+    }
+
+    public function setBattleCurrentHp(?int $hp): void
+    {
+        $this->battleCurrentHp = $hp === null ? null : max(0, $hp);
+    }
 }

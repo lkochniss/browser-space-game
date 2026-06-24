@@ -8,6 +8,7 @@ use App\Crew\Model\Crew;
 use App\Crew\ValueObject\CrewStatus;
 use App\Crew\ValueObject\CrewType;
 use App\Player\Model\Player;
+use App\Ship\Model\Ship;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -43,6 +44,15 @@ class CrewRepository extends ServiceEntityRepository
     public function findInTraining(): array
     {
         return $this->findBy(['status' => CrewStatus::TRAINING]);
+    }
+
+    /**
+     * T-103: lookup für Battle-Resolver — welche Crew ist diesem Schiff
+     * zugeordnet? Heute genau 1 (Captain); T-104c erweitert um Engineer/Diplomat.
+     */
+    public function findByAssignedShip(Ship $ship): ?Crew
+    {
+        return $this->findOneBy(['assignedShip' => $ship, 'status' => CrewStatus::ASSIGNED]);
     }
 
     /**

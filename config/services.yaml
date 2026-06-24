@@ -83,6 +83,10 @@ services:
     App\Crew\Repository\CrewRepository:
         public: true
 
+    # T-103: BattleResolver public für Tests + Demo-CLI (synchron triggered).
+    App\Battle\Service\BattleResolver:
+        public: true
+
     # T-025: ResearchTree als public Singleton (StartResearchCommandService + Demo-CLI).
     App\Research\Service\ResearchTree:
         public: true

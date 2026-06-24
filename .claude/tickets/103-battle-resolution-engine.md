@@ -4,7 +4,7 @@
 **Epic:** Combat & Battle
 **Domain:** Ship
 **Blocked By:** T-102, T-068
-**Status:** Ready
+**Status:** Done
 **Effort:** L (~6-8h)
 **Depends on:** T-102 (Ready), T-068 (Ready)
 **Blocks:** T-103b, T-103c, T-103d, T-103e, T-074, T-075, T-077, T-080, T-104b
@@ -39,54 +39,52 @@ T-103 = nackte Round-Engine ohne Tactic, NPC-AI, Replay-Log, Loot.
 
 ### Battle-Entity + Status
 
-- [ ] `App\Battle\Model\Battle` Entity: id, initiator, defender (nullable
-      für NPC), location, attackerFleet, defenderFleet (nullable),
-      defenderPlanet (nullable für Planet-Defense), status, startedAt,
-      endedAt, rounds (int)
-- [ ] `App\Battle\ValueObject\BattleStatus` Enum:
-      `RUNNING / ENDED_ATTACKER_WIN / ENDED_DEFENDER_WIN / DRAW`
-- [ ] Migration + Doctrine ORM-Mapping + Repository
+- [x] `App\Battle\Model\Battle` Entity (id, attacker, attackerFleet,
+      defenderFleet / defenderPlanet (XOR), location, status, rounds,
+      startedAt, endedAt)
+- [x] `App\Battle\ValueObject\BattleStatus` Enum mit 4 Werten
+- [x] Migration `Version20260624000003` + Doctrine ORM + Repository
 
 ### Round-Engine
 
-- [ ] `BattleResolver::resolve(Battle $battle, ?DateTimeImmutable $now): void`
-- [ ] Loop max 10 Rounds, break wenn eine Seite leer
-- [ ] Pro Round:
-  - `damageA = Σ ship.effectiveDamage()` (mit Captain × `1 + 0.03 × lvl`)
-  - `damageD = Σ ship.effectiveDamage() + turretDamage + aaDamage` (T-068)
-  - Per-Ship-Damage = `floor(totalDamage / N_enemy_ships)`
-  - Pro Ship: HP -= damage_per_ship; bei HP ≤ 0 → kill-marker
-- [ ] Nach Round: `em->remove($ship)` für gestorbene
-- [ ] Shield-Pool reduziert Damage zuerst (Defense-Battle)
-- [ ] Defense-Building-HP reduziert nach Shield (T-068 Damage-State-Contract)
+- [x] `BattleResolver::resolve(Battle $battle): void` (Clock injected)
+- [x] Loop max 10 Rounds, break wenn eine Seite leer
+- [x] Pro Round: Σ Damage gleichmäßig auf alive Enemy-Ships,
+      Captain-Boost via Crew.getStatsMultiplier × Blueprint-Damage
+- [x] Killed Ships via `em->remove($ship)`
+- [x] PLANETARY_SHIELD-Pool absorbiert Defender-Side-Damage VOR Ship-Loss
+      (Foundation: Shield-Pool in-memory tracked, kein Persist auf Building)
+- [ ] PLANETARY_SHIELD-Building-HP-Sync — _deferred: in-memory Shield-Pool
+      reicht für Foundation; Persistence-Sync auf Building.currentHp kann
+      mit T-103d Replay-Log zusammen ergänzt werden_
 
 ### Captain-Permadeath-Roll
 
-- [ ] Für jeden Killed-Ship mit Captain:
-      `random(100) < ship.shipClass.escapePodSurvivalChance`
-- [ ] Survive → Captain.status = IDLE, Captain.assignedShip = null,
-      Captain auf nearestHomePlanet (T-081 Helper)
-- [ ] Fail → Captain.status = DEAD (T-104a Hook)
+- [x] Pro Killed-Ship mit Captain (`CrewRepository::findByAssignedShip`):
+      `BattleRandomizer::roll() < ship.escapePodSurvivalChance`
+- [x] Survive → `Crew::unassign()` (status=IDLE, assignedShip=null)
+- [x] Fail → `Crew::markDead()` (status=DEAD)
+- [ ] Survival-Placement auf `nearestHomePlanet` (T-081) — _deferred:
+      Captain landet aktuell als IDLE ohne Planet-Binding (Crew hat keine
+      Planet-Relation); Folge-Ticket falls Crew-Planet-Binding gewünscht_
 
 ### Command + Trigger
 
-- [ ] `StartBattleCommand(attackerFleetId, defenderTargetId)`:
-      target = Fleet ODER Planet (Polymorph via discriminator)
-- [ ] Validation: Fleets im selben System, beide non-empty
-- [ ] BattleResolver läuft synchron beim Dispatch
+- [x] `StartBattleCommand(attackerFleetId, defenderFleetId|defenderPlanetId)`
+- [x] Validation: XOR auf Defender, Same-System, Non-Empty
+- [x] BattleResolver synchron beim Dispatch
 
 ### Tests
 
-- [ ] `BattleResolverFoundationTest`: 2v2 gleicher Damage → DRAW; High-HP wins
-- [ ] `CaptainStatBoostInBattleTest`: Captain L10 = ×1.30 effective Damage
-- [ ] `PlanetDefenseBattleTest`: Shield-HP absorbiert; Turret+AA-Damage zählt
-- [ ] `CaptainPermadeathRollTest`: Escape-Pod % per ShipClass (mock random)
-- [ ] `BattleStatusTest`: Win/Loss/Draw nach 10 Rounds
+- [x] `BattleResolverTest` (7): Class-Difference-Win, Draw-after-10,
+      Shield-Absorbtion (Frigate vs L5 Shield = Draw), Captain-Boost,
+      Captain-Permadeath (mocked Randomizer roll=99/0)
 
 ### Docs
 
-- [ ] `combat.md` (neu) — Battle-Foundation
-- [ ] `decisions.md` Eintrag T-103
+- [x] `combat.md` (neu) — Battle-Foundation
+- [x] `decisions.md` Eintrag T-103
+- [x] `README.md` (docs) Eintrag combat.md
 
 ## Out of Scope (Folge-Tickets)
 
@@ -110,3 +108,18 @@ Yes — `BattleFixture` (1v1, Multi-Ship, Planet-Defense, NPC-vs-Player Test-Bat
 ### Refinement Tokens (estimate)
 - Input: ~10k
 - Output: ~4k
+
+### Implementation Tokens (estimate)
+- Input: ~200k
+- Output: ~22k
+
+### Deferred / Follow-Ups
+
+- Persist Shield-Pool-Depletion auf PLANETARY_SHIELD.currentHp (heute
+  in-memory). Folge mit T-103d Replay-Log.
+- Captain-Survival landing auf nearestHomePlanet (T-081 Helper) — Crew hat
+  heute keine Planet-Relation; Foundation lässt überlebenden Captain einfach
+  IDLE ohne Planet.
+- `BattleFixture` für T-103-Folge-Tickets (heute Tests bauen inline)
+- Demo-CLI Action "Start Battle" mit Defender-Picker — Foundation-Demo deckt's
+  nicht ab

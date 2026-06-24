@@ -12,6 +12,7 @@ Vision. Vision-Konzepte liegen unter `/docs/*.md` (Obsidian-Notes, DE).
 | buildings.md | Building | 18 BuildingTypes, Cost/Duration-Config, Bauprozess, Storage-Cap, Tick-Reihenfolge |
 | ships.md | Ship | 6 ShipTypes, Bau (Shipyard-Gate), Life-Support, Cargo, Salvage (polymorph), Colonize |
 | crew.md | Crew | T-104a Foundation: Captain, Akademie/Officer-Quarters, Wallclock-Training, XP-Level-Up, Assign, Permadeath |
+| combat.md | Battle | T-103 Foundation Battle-Resolver — Round-Engine, Captain-Stats + Permadeath, Planet-Defense-Konsum |
 | fleets.md | Fleet | DOCKED ↔ IN_TRANSIT, Create/Move/Disband, FleetArrivalService (Tick-Resolver), Travel-Speed |
 | poi.md | POI | STI-Foundation + 5 Subtypes (Asteroid/Debris/Nebula/Wormhole/Station), SalvageableField-Interface |
 | probes.md | Probe | 3 ProbeTypes + ProbeLab-Gate; Foundation, Effekte folgen mit T-018/T-027/T-087 |
