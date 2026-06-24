@@ -30,6 +30,12 @@ readonly class RenewableProductionProcessor implements TickProcessorInterface
 
     public function process(Planet $planet, ?DateTimeImmutable $now = null): void
     {
+        // T-065 Power-Throttle: bei Unter-Versorgung drosselt Renewable-Produktion.
+        $powerThrottle = $planet->getPowerThrottleRatio($now);
+        if ($powerThrottle <= 0.0) {
+            return;
+        }
+
         foreach ($this->config->entries() as $entry) {
             $totalLevel = 0;
             foreach ($planet->getBuildings() as $b) {
@@ -45,7 +51,11 @@ readonly class RenewableProductionProcessor implements TickProcessorInterface
                 continue;
             }
 
-            $produced = $totalLevel * $entry['baseRate'];
+            // T-065: Power-Throttle wirkt vor Storage-Cap-Clamp.
+            $produced = (int) floor($totalLevel * $entry['baseRate'] * $powerThrottle);
+            if ($produced <= 0) {
+                continue;
+            }
             $resource = $planet->ensureResource($entry['resource']);
             $cap = $planet->getStorageCapacity($entry['resource']);
             $room = max(0, $cap - $resource->getAmount());

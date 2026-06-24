@@ -36,6 +36,12 @@ readonly class RefinementProductionProcessor implements TickProcessorInterface
         // (Tier-1-Output kann nicht im selben Tick zu Tier-2-Input werden).
         $refinedSnapshot = $this->snapshotRefined($planet);
 
+        // T-065 Power-Throttle: bei Unter-Versorgung drosselt Refinement proportional.
+        $powerThrottle = $planet->getPowerThrottleRatio($now);
+        if ($powerThrottle <= 0.0) {
+            return;
+        }
+
         foreach ($planet->getBuildings() as $building) {
             $recipe = $this->config->getRecipeForBuilding($building->getType());
             if ($recipe === null) {
@@ -47,7 +53,8 @@ readonly class RefinementProductionProcessor implements TickProcessorInterface
                 continue;
             }
 
-            $desiredOutput = $recipe->outputAmount * $building->getLevel();
+            // T-065: Power-Throttle wirkt vor Input-/Storage-Cap-Clamp.
+            $desiredOutput = (int) floor($recipe->outputAmount * $building->getLevel() * $powerThrottle);
             if ($desiredOutput <= 0) {
                 continue;
             }

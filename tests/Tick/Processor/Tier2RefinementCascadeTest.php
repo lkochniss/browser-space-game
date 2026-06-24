@@ -125,6 +125,10 @@ final class Tier2RefinementCascadeTest extends TestCase
 
     private function makePlanet(): Planet
     {
-        return Planet::generatePlanet(PlanetId::generate());
+        $planet = Planet::generatePlanet(PlanetId::generate());
+        // T-065 Power: HUB L1000 deckt alle Refinery-Consumption ab.
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HUB, 1000));
+
+        return $planet;
     }
 }

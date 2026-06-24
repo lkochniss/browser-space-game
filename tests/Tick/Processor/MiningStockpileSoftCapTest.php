@@ -66,6 +66,8 @@ final class MiningStockpileSoftCapTest extends TestCase
         // T-177: WAREHOUSE statt IRON_STORAGE — Generic-Volume statt per-Resource-Cap
         $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::WAREHOUSE, 1000));
         $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::IRON_MINE, 1));
+        // T-065 Power: HUB L100 produziert 2550 — deckt WAREHOUSE L1000 (1000 consumption)
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HUB, 100));
 
         return $planet;
     }

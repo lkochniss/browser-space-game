@@ -151,6 +151,58 @@ Die 6 alten Storage-Buildings (IRON_STORAGE / COAL_STORAGE / IRON_BAR_STORAGE /
 WATER_TANK / FOOD_SILO / OXYGEN_STORAGE) sind **gelöscht**. WAREHOUSE ist
 ihre einzige Konsolidierung — non-unique, beliebig stapelbar.
 
+## Power-Net (T-065 Energy-System)
+
+Live-berechnete Power-Bilanz pro Planet. Bei Unter-Versorgung drosseln
+Mining/Refinement/Renewable-Production proportional.
+
+### Producer + Consumer
+
+| Building | Production / Lvl | Consumption / Lvl |
+|----------|------------------|-------------------|
+| `HUB` | `50 + 25 × Lvl` | 1 |
+| `HQ` | 0 | 1 |
+| `WAREHOUSE` | 0 | 1 |
+| Renewable (W/F/O) | 0 | 1 |
+| Mines (alle 9) | 0 | 3 |
+| Hospital / Cultural-Center / Temple | 0 | 5 |
+| `RECYCLING_PLANT` | 0 | 6 |
+| Refineries (alle 9 inkl. IRON_SMELTER) | 0 | 8 |
+| `CONSTRUCTION_YARD` | 0 | 8 |
+| Lab-Trio (Research/Probe/Telescope) | 0 | 10 |
+| `SHIPYARD` | 0 | 15 |
+| `ACADEMY` / `OFFICER_QUARTERS` | 0 | 0 |
+
+T-071 Power-Plants (Solar/Fusion/Antimatter) erweitern die Producer-Liste.
+
+### Throttle-Mechanik (Q1=b)
+
+```
+ratio = min(1.0, produced / max(1, consumed))
+```
+
+Bei `consumed = 0` → ratio = 1.0. Drosselung wirkt auf:
+
+- `ResourceProductionProcessor` (Mining) — `desired *= ratio`
+- `RefinementProductionProcessor` — `desiredOutput = floor(recipe.outputAmount × level × ratio)`
+- `RenewableProductionProcessor` — `produced = floor(totalLevel × baseRate × ratio)`
+
+Strategic-Unique-Buildings (Shipyard/Lab/etc.) konsumieren weiter, drosseln aber
+nichts — sie haben keinen Production-Output. Pop-Survival kann durch Power-
+Mangel erodieren (Renewable drosselt → W/F/O sinkt → Pop stirbt) — realistic.
+
+### API
+
+| Methode | Zweck |
+|---------|-------|
+| `Planet::getPowerProduced($now): int` | Σ produktion ready Buildings |
+| `Planet::getPowerConsumed($now): int` | Σ consumption ready Buildings |
+| `Planet::getPowerBalance($now): int` | produced - consumed |
+| `Planet::getPowerThrottleRatio($now): float` | clamp(0..1) |
+
+Live-computed, kein DB-Feld. Per-Building-Priorisierung wäre T-065b
+(Player-Allocation manuell).
+
 ## Tick-Reihenfolge
 
 1. `ConstructionCompletionProcessor` (T-062) — recalc Pop-Cap mit aktueller Clock
@@ -262,7 +314,7 @@ nur auf diesem Planeten, kombiniert mit Forschung × Planet-Type-Bonus.
 ## Geplant
 - **High-Tier Cost-Migration:** Buildings mit IRON_BAR statt IRON_ORE als Cost
 - **T-025/T-026** Forschungs-Gating für höhere Building-Levels
-- **T-065** Power-Net (Energy-System) — Reaktoren + Consumer
+- **T-071** Power-Plants (Solar/Fusion/Antimatter) — erweitern T-065 Producer-Pool
 - **T-068** Defense-Buildings (Shield/Turret/Sensor/AA)
 - **T-069** Research-Lab Tier mit RP-Output
 - **Demolish/Refund-Flow** (eigenes Ticket bei Bedarf)

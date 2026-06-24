@@ -4,7 +4,7 @@
 **Epic:** Energy System
 **Domain:** Building
 **Blocked By:** T-006, T-009
-**Status:** Ready
+**Status:** Done
 **Effort:** L
 **Depends on:** T-006 (Done), T-009 (Done)
 **Blocks:** T-068, T-071
@@ -46,43 +46,42 @@ Renewable-Producer drosseln proportional `produced/consumed`.
 
 ### Power-Bilanz auf Planet
 
-- [ ] `BuildingType::getPowerProduction(int $level): int` (nur HUB liefert > 0;
+- [x] `BuildingType::getPowerProduction(int $level): int` (nur HUB liefert > 0;
       `50 + 25 × level`; alle anderen 0 bis T-071 PowerPlant-BuildingTypes hinzufügt)
-- [ ] `BuildingType::getPowerConsumption(int $level): int` per Decision-Tabelle oben
-- [ ] `Planet::getPowerProduced($now): int` — nur ready Buildings (T-062 isReady)
-- [ ] `Planet::getPowerConsumed($now): int` — nur ready Buildings
-- [ ] `Planet::getPowerBalance($now): int = produced - consumed`
-- [ ] `Planet::getPowerThrottleRatio($now): float` —
+- [x] `BuildingType::getPowerConsumption(int $level): int` per Decision-Tabelle oben
+- [x] `Planet::getPowerProduced($now): int` — nur ready Buildings (T-062 isReady)
+- [x] `Planet::getPowerConsumed($now): int` — nur ready Buildings
+- [x] `Planet::getPowerBalance($now): int = produced - consumed`
+- [x] `Planet::getPowerThrottleRatio($now): float` —
       `min(1.0, produced / max(1, consumed))`
 
 ### Throttle-Anwendung in Tick-Processors (Q1=b)
 
-- [ ] `ResourceProductionProcessor` (Mining) — multipliziert `desired` mit
+- [x] `ResourceProductionProcessor` (Mining) — multipliziert `desired` mit
       `$planet->getPowerThrottleRatio($now)` vor `intval`
-- [ ] `RefinementProductionProcessor` — analog auf `desiredOutput`
-- [ ] `RenewableProductionProcessor` (T-097a) — analog auf produzierte W/F/O
-- [ ] Bei ratio = 0 (kein Power) → kein Output
-- [ ] Tests: jede der 3 Production-Mechaniken mit/ohne Throttle
+- [x] `RefinementProductionProcessor` — analog auf `desiredOutput` (floor)
+- [x] `RenewableProductionProcessor` (T-097a) — analog auf produzierte W/F/O (floor)
+- [x] Bei ratio = 0 (kein Power) → kein Output (Early-Return im Processor)
+- [x] Tests: jede der 3 Production-Mechaniken mit/ohne Throttle
 
 ### Demo-CLI
 
-- [ ] `showStatus` zeigt pro Planet `Power: <produced>/<consumed> (ratio X.XX)`
-- [ ] Bei ratio < 1: `[POWER LOW — ratio X.XX]` Tag in rot/warn
+- [x] `showStatus` zeigt pro Planet `Power: <produced>/<consumed> (ratio X.XX)`
+- [x] Bei ratio < 1: `[POWER LOW — ratio X.XX]` Tag in rot
 
 ### Tests
 
-- [ ] `PlanetPowerBalanceTest`: produced/consumed/balance/ratio Werte für
-      diverse Building-Setups
-- [ ] `PowerThrottleMiningTest` (IT): IRON_MINE mit niedriger Power-Ratio
-      produziert proportional weniger
-- [ ] `PowerThrottleRefinementTest` (IT): Analog IRON_SMELTER
-- [ ] `PowerThrottleRenewableTest` (IT): Analog WATER_RECLAIMER
-- [ ] `PowerNoThrottleAboveBalanceTest`: ratio = 1.0 wenn produced ≥ consumed
+- [x] `PlanetPowerBalanceTest` (6): produced/consumed/balance/ratio Werte für
+      diverse Building-Setups + In-Progress-Filter
+- [x] `PowerThrottleProductionTest` (7): jede der 3 Production-Mechaniken
+      (Mining/Refinement/Renewable) mit Half-Power, Zero-Power, Full-Power
+- [x] 28 bestehende Production-Tests bekamen HUB-Booster (Foundation-Erwartung:
+      jeder produktive Planet hat ein HUB)
 
 ### Docs
 
-- [ ] `buildings.md` Power-Sektion: Producer/Consumer-Tabelle, Throttle-Mechanik
-- [ ] `decisions.md` Eintrag T-065
+- [x] `buildings.md` Power-Sektion: Producer/Consumer-Tabelle, Throttle-Mechanik
+- [x] `decisions.md` Eintrag T-065
 
 ## Fixtures Needed
 
@@ -100,3 +99,7 @@ No — Tests nutzen direkt `Planet::generatePlanet()` + Building-Constructor.
 ### Refinement Tokens (estimate)
 - Input: ~7k
 - Output: ~3k
+
+### Implementation Tokens (estimate)
+- Input: ~120k
+- Output: ~12k

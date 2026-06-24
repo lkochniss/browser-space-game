@@ -590,6 +590,61 @@ class Planet
     }
 
     /**
+     * T-065 Power-Net pro Planet. Summe der Produktion aller ready Buildings.
+     * Foundation-Producer: HUB liefert `50 + 25/Lvl` per Instance. T-071 erweitert
+     * dies um dedizierte Power-Plants (Solar/Fusion/Antimatter).
+     */
+    public function getPowerProduced(?DateTimeImmutable $now = null): int
+    {
+        $sum = 0;
+        foreach ($this->buildings as $b) {
+            if (!$b->isReady($now)) {
+                continue;
+            }
+            $sum += $b->getType()->getPowerProduction($b->getLevel());
+        }
+
+        return $sum;
+    }
+
+    /**
+     * T-065 Power-Net pro Planet. Summe der Consumption aller ready Buildings.
+     */
+    public function getPowerConsumed(?DateTimeImmutable $now = null): int
+    {
+        $sum = 0;
+        foreach ($this->buildings as $b) {
+            if (!$b->isReady($now)) {
+                continue;
+            }
+            $sum += $b->getType()->getPowerConsumption($b->getLevel());
+        }
+
+        return $sum;
+    }
+
+    public function getPowerBalance(?DateTimeImmutable $now = null): int
+    {
+        return $this->getPowerProduced($now) - $this->getPowerConsumed($now);
+    }
+
+    /**
+     * T-065 Throttle-Ratio (Q1=b Hard-Linear). Bei `consumed > produced` drosseln
+     * Mines/Refineries/Renewable proportional. Bei `consumed <= produced` voller
+     * Output (1.0). `consumed = 0` → 1.0 (kein div-by-zero).
+     */
+    public function getPowerThrottleRatio(?DateTimeImmutable $now = null): float
+    {
+        $consumed = $this->getPowerConsumed($now);
+        if ($consumed <= 0) {
+            return 1.0;
+        }
+        $produced = $this->getPowerProduced($now);
+
+        return min(1.0, $produced / $consumed);
+    }
+
+    /**
      * T-063: PlanetType-Bonus × Size-Faktor → Effective Mining-Multiplier.
      * Formel: max(0, 1 + typeBonus × sizeFactor). Multipliziert Mining-Output.
      *

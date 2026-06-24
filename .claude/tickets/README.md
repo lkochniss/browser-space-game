@@ -76,7 +76,7 @@
 | 063-planet-bonus-system.md | Feature | Foundation: Planet Types | Planet | Done | T-008 | Planet-Type-Boni (Mining-Multi pro Resource je Type) |
 | 064-construction-speed-boost.md | Feature | Research & Tech-Tree | Research | Done | T-062, T-025, T-026 | construction_speed_1 (3 Levels) reduziert Bauzeit multiplikativ; Stack mit T-063 Planet-Type |
 | 064b-construction-hub-building.md | Feature | Building System | Building | Done | T-064 | CONSTRUCTION_HUB Building (unique, slot-size 2); ×1.10/Level lokaler Speed-Multi, stackt mit T-063 + T-064 |
-| 065-energy-system.md | Feature | Energy System | Building | Ready | T-006, T-009 | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
+| 065-energy-system.md | Feature | Energy System | Building | Done | T-006, T-009 | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Storage Vision | Resource | Blocked | T-002, T-003 | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Resources Tier-2/3 | Resource | Done | T-003 | Tier-2-Erzeugnisse (3 Bars + 5 Compounds) + 2 neue FINITE Erze + Snapshot-Single-Step-Cascade; Volume-Tabelle erweitert. T-072 superseded |
 | 068-defense-buildings.md | Feature | Combat & Battle | Building | Ready | T-065, T-067 | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |

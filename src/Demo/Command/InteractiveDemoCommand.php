@@ -428,6 +428,15 @@ class InteractiveDemoCommand extends Command
             $io->text(sprintf('  Build-Queue: %d/%d', $active, $this->queueCapCalculator->compute($planet, $player, $now)));
             // T-171: Slot-Auslastung
             $io->text(sprintf('  Building-Slots: %d/%d', $planet->getBuildingSlotsUsed(), $planet->getBuildingSlotCap()));
+            // T-065: Power-Bilanz mit Throttle-Tag bei Unter-Versorgung
+            $produced = $planet->getPowerProduced($now);
+            $consumed = $planet->getPowerConsumed($now);
+            $ratio = $planet->getPowerThrottleRatio($now);
+            $powerLine = sprintf('  Power: %d/%d (ratio %.2f)', $produced, $consumed, $ratio);
+            if ($ratio < 1.0) {
+                $powerLine .= sprintf(' <fg=red>[POWER LOW — ratio %.2f]</>', $ratio);
+            }
+            $io->text($powerLine);
         }
 
         // Ships across all planets

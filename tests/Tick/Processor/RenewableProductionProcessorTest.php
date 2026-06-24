@@ -111,6 +111,12 @@ final class RenewableProductionProcessorTest extends TestCase
             $planet->addResource(Resource::generateWithAmount(ResourceType::OXYGEN, $initialOxygen));
         }
         $now = new DateTimeImmutable('-1 minute');
+
+        // T-065 Power: HUB L1000 ready, deckt Renewable-Building-Consumption ab.
+        $hub = new Building(BuildingId::generate(), BuildingType::HUB, 1000);
+        $hub->setFinishedAt($now);
+        $planet->addBuilding($hub);
+
         if ($waterReclaimerLevel > 0) {
             $b = new Building(BuildingId::generate(), BuildingType::WATER_RECLAIMER, $waterReclaimerLevel);
             $b->setFinishedAt($now);

@@ -35,6 +35,8 @@ final class TickPersistenceTest extends IntegrationTestCase
         $planet = Planet::generatePlanet(PlanetId::generate());
         $player->claimPlanet($planet);
         $planet->addBuilding(Building::createNewBuilding(BuildingType::IRON_MINE));
+        // T-065 Power: HUB deckt Mine-Consumption
+        $planet->addBuilding(Building::createNewBuilding(BuildingType::HUB));
         $planet->addResource(Resource::generateEmptyResource(ResourceType::IRON_ORE));
         $planet->addDeposit(ResourceDeposit::generateDepositWithAmount(ResourceType::IRON_ORE, 1000));
 
@@ -63,6 +65,8 @@ final class TickPersistenceTest extends IntegrationTestCase
         $planet = Planet::generatePlanet(PlanetId::generate());
         $player->claimPlanet($planet);
         $planet->addBuilding(Building::createNewBuilding(BuildingType::IRON_MINE));
+        // T-065 Power: HUB deckt Mine-Consumption
+        $planet->addBuilding(Building::createNewBuilding(BuildingType::HUB));
         $planet->addResource(Resource::generateEmptyResource(ResourceType::IRON_ORE));
         $planet->addDeposit(ResourceDeposit::generateDepositWithAmount(ResourceType::IRON_ORE, 100));
 
@@ -122,6 +126,8 @@ final class TickPersistenceTest extends IntegrationTestCase
         $planet = Planet::generatePlanet(PlanetId::generate());
         $player->claimPlanet($planet);
         $planet->addBuilding(\App\Building\Model\Building::createNewBuilding(\App\Building\ValueObject\BuildingType::IRON_SMELTER));
+        // T-065 Power: HUB deckt Smelter-Consumption
+        $planet->addBuilding(\App\Building\Model\Building::createNewBuilding(\App\Building\ValueObject\BuildingType::HUB));
         $planet->addResource(Resource::generateWithAmount(ResourceType::IRON_ORE, 100));
         $planet->addResource(Resource::generateWithAmount(ResourceType::COAL, 100));
 

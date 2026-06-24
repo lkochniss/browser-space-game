@@ -176,6 +176,8 @@ final class RefinementProductionProcessorTest extends TestCase
             $planet->addResource(Resource::generateEmptyResource(ResourceType::IRON_BAR));
         }
 
+        // T-065 Power: HUB L1000 deckt Refinery-Consumption ab.
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HUB, 1000));
         $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::IRON_SMELTER, $smelterLevel));
 
         return $planet;

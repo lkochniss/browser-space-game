@@ -26,6 +26,12 @@ readonly class ResourceProductionProcessor implements TickProcessorInterface
 
     public function process(Planet $planet, ?DateTimeImmutable $now = null): void
     {
+        // T-065 Power-Throttle: bei Unter-Versorgung drosselt Mining proportional.
+        $powerThrottle = $planet->getPowerThrottleRatio($now);
+        if ($powerThrottle <= 0.0) {
+            return;
+        }
+
         foreach ($planet->getResourceDeposits() as $deposit) {
             if (!$this->policy->canExtract($deposit, $planet->getBuildings())) {
                 continue;
@@ -49,6 +55,9 @@ readonly class ResourceProductionProcessor implements TickProcessorInterface
                 $multiplier = $this->resourceBuildingMap->getMultiplier($resourceType, $building->getType());
                 $desired += $baseValue * $building->getLevel() * $multiplier * $typeMulti * $stockpileMulti;
             }
+
+            // T-065: Power-Throttle wirkt vor Storage-Cap-Clamp.
+            $desired *= $powerThrottle;
 
             if ($desired <= 0) {
                 continue;

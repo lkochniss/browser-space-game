@@ -166,6 +166,8 @@ final class ResourceProductionProcessorTest extends TestCase
         $planet = Planet::generatePlanet(PlanetId::generate());
         $player->claimPlanet($planet);
 
+        // T-065 Power: HUB L1000 → 25050 produced, deckt jeden Test-Setup.
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HUB, 1000));
         $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::IRON_MINE, $buildingLevel));
         $planet->addResource(Resource::generateEmptyResource(ResourceType::IRON_ORE));
         $planet->addDeposit(ResourceDeposit::generateDepositWithAmount(ResourceType::IRON_ORE, $depositAmount));
@@ -183,6 +185,8 @@ final class ResourceProductionProcessorTest extends TestCase
         $planet = Planet::generatePlanet(PlanetId::generate(), $type, $size);
         $player->claimPlanet($planet);
 
+        // T-065 Power: HUB L1000 → 25050 produced.
+        $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::HUB, 1000));
         $planet->addBuilding(new Building(BuildingId::generate(), BuildingType::IRON_MINE, $buildingLevel));
         $planet->addResource(Resource::generateEmptyResource(ResourceType::IRON_ORE));
         $planet->addDeposit(ResourceDeposit::generateDepositWithAmount(ResourceType::IRON_ORE, $depositAmount));

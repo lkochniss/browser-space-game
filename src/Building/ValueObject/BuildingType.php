@@ -131,6 +131,63 @@ enum BuildingType: string
     }
 
     /**
+     * T-065 Power-Production pro Building (gegeben Level).
+     * Foundation: nur HUB ist Bootstrap-Producer (`50 + 25 × level` pro Instance).
+     * T-071 erweitert um dedizierte Power-Plants (Solar/Fusion/Antimatter).
+     */
+    public function getPowerProduction(int $level): int
+    {
+        return match ($this) {
+            self::HUB => 50 + 25 * $level,
+            default => 0,
+        };
+    }
+
+    /**
+     * T-065 Power-Consumption pro Building (gegeben Level). Werte laut
+     * Decision-Tabelle T-065 (Q2 sanft). Tuning-Knob für späteres Balancing.
+     */
+    public function getPowerConsumption(int $level): int
+    {
+        return match ($this) {
+            self::HQ,
+            self::HUB,
+            self::WAREHOUSE,
+            self::WATER_RECLAIMER,
+            self::AGRI_DOME,
+            self::ATMOSPHERIC_PROCESSOR => 1 * $level,
+            self::IRON_MINE,
+            self::COAL_MINE,
+            self::COPPER_MINE,
+            self::SILICON_MINE,
+            self::ALUMINUM_MINE,
+            self::TITANIUM_MINE,
+            self::URANIUM_MINE,
+            self::PLASTIC_RESIN_MINE,
+            self::TRITIUM_MINE => 3 * $level,
+            self::HOSPITAL,
+            self::CULTURAL_CENTER,
+            self::TEMPLE => 5 * $level,
+            self::RECYCLING_PLANT => 6 * $level,
+            self::IRON_SMELTER,
+            self::ALUMINUM_REFINERY,
+            self::COPPER_REFINERY,
+            self::TITANIUM_REFINERY,
+            self::STEEL_SMELTER,
+            self::CHIP_FAB,
+            self::COMPOSITE_PLANT,
+            self::HULL_FOUNDRY,
+            self::SHIELD_ASSEMBLER,
+            self::CONSTRUCTION_YARD => 8 * $level,
+            self::RESEARCH_LAB,
+            self::PROBE_LAB,
+            self::TELESCOPE => 10 * $level,
+            self::SHIPYARD => 15 * $level,
+            default => 0,
+        };
+    }
+
+    /**
      * T-177: Volume-Beitrag pro Building-Level zum generischen Planet-Storage.
      *
      * Ersetzt den alten `getStorageContribution(ResourceType)` (T-061 per-Resource-
