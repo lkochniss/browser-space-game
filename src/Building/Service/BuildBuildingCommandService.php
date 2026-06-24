@@ -111,6 +111,8 @@ readonly class BuildBuildingCommandService
 
         $building = Building::createNewBuilding($type);
         $building->setFinishedAt($now->add(new DateInterval(sprintf('PT%dS', $duration))));
+        // T-068: Defense-Buildings starten mit voller HP (Stub für non-Defense).
+        $building->restoreFullHp();
 
         $planet->addBuilding($building, $now);
 

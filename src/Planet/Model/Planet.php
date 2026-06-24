@@ -590,6 +590,47 @@ class Planet
     }
 
     /**
+     * T-068 Live-aggregated Defense-Stats für T-103 Battle-Resolver-Konsum.
+     * Nur operational Buildings (`isReady` + `currentHp > 0` für Defense-Types)
+     * tragen bei.
+     */
+    public function getDefenseStats(?DateTimeImmutable $now = null): \App\Battle\ValueObject\DefenseStats
+    {
+        $shieldHp = 0;
+        $shieldHpMax = 0;
+        $turretDamage = 0;
+        $sensorRange = 0;
+        $aaDamage = 0;
+
+        foreach ($this->buildings as $b) {
+            if (!$b->isOperational($now)) {
+                continue;
+            }
+            $type = $b->getType();
+            if (!$type->isDefenseBuilding()) {
+                continue;
+            }
+            $level = $b->getLevel();
+            // Planet-Shield-Buffer (Q2). Foundation: shieldHp = shieldHpMax; T-103
+            // managed Battle-Shield-Depletion via eigene Mechanik.
+            $shieldContribution = $type->getDefenseShieldHpPerLevel() * $level;
+            $shieldHp += $shieldContribution;
+            $shieldHpMax += $shieldContribution;
+            $turretDamage += $type->getDefenseTurretDamagePerLevel() * $level;
+            $sensorRange = max($sensorRange, $type->getSensorRangePerLevel() * $level);
+            $aaDamage += $type->getDefenseAaDamagePerLevel() * $level;
+        }
+
+        return new \App\Battle\ValueObject\DefenseStats(
+            shieldHp: $shieldHp,
+            shieldHpMax: $shieldHpMax,
+            turretDamage: $turretDamage,
+            sensorRange: $sensorRange,
+            aaDamage: $aaDamage,
+        );
+    }
+
+    /**
      * T-065 Power-Net pro Planet. Summe der Produktion aller ready Buildings.
      * Foundation-Producer: HUB liefert `50 + 25/Lvl` per Instance. T-071 erweitert
      * dies um dedizierte Power-Plants (Solar/Fusion/Antimatter).

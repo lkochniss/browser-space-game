@@ -83,6 +83,14 @@ enum BuildingType: string
     case ACADEMY = 'academy';
     case OFFICER_QUARTERS = 'officer_quarters';
 
+    // T-068 Defense-Buildings (Planet-Defense gegen NPC/Pirate-Angriffe).
+    // PLANETARY_SHIELD + SENSOR_ARRAY = strikt-unique (Slot-Size 2);
+    // DEFENSE_TURRET + AA_BATTERY = non-unique (Slot-Size 1).
+    case PLANETARY_SHIELD = 'planetary_shield';
+    case DEFENSE_TURRET = 'defense_turret';
+    case SENSOR_ARRAY = 'sensor_array';
+    case AA_BATTERY = 'aa_battery';
+
     public function getPopulationCapBonusPerLevel(): int
     {
         return match ($this) {
@@ -109,7 +117,9 @@ enum BuildingType: string
             self::CONSTRUCTION_YARD,
             self::HOSPITAL,
             self::CULTURAL_CENTER,
-            self::TEMPLE => true,
+            self::TEMPLE,
+            self::PLANETARY_SHIELD,
+            self::SENSOR_ARRAY => true,
             default => false,
         };
     }
@@ -125,7 +135,9 @@ enum BuildingType: string
             self::TELESCOPE,
             self::CONSTRUCTION_YARD,
             self::ACADEMY,
-            self::OFFICER_QUARTERS => 2,
+            self::OFFICER_QUARTERS,
+            self::PLANETARY_SHIELD,
+            self::SENSOR_ARRAY => 2,
             default => 1,
         };
     }
@@ -183,7 +195,65 @@ enum BuildingType: string
             self::PROBE_LAB,
             self::TELESCOPE => 10 * $level,
             self::SHIPYARD => 15 * $level,
+            // T-068 Defense — heavy-Consumer (Late-Game-Bottleneck).
+            self::PLANETARY_SHIELD => 100 * $level,
+            self::AA_BATTERY => 40 * $level,
+            self::DEFENSE_TURRET => 30 * $level,
+            self::SENSOR_ARRAY => 20 * $level,
             default => 0,
+        };
+    }
+
+    /**
+     * T-068 Defense-Buildings haben HP. Max-HP skaliert linear mit Level.
+     * Non-Defense-Types liefern 0 (kein HP-Tracking nötig).
+     */
+    public function getMaxHpPerLevel(): int
+    {
+        return match ($this) {
+            self::PLANETARY_SHIELD => 100,
+            self::DEFENSE_TURRET => 200,
+            self::SENSOR_ARRAY => 100,
+            self::AA_BATTERY => 150,
+            default => 0,
+        };
+    }
+
+    /**
+     * T-068 PLANETARY_SHIELD-Stat: zusätzliche Shield-HP pro Level zur
+     * Planet-Defense (über `Planet::getDefenseStats`).
+     */
+    public function getDefenseShieldHpPerLevel(): int
+    {
+        return $this === self::PLANETARY_SHIELD ? 5000 : 0;
+    }
+
+    /** T-068 Turret-Damage pro Level. */
+    public function getDefenseTurretDamagePerLevel(): int
+    {
+        return $this === self::DEFENSE_TURRET ? 500 : 0;
+    }
+
+    /** T-068 AA-Damage pro Level. */
+    public function getDefenseAaDamagePerLevel(): int
+    {
+        return $this === self::AA_BATTERY ? 300 : 0;
+    }
+
+    /** T-068 Sensor-Range (Systeme) pro Level. */
+    public function getSensorRangePerLevel(): int
+    {
+        return $this === self::SENSOR_ARRAY ? 1 : 0;
+    }
+
+    public function isDefenseBuilding(): bool
+    {
+        return match ($this) {
+            self::PLANETARY_SHIELD,
+            self::DEFENSE_TURRET,
+            self::SENSOR_ARRAY,
+            self::AA_BATTERY => true,
+            default => false,
         };
     }
 

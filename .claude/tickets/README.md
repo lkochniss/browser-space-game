@@ -79,7 +79,7 @@
 | 065-energy-system.md | Feature | Energy System | Building | Done | T-006, T-009 | Power-Net pro Planet — Hub-Reaktor + Power-Plants vs Consumer |
 | 066-treibstoff-resource.md | Feature | Storage Vision | Resource | Blocked | T-002, T-003 | H2 + Promethium als Fuel-Resources (isFuel-Flag); blocked by T-177 |
 | 067-erzeugnis-tree-erweiterung.md | Feature | Resources Tier-2/3 | Resource | Done | T-003 | Tier-2-Erzeugnisse (3 Bars + 5 Compounds) + 2 neue FINITE Erze + Snapshot-Single-Step-Cascade; Volume-Tabelle erweitert. T-072 superseded |
-| 068-defense-buildings.md | Feature | Combat & Battle | Building | Ready | T-065, T-067 | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
+| 068-defense-buildings.md | Feature | Combat & Battle | Building | Done | T-065, T-067 | Shield/Turret/Sensor/AA für Planet-Defense; blocked by T-103 |
 | 069-research-lab-tier.md | Feature | Research & Tech-Tree | Research | Done | T-025, T-025c | ResearchNode.requiredLabLevel + Tier-Gate-Validation; Tier-1/2/3-Mapping; LabLevelTooLowException |
 | 070-pop-qol-buildings.md | Feature | Pop QoL | Building | Done | T-005, T-006, T-172 | 4 QoL-Foundation: Hospital +20 Pop/Lvl + Cultural-Center +2%/Lvl Mining/Refinement; Effekte in T-070b |
 | 070b-pop-qol-effects-extension.md | Feature | Pop QoL | Building | Draft | T-070, T-005 | Hospital-Mangel-Tod + University-RP-Multi + Temple-Loyalty + Power-Consumption (Folge zu T-070) |

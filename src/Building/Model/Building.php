@@ -27,6 +27,20 @@ class Building
     #[ORM\Column(name: 'finished_at', type: 'datetime_immutable', nullable: true)]
     private ?DateTimeImmutable $finishedAt = null;
 
+    /**
+     * T-068 Defense-Buildings: aktueller HP-Pool. Battle reduziert. Repair
+     * setzt zurück auf `computeMaxHp()`. Non-Defense-Buildings haben hier
+     * stets `computeMaxHp() = 0`.
+     */
+    #[ORM\Column(name: 'current_hp', type: 'integer', options: ['default' => 0])]
+    private int $currentHp = 0;
+
+    /**
+     * T-068 Cooldown-Stamp für Repair-Mechanik (24h). NULL = nie repariert.
+     */
+    #[ORM\Column(name: 'last_repair_at', type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $lastRepairAt = null;
+
     public function __construct(
         #[ORM\Id]
         #[ORM\Column(type: BuildingIdType::NAME)]
@@ -113,5 +127,61 @@ class Building
         }
 
         return $this->finishedAt <= $now;
+    }
+
+    /**
+     * T-068: Max-HP basiert auf BuildingType × Level. Defense-Buildings haben
+     * Werte > 0 (Stats-Tabelle); andere returnen 0.
+     */
+    public function computeMaxHp(): int
+    {
+        return $this->type->getMaxHpPerLevel() * $this->level;
+    }
+
+    public function getCurrentHp(): int
+    {
+        return $this->currentHp;
+    }
+
+    public function setCurrentHp(int $hp): void
+    {
+        $this->currentHp = max(0, min($this->computeMaxHp(), $hp));
+    }
+
+    /** T-068: Schaden anwenden. Returnt verbleibende HP. */
+    public function takeDamage(int $amount): int
+    {
+        $this->currentHp = max(0, $this->currentHp - $amount);
+
+        return $this->currentHp;
+    }
+
+    /** T-068: Setzt HP auf Maximum (für Build-Complete + Repair). */
+    public function restoreFullHp(): void
+    {
+        $this->currentHp = $this->computeMaxHp();
+    }
+
+    public function getLastRepairAt(): ?DateTimeImmutable
+    {
+        return $this->lastRepairAt;
+    }
+
+    public function setLastRepairAt(?DateTimeImmutable $when): void
+    {
+        $this->lastRepairAt = $when;
+    }
+
+    /** T-068: Defense-Building ist nur wirksam wenn currentHp > 0. */
+    public function isOperational(?DateTimeImmutable $now = null): bool
+    {
+        if (!$this->isReady($now)) {
+            return false;
+        }
+        if (!$this->type->isDefenseBuilding()) {
+            return true;
+        }
+
+        return $this->currentHp > 0;
     }
 }

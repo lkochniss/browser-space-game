@@ -195,4 +195,38 @@ class Player
 
         return false;
     }
+
+    /**
+     * T-068 Sensor-Range-Helper. Foundation-Scope: prüft nur ob ein Player-
+     * Planet im **selben** System einen `SENSOR_ARRAY` mit `level >= $range`
+     * besitzt. Galaxy-Cross-System-Adjacency wird in T-007b ergänzt; bis
+     * dahin ist Sensor-Range "Range innerhalb des eigenen Systems".
+     *
+     * T-074 Pirate-Spawn-Service ruft das beim Spawn-Event auf um
+     * Notifications (T-161) zu dispatchen.
+     */
+    public function hasSensorInSystem(
+        \App\SolarSystem\Model\SolarSystem $sys,
+        int $range,
+        ?\DateTimeImmutable $now = null,
+    ): bool {
+        foreach ($this->planets as $planet) {
+            if ($planet->getSolarSystem()?->getId()->equals($sys->getId()) !== true) {
+                continue;
+            }
+            foreach ($planet->getBuildings() as $b) {
+                if ($b->getType() !== \App\Building\ValueObject\BuildingType::SENSOR_ARRAY) {
+                    continue;
+                }
+                if (!$b->isOperational($now)) {
+                    continue;
+                }
+                if ($b->getLevel() >= $range) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

@@ -151,6 +151,55 @@ Die 6 alten Storage-Buildings (IRON_STORAGE / COAL_STORAGE / IRON_BAR_STORAGE /
 WATER_TANK / FOOD_SILO / OXYGEN_STORAGE) sind **gelöscht**. WAREHOUSE ist
 ihre einzige Konsolidierung — non-unique, beliebig stapelbar.
 
+## Defense-Buildings (T-068)
+
+Planet-Defense gegen NPC-Angriffe (PvE only). Buildings haben eigene HP, die
+in der Battle reduziert wird; HP=0 → Building deaktiviert (kein Defense-Beitrag
+mehr). Repair-Mechanik mit 24h-Cooldown.
+
+| Building | Stats | maxHp/Lvl | Slot-Size | Unique |
+|----------|-------|-----------|-----------|--------|
+| `PLANETARY_SHIELD` | +5000 Shield-HP/Lvl (Planet-Buffer) | 100 | 2 | ✓ |
+| `DEFENSE_TURRET` | +500 Damage/Lvl | 200 | 1 | — |
+| `SENSOR_ARRAY` | +1 Sensor-Range/Lvl | 100 | 2 | ✓ |
+| `AA_BATTERY` | +300 Anti-Ship-Damage/Lvl | 150 | 1 | — |
+
+### DefenseStats (live, für T-103-Konsum)
+
+`Planet::getDefenseStats($now): DefenseStats` aggregiert operational Buildings
+(`isReady` + `currentHp > 0`). VO mit Feldern `shieldHp`, `shieldHpMax`,
+`turretDamage`, `sensorRange`, `aaDamage`.
+
+Foundation: `shieldHp == shieldHpMax` (volle Auffüllung). T-103 wird den
+Shield-Pool während Battle live runterzählen.
+
+### HP-State pro Building
+
+`Building::currentHp` + `maxHp = level × type.getMaxHpPerLevel()`. Initial bei
+Build-Complete auf voll (`restoreFullHp()`). Upgrade synchronisiert HP auf
+neuen Max-Wert.
+
+### Repair-Mechanik
+
+`RepairBuildingCommand(planetId, buildingId)`:
+
+- Validation: Building ist beschädigt, Cooldown < 24h Repair-Last nicht aktiv
+- Cost = `ceil(0.30 × BuildingCost.resources)` auf Base-Cost (kein Pop-Cost)
+- Effekt: `currentHp = maxHp`, `lastRepairAt = now`
+- Cooldown: 24h hardcoded — `RepairCooldownActiveException` bei zu früher
+  Wieder-Reparatur
+
+`BuildingNotDamagedException` bei voller HP. Player kann nicht "proaktiv"
+HP topfüllen ohne dass Schaden vorliegt.
+
+### Sensor-Range (T-074 Hook)
+
+`Player::hasSensorInSystem(SolarSystem $sys, int $range, ?$now): bool` —
+prüft ob irgendein Player-Planet im **selben** System ein operational
+SENSOR_ARRAY mit `level >= $range` hat. Cross-System-Adjacency folgt mit
+T-007b. T-074 Pirate-Spawn-Service ruft das beim Spawn auf um T-161
+Notifications zu dispatchen.
+
 ## Power-Net (T-065 Energy-System)
 
 Live-berechnete Power-Bilanz pro Planet. Bei Unter-Versorgung drosseln
@@ -172,6 +221,10 @@ Mining/Refinement/Renewable-Production proportional.
 | Lab-Trio (Research/Probe/Telescope) | 0 | 10 |
 | `SHIPYARD` | 0 | 15 |
 | `ACADEMY` / `OFFICER_QUARTERS` | 0 | 0 |
+| `SENSOR_ARRAY` (T-068) | 0 | 20 |
+| `DEFENSE_TURRET` (T-068) | 0 | 30 |
+| `AA_BATTERY` (T-068) | 0 | 40 |
+| `PLANETARY_SHIELD` (T-068) | 0 | 100 |
 
 T-071 Power-Plants (Solar/Fusion/Antimatter) erweitern die Producer-Liste.
 
@@ -230,6 +283,8 @@ Alle Processors bekommen `?DateTimeImmutable $now` aus `gameState.getClock()->no
 | `HOSPITAL` (T-070) | 1 | +20 Pop-Cap/Lvl; T-070b: Mangel-Tod-Reduction |
 | `CULTURAL_CENTER` (T-070) | 1 | +2%/Lvl Mining + Refinement (capped +20%) |
 | `TEMPLE` (T-070) | 1 | T-070b/T-122: Loyalty-Hook |
+| `PLANETARY_SHIELD` (T-068) | 2 | +5000 Shield-HP/Lvl |
+| `SENSOR_ARRAY` (T-068) | 2 | +1 Sensor-Range/Lvl |
 
 > T-182: UNIVERSITY entfernt — war Wort-Mix-Up mit RESEARCH_LAB. Lab ist die
 > einzige Forschungs-Einrichtung; +RP-Output-Multi (T-070b) gestrichen.

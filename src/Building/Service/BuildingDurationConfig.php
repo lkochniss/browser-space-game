@@ -75,6 +75,12 @@ class BuildingDurationConfig
         // T-104a Crew-Foundation
         BuildingType::ACADEMY->value => 3600,           // 60min — heavy-Infrastructure
         BuildingType::OFFICER_QUARTERS->value => 2400,  // 40min
+
+        // T-068 Defense-Buildings
+        BuildingType::PLANETARY_SHIELD->value => 3600,  // 60min — heavy strategic
+        BuildingType::DEFENSE_TURRET->value => 1500,    // 25min
+        BuildingType::SENSOR_ARRAY->value => 1800,      // 30min
+        BuildingType::AA_BATTERY->value => 1500,        // 25min
     ];
 
     /**

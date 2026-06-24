@@ -71,6 +71,9 @@ readonly class UpgradeBuildingCommandService
 
         $building->setLevel($currentLevel + 1);
         $building->setFinishedAt($now->add(new DateInterval(sprintf('PT%dS', $duration))));
+        // T-068: bei Defense-Building-Upgrade Max-HP wächst — HP auf neuen Max
+        // füllen, damit Player nicht durch Upgrade "geschwächt" wird.
+        $building->restoreFullHp();
 
         $planet->recalculatePopulationCap($now);
 

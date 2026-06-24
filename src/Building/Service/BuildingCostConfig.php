@@ -259,6 +259,37 @@ class BuildingCostConfig
                 ],
                 populationCost: 20,
             ),
+
+            // T-068 Defense-Buildings
+            BuildingType::PLANETARY_SHIELD->value => new BuildingCost(
+                resources: [
+                    ResourceType::STEEL->value => 800,
+                    ResourceType::CHIP->value => 100,
+                    ResourceType::COMPOSITE->value => 50,
+                ],
+                populationCost: 40,
+            ),
+            BuildingType::DEFENSE_TURRET->value => new BuildingCost(
+                resources: [
+                    ResourceType::STEEL->value => 300,
+                    ResourceType::IRON_BAR->value => 150,
+                ],
+                populationCost: 15,
+            ),
+            BuildingType::SENSOR_ARRAY->value => new BuildingCost(
+                resources: [
+                    ResourceType::IRON_BAR->value => 250,
+                    ResourceType::CHIP->value => 80,
+                ],
+                populationCost: 15,
+            ),
+            BuildingType::AA_BATTERY->value => new BuildingCost(
+                resources: [
+                    ResourceType::STEEL->value => 250,
+                    ResourceType::IRON_BAR->value => 100,
+                ],
+                populationCost: 15,
+            ),
         ];
     }
 

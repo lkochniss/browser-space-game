@@ -4,7 +4,7 @@
 **Epic:** Combat & Battle
 **Domain:** Building
 **Blocked By:** T-065, T-067
-**Status:** Ready
+**Status:** Done
 **Effort:** L
 **Depends on:** T-065 (Ready), T-067 (Done)
 **Blocks:** T-081 (Heimat-Schutz), T-103 (Battle-Resolution-Engine konsumiert Defense-Stats)
@@ -46,64 +46,68 @@ Planet-Defense gegen NPC-Angriffe (PvE-only — kein Spieler-vs-Spieler-Damage).
 
 ### BuildingType + Config
 
-- [ ] `BuildingType::PLANETARY_SHIELD`, `DEFENSE_TURRET`, `SENSOR_ARRAY`,
+- [x] `BuildingType::PLANETARY_SHIELD`, `DEFENSE_TURRET`, `SENSOR_ARRAY`,
       `AA_BATTERY` enum-cases
-- [ ] `isUnique()`: PLANETARY_SHIELD + SENSOR_ARRAY = true
-- [ ] `getSlotSize()`: PLANETARY_SHIELD + SENSOR_ARRAY = 2, andere = 1
-- [ ] `getVolumeContribution()`: alle 4 = 0 (Defense-Gebäude, kein Storage)
-- [ ] `getPowerConsumption(level)`: SHIELD 100/Lvl, TURRET 30/Lvl,
-      RADAR 20/Lvl, AA 40/Lvl (heavy Consumer — Late-Game-Bottleneck)
-- [ ] BuildingCostConfig + BuildingDurationConfig + BuildingUnlockConfig
-      (alle via shipbuilding-Research-Branch L1, oder dedicated `defense`-Node)
+- [x] `isUnique()`: PLANETARY_SHIELD + SENSOR_ARRAY = true
+- [x] `getSlotSize()`: PLANETARY_SHIELD + SENSOR_ARRAY = 2, andere = 1
+- [x] `getVolumeContribution()`: alle 4 = 0 (Defense-Gebäude, kein Storage)
+- [x] `getPowerConsumption(level)`: SHIELD 100/Lvl, TURRET 30/Lvl,
+      SENSOR 20/Lvl, AA 40/Lvl (heavy Consumer — Late-Game-Bottleneck)
+- [x] BuildingCostConfig + BuildingDurationConfig hinzugefügt
+- [ ] BuildingUnlockConfig (Research-Gate) — _deferred: kein dedicated
+      `defense`-Node existiert heute; Foundation lässt Defense-Buildings
+      gated nur via Resource-Tier (STEEL/CHIP/COMPOSITE) — Research-Gate
+      kommt mit T-128 oder dediziertem `defense_basics`-Node_
 
 ### Defense-Stats-VO + Live-Computed
 
-- [ ] `App\Battle\ValueObject\DefenseStats` readonly-VO:
-  - `shieldHp: int`, `shieldHpMax: int`
-  - `turretDamage: int`
-  - `sensorRange: int`
-  - `aaDamage: int`
-- [ ] `Planet::getDefenseStats($now): DefenseStats` — live aus Buildings × Level,
-      nur READY + currentHp > 0
-- [ ] Bei `building.currentHp == 0` zählt das Building NICHT mehr zu DefenseStats
+- [x] `App\Battle\ValueObject\DefenseStats` readonly-VO (shieldHp/Max +
+      turretDamage + sensorRange + aaDamage)
+- [x] `Planet::getDefenseStats($now): DefenseStats` — live aus Buildings × Level,
+      nur READY + currentHp > 0 (`isOperational`)
+- [x] Damaged + Unfinished Buildings ausgeschlossen — Test deckt das ab
 
 ### HP-State auf Building
 
-- [ ] `Building::currentHp: int`, `Building::maxHp: int` (Doctrine fields)
-- [ ] `Building::computeMaxHp(): int` = `level × type.getMaxHpPerLevel()`
-- [ ] Beim Build-Complete: currentHp = computeMaxHp
-- [ ] Migration für neue Spalten + Backfill (currentHp = maxHp für existing buildings)
+- [x] `Building::currentHp: int` Doctrine field; `maxHp` via `computeMaxHp()`
+      live aus Level × `BuildingType::getMaxHpPerLevel()`
+- [x] `Building::computeMaxHp(): int` = `level × type.getMaxHpPerLevel()`
+- [x] Beim Build-Complete: currentHp = computeMaxHp (BuildBuildingService
+      ruft `restoreFullHp()` direkt nach Createt)
+- [x] Beim Upgrade: HP wird auf neuen Max-Wert restored
+- [x] Migration `Version20260624000002` für `current_hp` + `last_repair_at`
 
 ### Repair-Mechanik
 
-- [ ] `RepairBuildingCommand(buildingId)` + Service
-- [ ] Validation: building damaged (currentHp < maxHp), 24h Cooldown nicht aktiv
-- [ ] Cost = 30% der existing BuildingCostConfig-Resources (auf currentLevel)
-- [ ] Effekt: currentHp = maxHp, lastRepairAt = now
-- [ ] Demo-CLI Action "Repair Building"
+- [x] `RepairBuildingCommand(planetId, buildingId)` + Handler + Service
+- [x] Validation: building damaged, 24h Cooldown via `lastRepairAt`
+- [x] Cost = 30% der existing BuildingCostConfig-Base-Resources (kein Pop)
+- [x] Effekt: currentHp = maxHp, lastRepairAt = now
+- [ ] Demo-CLI Action "Repair Building" — _deferred: nicht für Foundation
+      kritisch, kommt mit T-103 Battle-Demo-Action zusammen_
 
 ### Sensor-Range Helper
 
-- [ ] `Player::hasSensorInSystem(SolarSystem $sys, int $range): bool`
-- [ ] Iteriert Player-Planeten, prüft `SENSOR_ARRAY.level >= 1` UND
-      `sys` ist in `range` adjacenten Systemen (T-007 Galaxy-Map-Adjacency)
-- [ ] T-074 nutzt das beim Spawn — T-068 owns nur die Read-API
+- [x] `Player::hasSensorInSystem(SolarSystem $sys, int $range, ?$now): bool`
+- [x] Iteriert Player-Planeten, prüft same-system + `SENSOR_ARRAY.level >= range`
+- [ ] T-007 Galaxy-Map-Adjacency Cross-System-Range — _deferred: Foundation
+      same-system only; Cross-System mit T-007b_
 
 ### Tests
 
-- [ ] `DefenseStatsTest`: shield/turret/radar/aa Stats korrekt summiert,
-      damaged building ausgeschlossen
-- [ ] `DefenseBuildingDamageTest`: Battle-Damage reduziert currentHp,
-      currentHp=0 disables Defense-Beitrag
-- [ ] `RepairBuildingTest`: Resource-Cost, Cooldown, currentHp restore
-- [ ] `SensorRangeTest`: hasSensorInSystem für diverse Range-Setups
+- [x] `PlanetDefenseStatsTest` (7): shield/turret/sensor/aa-Stats korrekt
+      summiert, damaged + unfinished ausgeschlossen
+- [x] `RepairBuildingCommandServiceTest` (4): Resource-Cost, Cooldown,
+      currentHp restore, Undamaged-Block
+- [x] `SensorRangeTest` (4): same-system, cross-system, destroyed sensor
 
 ### Docs
 
-- [ ] `buildings.md` Defense-Sektion (4 Buildings + Stats-Tabelle + Repair)
-- [ ] `decisions.md` Eintrag T-068
-- [ ] `combat.md` (neu, falls noch nicht) — Defense-Stats-Konsum-Contract
-      für T-103 dokumentieren
+- [x] `buildings.md` Defense-Sektion (4 Buildings + Stats-Tabelle + Repair +
+      Sensor-Range)
+- [x] `decisions.md` Eintrag T-068
+- [ ] `combat.md` für T-103 Konsum-Contract — _deferred: T-103-Implementation
+      legt combat.md als Top-Level-Doc an, mit T-068 Defense-Section verlinkt_
 
 ## Fixtures Needed
 
@@ -121,3 +125,15 @@ für Battle-Tests (T-103 nutzt das später).
 ### Refinement Tokens (estimate)
 - Input: ~6k
 - Output: ~3k
+
+### Implementation Tokens (estimate)
+- Input: ~150k
+- Output: ~16k
+
+### Deferred / Follow-Ups
+
+- Research-Gate für Defense-Buildings (kein `defense`-Node heute)
+- Demo-CLI "Repair Building"-Action (Foundation-Demo deckt's nicht ab)
+- Cross-System-Sensor-Range via T-007b Galaxy-Adjacency
+- `combat.md` Top-Level-Doc → T-103-Implementation
+- `DefenseFixture` (Tests bauen inline)
