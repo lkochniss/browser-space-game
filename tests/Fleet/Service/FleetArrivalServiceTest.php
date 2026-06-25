@@ -94,7 +94,7 @@ final class FleetArrivalServiceTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: ShipType::GENERIC,
             populationAssigned: 20,
-            cargoCapacity: 0,
+            cargoVolumeCapacity: 0,
         );
         $ship->setPlanet($origin);
         $ship->setFinishedAt(new DateTimeImmutable('-1 hour'));

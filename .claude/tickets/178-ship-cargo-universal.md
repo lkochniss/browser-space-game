@@ -4,7 +4,7 @@
 **Epic:** Storage Vision
 **Domain:** Ship
 **Blocked By:** T-177, T-180
-**Status:** Blocked (by T-177)
+**Status:** Done
 **Effort:** M (~4-5h)
 **Depends on:** T-177 (Generic-Storage-Refactor), T-180 (Size-Multiplier-Config)
 **Blocks:** T-066 (Fuel-Storage auf Ship), T-105 (Schiff-Maintenance — Fuel-Consumption)
@@ -20,69 +20,165 @@ Aktuell (T-015 Done): nur `TransportShipClass` hat `CargoManifest`. Andere
 Ships haben keinen Cargo-Slot. Neuer Stand: alle Ships haben Cargo,
 volumengebunden.
 
-## Open Questions
+## Resolved Decisions
 
-### Q1: Cargo-Größe pro Ship-Klasse
+### Q1: Cargo-Größe pro Ship-Klasse → **(a) Per-ShipType + ShipClass konstant**
 
-Wie groß ist der Cargo-Volumen pro Klasse?
+ShipType + Combat-ShipClass haben jeweils eigene `cargoVolume`-Konstante.
+Combat-Mk-Tier multipliziert Base mit Mk-Multi.
 
-- (a) **Per ShipType konfiguriert** — jede ShipType-Enum-Variante hat eigene `cargoVolume`-Konstante (z.B. CARGO_LIGHT=500, CARGO_MEDIUM=2000, CARGO_HEAVY=10000, SCOUT=50, FRIGATE=200, BATTLESHIP=400, COLONY_SHIP=300, PROBE=10)
-- (b) **Linear nach Schiff-Mass-Class** — drei Mass-Tiers (S/M/L), Cargo skaliert linear (z.B. S=100, M=500, L=2000)
-- (c) **Hybrid** — Base-Cargo (10-50, für Eigen-Versorgung) + Mass-Tier-Bonus + Spezialisierung (Transport-Klassen ×5)
+| ShipType / Class | Cargo (m³) |
+|------------------|------------|
+| GENERIC | 50 |
+| COLONY_SHIP | 300 |
+| TRANSPORT_SMALL | 100 |
+| TRANSPORT_MEDIUM | 500 |
+| TRANSPORT_LARGE | 2000 |
+| SALVAGE | 500 |
+| PROBE (T-013) | 10 |
+| Frigate Mk I | 50 |
+| Destroyer Mk I | 80 |
+| Cruiser Mk I | 120 |
+| Battleship Mk I | 200 |
+| Carrier Mk I | 150 |
 
-### Q2: Was bedeutet "Eigen-Versorgung"?
+Mk II = Base × 1.5, Mk III = Base × 2.25 (analog Stats-Scaling).
 
-Für Non-Transporter (z.B. Frigatte) — was muss in Cargo passen?
+### Q2: Cargo-Item-Scope → **(d) Komplett offen**
 
-- (a) **Nur Fuel** (T-066) — Schiff trägt Treibstoff für Reichweite
-- (b) **Fuel + Pop-Survival-Ration** (T-105 Folge) — Crew braucht W/F/O für Reise
-- (c) **Fuel + Pop + Loot** — Battleship kann auch Loot mitnehmen (Salvage, Kriegsbeute)
+Ship-Cargo akzeptiert alle Items wie Transport-Klassen — Resources,
+Pop, Fuel, Munition (T-088), Loot. Volume regelt sich über
+`ResourceVolumeConfig` (T-180). Keine Sonderlogik für Non-Transporter —
+nur kleineres Volumen-Cap unterscheidet Combat vs. Transport.
 
-### Q3: Migration T-015 CargoManifest
+### Q3: T-015 CargoManifest Migration → **(a) Ersetzen durch ShipCargo**
 
-T-015 (Done) hat `CargoManifest` Embeddable für Transport-Klassen. Was passiert?
+`CargoManifest` Embeddable wird gelöscht. Generic `ShipCargo` Embeddable
+analog T-177 `StorageInventory`-Pattern wird eingeführt — alle Ships
+(Transport + Combat + Spezial) nutzen `ShipCargo`. T-015 Tests
+(`LoadCargo` / `UnloadCargo`) ziehen mit. Code-Cleanup im selben Commit.
 
-- (a) **CargoManifest komplett ersetzen** durch generic `ShipCargo` (analog T-177 Storage)
-- (b) **CargoManifest umbenennen** zu `ShipCargo`, beibehalten, Volume-Logic einbauen
-- (c) **CargoManifest bleibt für Transport-Klassen** (legacy), neue `ShipCargo` nur für Non-Transporter (gemischt — komplex)
+### Q4: Load/Unload-API → **(a) Generisch für alle Ships**
 
-### Q4: Load/Unload-API
+`LoadCargoCommand` / `UnloadCargoCommand` akzeptieren beliebige Ship-IDs.
+Volume-Check intern via `Ship::cargoVolumeCapacity` + `ShipCargo::usedVolume()`.
+Keine separaten Convenience-Commands — bei Bedarf später als eigenes Ticket.
+T-088 Munition-Loading nutzt gleichen Code-Pfad.
 
-T-015 hat `LoadCargoCommand`/`UnloadCargoCommand` für Transport-Klassen.
+### Q5: Default-Cargo-Content bei Bau → **(a) Leer**
 
-- (a) **Generisch für alle Ships** — Commands akzeptieren beliebige Ship-IDs; Volume-Check intern
-- (b) **Eigene Commands für Non-Transporter** — z.B. `RefuelShipCommand` für Fuel-Only-Subset
-- (c) **Beibehalten + erweitern** — Load/Unload-Commands für alle, plus convenience-Commands für häufige Cases (Refuel, Pop-Embark)
+`BuildShipCommand` setzt Ship-Cargo auf leer. Player muss explizit
+Resources/Fuel/Pop via `LoadCargoCommand` laden bevor Schiff fliegt.
+T-066 (Fuel) und T-105 (Pop-Survival) liefern Auto-Refuel/Provisionierungs-
+Hooks später nach — out-of-scope für T-178.
 
-### Q5: Default-Cargo-Content bei Bau
+## Acceptance Criteria
 
-Wenn ein Schiff gebaut wird (BuildShipCommand): bekommt es Initial-Cargo?
+### Entity + Embeddable
 
-- (a) **Leer** — Player muss explizit Cargo laden vor Reise
-- (b) **Auto-Refuel** — Ship startet mit voll Fuel für seine Reichweite (analog "tank voll bei Auslieferung")
-- (c) **Auto-Refuel + Pop-Crew-Ration** — Standard-Reise-Ausstattung
+- [x] `ShipCargo` Embeddable (generic Item-Storage analog T-177 `StorageInventory`):
+      - `addItem(ResourceType, qty): void` mit Volume-Check
+      - `removeItem(ResourceType, qty): void`
+      - `getQuantity(ResourceType): int`
+      - `usedVolume(): int` (via `ResourceVolumeConfig`)
+      - `canAddItem(ResourceType, qty, capacity): bool`
+      - `maxAddableQuantity(ResourceType, capacity): int`
+- [x] `Ship::cargo: ShipCargo` Embeddable an allen Ship-Entities (Transport +
+      Combat + Spezial)
+- [x] `Ship::cargoVolumeCapacity: int` — kommt aus Config (siehe Q1-Tabelle),
+      Combat-Klassen via Mk-Multi (Mk II ×1.5, Mk III ×2.25)
+- [x] `Ship::cargo` initial leer bei Build
 
-## Acceptance Criteria (Draft — final nach Q1-Q5)
+### Config
 
-- [ ] `Ship::cargoVolumeCapacity: int` (statisch pro ShipType)
-- [ ] `Ship::cargo: ShipCargo` (Embeddable, generic Item-Storage analog T-177)
-- [ ] Volume-Check bei Load/Unload (Q4)
-- [ ] Cargo-Größen-Tabelle pro ShipType (Q1)
-- [ ] T-015 CargoManifest-Refactor (Q3)
-- [ ] Load/Unload-API generalisiert (Q4)
-- [ ] Initial-Cargo-Setup beim Build (Q5)
-- [ ] Tests: Cargo-Volume-Check, Multi-Item-Cargo, Fuel-Verbrauch (Stub für T-105)
-- [ ] Doc `ships.md` Cargo-Sektion komplett überarbeitet
+- [x] `ShipCargoVolumeConfig` (oder Erweiterung `ShipCostConfig`) liefert
+      `cargoVolume(ShipType, ?ShipClass, ?MkTier): int` per Q1-Tabelle
+- [x] Combat-Klassen-Lookup: `ShipBlueprintRegistry` liefert Mk-Tier-Multi
+
+### Migration (T-015 Refactor)
+
+- [x] `CargoManifest` Embeddable + Field aus `Ship` gelöscht
+- [x] Alle Referenzen (`$ship->getCargo()`, `LoadCargoCommandService`,
+      `UnloadCargoCommandService`, Tests) auf `ShipCargo` umgestellt
+- [x] Doctrine-Migration: `cargo_*`-Columns umbenennen / ersetzen (alte
+      `CargoManifest`-Columns → neue `ShipCargo`-Columns + neue
+      `cargo_volume_capacity`-Column)
+- [x] T-015 IT-Tests (`LoadCargoTest`, `UnloadCargoTest`) grün nach Refactor
+
+### Load/Unload-API generalisiert
+
+- [x] `LoadCargoCommand`/`UnloadCargoCommand` akzeptieren jede Ship-ID
+      (kein Transport-Filter)
+- [x] Volume-Cap-Check via `Ship::cargoVolumeCapacity` + `ShipCargo::canAddItem()`
+- [x] `ShipCargoOverflowException` wenn Volume-Cap überschritten
+
+### Tests
+
+- [x] `ShipCargoVolumeTest` (UT): Volume-Berechnung pro ShipType/ShipClass/Mk
+- [x] `ShipCargoEmbeddableTest` (UT): addItem/removeItem/canAddItem/maxAddable
+- [x] `LoadCargoOnCombatShipTest` (IT): Combat-Ship lädt Resource — Volume-Check ok
+- [x] `LoadCargoOverflowTest` (IT): Overflow wirft `ShipCargoOverflowException`
+- [x] `LoadCargoOnAllShipTypesTest` (IT): jede Ship-Klasse kann laden
+- [x] T-015 Tests bleiben grün (Regression)
+
+### Fixtures
+
+- [x] `ShipCargoFixture`: 1 Combat-Ship (leer), 1 Transport-Ship (leer), 1
+      mit Pre-Load (Resource im Cargo)
+
+### Docs
+
+- [x] `ships.md` Cargo-Sektion komplett überarbeitet (alte CargoManifest-Sektion
+      ersetzen; neue Volume-Tabelle aus Q1; ShipCargo-Embeddable beschreiben)
+- [x] `resources.md` Hinweis: ResourceVolumeConfig nun auch für Ship-Cargo
+- [x] `dependencies.md` Eintrag T-178
+- [x] `decisions.md` Eintrag T-178 (Q1-Q5 Resolution)
 
 ## Out of Scope
 
-- Fuel-Verbrauch-Logic im Flug (T-105)
+- Fuel-Verbrauch-Logic im Flug (T-066 / T-105)
 - Pop-Mortality bei Crew-Mangel (T-105 Folge)
+- Auto-Refuel / Auto-Provisioning bei Build (T-066 / T-105 Hook)
 - Trade-Routes (T-110) Auto-Cargo-Management
+- Convenience-Commands `RefuelShipCommand` etc. (eigenes Folge-Ticket bei Bedarf)
 
 ## Notes
 
-- T-015 wird **erweitert**, nicht superseded (CargoManifest war nur für
-  Transport-Klassen — nun für alle)
-- T-015c (Pop-Transfer Ship↔Station, Draft) ist davon betroffen → muss
-  Volume-Logic mitkriegen wenn T-179 done
+- T-015 wird durch T-178 **refactored** (CargoManifest → ShipCargo). T-015
+  bleibt als Done-Marker, T-178 erweitert Cargo-Scope auf alle Ship-Klassen.
+- T-088 Munition-Cargo nutzt `ShipCargo` direkt — kein Sonder-Storage.
+- T-015c (Pop-Transfer Ship↔Station, Draft) profitiert automatisch
+  (Pop via T-180 als Cargo-Item mit Volume-Multi 10).
+
+### Refinement Tokens (estimate)
+- Input: ~8k
+- Output: ~3k
+
+### Implementation Tokens (estimate)
+- Input: ~110k
+- Output: ~20k
+
+### Implementation Summary
+
+**New Code:**
+- `src/Ship/ValueObject/ShipCargo.php` (Embeddable, volume-based)
+- `src/Ship/Service/ShipCargoVolumeConfig.php` (Q1-Tabelle als Service)
+- `src/Ship/Exception/ShipCargoOverflowException.php`
+- `migrations/Version20260624000006.php` (`cargo_capacity` → `cargo_volume_capacity`)
+
+**Refactored:**
+- `Ship`-Entity: `CargoManifest` → `ShipCargo` Embeddable, `cargoCapacity` → `cargoVolumeCapacity`
+- `Ship::canAddResource/canAddPop/maxAddableResource/maxAddablePop` (Volume-aware API analog T-177)
+- `LoadCargoCommandService` / `UnloadCargoCommandService`: Transport-Filter entfernt
+- `BuildShipCommandService`: `ShipCargoVolumeConfig` ersetzt `ShipCostConfig::getCargoCapacity`
+- `SalvageProcessor`: Volume-aware Cargo-Cap via `maxAddableResource`
+- `CreateTradeRouteCommandService` + `TradeRouteProcessor`: m³-Check statt Units
+- Demo-CLI + Snapshotter: m³-Anzeige
+
+**Tests:** 748 grün (+15 neue T-178 Tests). Neue UT: `ShipCargoTest`,
+`ShipCargoVolumeConfigTest`. Neue IT: `ShipCargoUniversalTest`.
+
+**Out-of-Scope Note:** `SpaceStation` (POI-Domain) nutzt weiter `CargoManifest`
+(units-based). Refactor folgt in T-183 Station-Generic-Storage. T-178 ändert
+nur Ship-Side. Konsequenz: `CargoCapacityExceededException` bleibt für
+Station-Pfad, `ShipCargoOverflowException` ist neu für Ship-Pfad.

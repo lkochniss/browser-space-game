@@ -172,7 +172,7 @@ final class StationCargoTransferTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: ShipType::TRANSPORT_SMALL,
             populationAssigned: 0,
-            cargoCapacity: 1000,
+            cargoVolumeCapacity: 1000,
         );
         $ship->setStation($station);
         if ($shipIronBar > 0) {
@@ -194,7 +194,7 @@ final class StationCargoTransferTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: ShipType::TRANSPORT_SMALL,
             populationAssigned: 0,
-            cargoCapacity: 1000,
+            cargoVolumeCapacity: 1000,
         );
         // Weder planet noch station gesetzt → undocked.
         $this->em->persist($ship);

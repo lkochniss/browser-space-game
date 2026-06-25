@@ -183,7 +183,7 @@ readonly class TradeRouteProcessor
         if ($available <= 0) {
             return 0;
         }
-        $loadable = min($qty, $available, $ship->getCargoFreeUnits());
+        $loadable = min($qty, $available, $ship->maxAddableResource($type, $qty));
         if ($loadable <= 0) {
             return 0;
         }

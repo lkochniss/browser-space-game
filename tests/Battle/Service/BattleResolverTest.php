@@ -209,7 +209,7 @@ final class BattleResolverTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: ShipType::GENERIC,
             populationAssigned: 30,
-            cargoCapacity: 0,
+            cargoVolumeCapacity: 0,
         );
         $ship->setShipClass($class);
         $ship->setPlanet($planet);

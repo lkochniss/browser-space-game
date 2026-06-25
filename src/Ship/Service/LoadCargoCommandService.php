@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Ship\Service;
 
 use App\Common\Interface\ClockInterface;
+use App\Resource\Service\ResourceVolumeConfig;
 use App\Resource\ValueObject\ResourceType;
-use App\Ship\Exception\CargoCapacityExceededException;
 use App\Ship\Exception\InsufficientPopulationException;
 use App\Ship\Exception\InsufficientResourcesException;
-use App\Ship\Exception\NotATransportShipException;
+use App\Ship\Exception\ShipCargoOverflowException;
 use App\Ship\Exception\ShipNotDockedException;
 use App\Ship\Exception\ShipNotFoundException;
 use App\Ship\Exception\ShipNotReadyException;
@@ -19,13 +19,13 @@ use App\Ship\ValueObject\ShipId;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * T-015 Cargo-Load.
+ * T-015 / T-178 Cargo-Load.
  *
- * Lädt Resources + Pop vom dockedAt-Planet ins Schiff. Hard-Reject bei
- * Capacity-Überschreitung (User-Decision) und fehlenden Resources/Pop.
+ * Lädt Resources + Pop vom dockedAt-Planet ODER Station ins Schiff.
  *
+ * Seit T-178 (volume-based): Jedes Schiff kann laden (kein Transport-Filter).
+ * Volume-Cap-Check via `Ship::cargoVolumeCapacity` + `ResourceVolumeConfig`.
  * Pop-Mechanik: Pop wird auf Heimat assigned (analog Schiffs-Crew, T-012).
- * Bei Unload landet die Pop am Ziel-Planet.
  */
 readonly class LoadCargoCommandService
 {
@@ -46,10 +46,6 @@ readonly class LoadCargoCommandService
             throw new ShipNotFoundException($shipId);
         }
 
-        if (!$ship->getType()->isTransport()) {
-            throw new NotATransportShipException($shipId, $ship->getType());
-        }
-
         if (!$ship->isReady($this->clock->now())) {
             throw new ShipNotReadyException($shipId);
         }
@@ -60,9 +56,10 @@ readonly class LoadCargoCommandService
             throw new ShipNotDockedException($shipId);
         }
 
-        $totalUnits = array_sum($resources) + $popCount;
-        if ($totalUnits > $ship->getCargoFreeUnits()) {
-            throw new CargoCapacityExceededException($shipId, $totalUnits, $ship->getCargoFreeUnits());
+        $requestedVolume = $this->calculateVolume($resources, $popCount);
+        $freeVolume = $ship->getCargoVolumeFree();
+        if ($requestedVolume > $freeVolume) {
+            throw new ShipCargoOverflowException($shipId, $requestedVolume, $freeVolume);
         }
 
         if ($station !== null) {
@@ -144,6 +141,24 @@ readonly class LoadCargoCommandService
         $this->em->flush();
 
         return $ship;
+    }
+
+    /**
+     * @param array<string, int> $resources
+     */
+    private function calculateVolume(array $resources, int $popCount): int
+    {
+        $volume = 0.0;
+        foreach ($resources as $resourceTypeValue => $amount) {
+            if ($amount <= 0) {
+                continue;
+            }
+            $type = ResourceType::from($resourceTypeValue);
+            $volume += $amount * ResourceVolumeConfig::getMultiForResource($type);
+        }
+        $volume += $popCount * ResourceVolumeConfig::getPopMulti();
+
+        return (int) ceil($volume);
     }
 
     private function getResourceAmount(\App\Planet\Model\Planet $planet, ResourceType $type): int

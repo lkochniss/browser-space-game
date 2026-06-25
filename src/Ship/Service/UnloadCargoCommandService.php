@@ -8,7 +8,6 @@ use App\Common\Interface\ClockInterface;
 use App\Resource\Model\Resource;
 use App\Resource\ValueObject\ResourceType;
 use App\Ship\Exception\InsufficientCargoException;
-use App\Ship\Exception\NotATransportShipException;
 use App\Ship\Exception\ShipNotDockedException;
 use App\Ship\Exception\ShipNotFoundException;
 use App\Ship\Exception\ShipNotReadyException;
@@ -41,10 +40,6 @@ readonly class UnloadCargoCommandService
         $ship = $this->shipRepository->find($shipId);
         if ($ship === null) {
             throw new ShipNotFoundException($shipId);
-        }
-
-        if (!$ship->getType()->isTransport()) {
-            throw new NotATransportShipException($shipId, $ship->getType());
         }
 
         if (!$ship->isReady($this->clock->now())) {

@@ -58,6 +58,7 @@ readonly class CreateTradeRouteCommandService
             $shipId,
             $sourceId,
             $targetId,
+            $outboundResource,
             $outboundQty,
         );
 
@@ -93,6 +94,7 @@ readonly class CreateTradeRouteCommandService
             $shipId,
             $sourceId,
             $targetId,
+            $resource,
             $qty,
         );
 
@@ -121,6 +123,7 @@ readonly class CreateTradeRouteCommandService
         ShipId $shipId,
         PlanetId $sourceId,
         PlanetId $targetId,
+        ResourceType $outboundResource,
         int $outboundQty,
     ): array {
         $player = $this->playerRepo->find($playerId);
@@ -156,11 +159,13 @@ readonly class CreateTradeRouteCommandService
             throw InvalidTradeRouteException::shipNotDocked();
         }
 
-        // T-110 Cargo-Capacity-Check: outboundQty muss in Cargo-Slots passen
-        // (1 Slot = 1 Cargo-Unit nach T-015 Foundation). Volume-Multi (T-177)
-        // wird beim eigentlichen LoadCargo geprüft.
-        if ($ship->getCargoCapacity() < $outboundQty) {
-            throw InvalidTradeRouteException::shipCargoTooSmall($outboundQty, $ship->getCargoCapacity());
+        // T-110/T-178 Cargo-Volume-Check: outboundQty × ResourceVolumeConfig-Multi
+        // muss in Ship-Volume passen (m³-basiert seit T-178).
+        $neededVolume = (int) ceil(
+            $outboundQty * \App\Resource\Service\ResourceVolumeConfig::getMultiForResource($outboundResource),
+        );
+        if ($ship->getCargoVolumeCapacity() < $neededVolume) {
+            throw InvalidTradeRouteException::shipCargoTooSmall($neededVolume, $ship->getCargoVolumeCapacity());
         }
 
         return [$player, $source, $target, $ship];

@@ -33,15 +33,6 @@ final class ShipCostConfigTest extends TestCase
         );
         self::assertSame(50, $config->getPopulationCost(ShipType::COLONY_SHIP));
         self::assertSame(3600, $config->getDurationSeconds(ShipType::COLONY_SHIP));
-        self::assertSame(0, $config->getCargoCapacity(ShipType::COLONY_SHIP));
-    }
-
-    public function test_non_transport_has_zero_cargo_capacity(): void
-    {
-        $config = new ShipCostConfig();
-
-        self::assertSame(0, $config->getCargoCapacity(ShipType::GENERIC));
-        self::assertSame(0, $config->getCargoCapacity(ShipType::COLONY_SHIP));
     }
 
     public function test_transport_small_is_intra_system_class(): void
@@ -54,7 +45,6 @@ final class ShipCostConfigTest extends TestCase
         );
         self::assertSame(15, $config->getPopulationCost(ShipType::TRANSPORT_SMALL));
         self::assertSame(1800, $config->getDurationSeconds(ShipType::TRANSPORT_SMALL));
-        self::assertSame(1000, $config->getCargoCapacity(ShipType::TRANSPORT_SMALL));
     }
 
     public function test_transport_medium_costs_aluminum_too(): void
@@ -65,7 +55,6 @@ final class ShipCostConfigTest extends TestCase
         self::assertSame(400, $cost[ResourceType::IRON_BAR->value]);
         self::assertSame(50, $cost[ResourceType::ALUMINUM_ORE->value]);
         self::assertSame(30, $config->getPopulationCost(ShipType::TRANSPORT_MEDIUM));
-        self::assertSame(5000, $config->getCargoCapacity(ShipType::TRANSPORT_MEDIUM));
     }
 
     public function test_transport_large_is_heavy_hauler(): void
@@ -78,6 +67,5 @@ final class ShipCostConfigTest extends TestCase
         self::assertSame(50, $cost[ResourceType::TITANIUM_ORE->value]);
         self::assertSame(100, $config->getPopulationCost(ShipType::TRANSPORT_LARGE));
         self::assertSame(7200, $config->getDurationSeconds(ShipType::TRANSPORT_LARGE));
-        self::assertSame(20000, $config->getCargoCapacity(ShipType::TRANSPORT_LARGE));
     }
 }

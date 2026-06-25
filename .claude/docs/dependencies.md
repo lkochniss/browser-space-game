@@ -20,6 +20,16 @@ BuildBuildingCommandService → PlanetRepository + BuildingCostConfig + EM (debi
 UpgradeBuildingCommandService → PlanetRepository + BuildingCostConfig + EM (scaled cost + cap-recalc)
 ```
 
+T-178 Ship-Cargo-Universal:
+```
+Ship → ShipCargo (Embeddable, volume-based, T-178)
+Ship.cargoVolumeCapacity → ShipCargoVolumeConfig (per ShipType + ShipClass+Mk)
+LoadCargoCommand / UnloadCargoCommand → all Ships (kein Transport-Filter)
+SalvageProcessor → Ship.maxAddableResource (volume-aware extract-cap)
+TradeRouteProcessor / CreateTradeRouteCommandService → volume-based check
+SpaceStation.storage bleibt CargoManifest (units) bis T-183
+```
+
 Geplant (siehe Tickets):
 
 ```

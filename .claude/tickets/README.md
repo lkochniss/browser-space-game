@@ -198,9 +198,10 @@
 | 175-pirate-station-spawn.md | Feature | NPC Factions | POI | Draft | T-073, T-049a, T-023 | Galaxy-Bootstrap-Spawn von Pirate-owned + ABANDONED Stations (Lost-Tech-Lore) |
 | 176-pirate-station-takeover.md | Feature | NPC Factions | POI | Draft | T-023b, T-073, T-103 | Pirate-Takeover ABANDONED → Pirate + Combat-Capture-Mechanik (zweistufig) |
 | 177-generic-storage-refactor.md | Feature | Storage Vision | Planet | Done | T-180 | Generic Volume-Storage Planet (m³) + WAREHOUSE konsolidiert 6 T-061-Buildings; Volume-Cap-Stop für Production; canAddItem/maxAddableQuantity. T-061 superseded |
-| 178-ship-cargo-universal.md | Feature | Storage Vision | Ship | Blocked | T-177, T-180 | Ship-Cargo-Universal: alle Schiffe haben Cargo-Volume; blocked by T-177 |
+| 178-ship-cargo-universal.md | Feature | Storage Vision | Ship | Done | T-177, T-180 | Ship-Cargo-Universal: alle Schiffe haben m³-Volume-Cargo; CargoManifest→ShipCargo |
 | 179-pop-as-storage-item.md | Feature | Storage Vision | Planet | Blocked | T-177, T-178, T-180 | Pop wird Storage-Item mit hohem Size-Multi; T-004/T-005 refactored; blocked by T-178 |
 | 180-resource-volume-config.md | Feature | Storage Vision | Resource | Done | None | ResourceVolumeConfig (m³/Unit für 14 ResourceTypes + Pop=10); Foundation für T-177ff Generic-Storage |
 | 181-resource-volume-debug-command.md | Feature | Storage Vision | Resource | Done | T-180 | `app:debug:resource-volume` Symfony-Command — Volume-Tabelle sortiert + Beispiel-Profile |
 | 182-techdebt-remove-university-building.md | TechDebt | Tech-Debt & Cleanup | Building | Done | None | UNIVERSITY-Building entfernt (Wort-Mix-Up mit RESEARCH_LAB); T-070-AC + T-070b-Section + T-089/T-097a Refs aufgeräumt |
 | 183-station-generic-storage.md | Feature | Storage Vision | POI | Blocked | T-180, T-177, T-023, T-023b | Station-Generic-Volume-Storage (analog T-177 Planet); blocked by T-177 + T-180 |
+| 184-docked-ship-supply-planet-only.md | Feature | Storage Vision | Ship | Draft | None | Docked-Ship Life-Support nutzt nur Planet-Storage, kein Ship-Cargo-Fallback mehr (vereinfacht T-178-Cargo-Mental-Model) |

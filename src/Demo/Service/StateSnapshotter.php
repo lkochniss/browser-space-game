@@ -98,7 +98,8 @@ readonly class StateSnapshotter
                     'pop_assigned' => $ship->getPopulationAssigned(),
                     'cargo' => $cargo,
                     'cargo_pop' => $ship->getCargo()->getPopCount(),
-                    'cargo_capacity' => $ship->getCargoCapacity(),
+                    'cargo_volume_capacity' => $ship->getCargoVolumeCapacity(),
+                    'cargo_volume_used' => $ship->getCargoVolumeUsed(),
                     'supplies' => [
                         'water' => $ship->getSupplyWater(),
                         'food' => $ship->getSupplyFood(),

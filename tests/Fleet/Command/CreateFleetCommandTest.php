@@ -171,7 +171,7 @@ final class CreateFleetCommandTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: $type,
             populationAssigned: $populationAssigned,
-            cargoCapacity: $cargoCapacity,
+            cargoVolumeCapacity: $cargoCapacity,
         );
         $ship->setPlanet($planet);
         $ship->setFinishedAt(

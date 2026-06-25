@@ -115,6 +115,7 @@ class InteractiveDemoCommand extends Command
         private readonly SalvageProcessor $salvageProcessor,
         private readonly BuildingCostConfig $buildingCostConfig,
         private readonly ShipCostConfig $shipCostConfig,
+        private readonly \App\Ship\Service\ShipCargoVolumeConfig $shipCargoVolumeConfig,
         private readonly ProbeCostConfig $probeCostConfig,
         private readonly DemoGoalChecker $goalChecker,
         private readonly TelescopeDiscoveryService $telescopeDiscovery,
@@ -450,7 +451,7 @@ class InteractiveDemoCommand extends Command
                 if ($ship->getFleet() !== null) {
                     $extra .= sprintf(' [fleet %s]', $ship->getFleet()->getId());
                 }
-                $shipLines[] = sprintf('  %s %s (cargo %d/%d)%s', $ship->getType()->value, $ship->getId(), $ship->getCargo()->getTotalUnits(), $ship->getCargoCapacity(), $extra);
+                $shipLines[] = sprintf('  %s %s (cargo %d/%d m³)%s', $ship->getType()->value, $ship->getId(), $ship->getCargoVolumeUsed(), $ship->getCargoVolumeCapacity(), $extra);
             }
         }
         if ($shipLines !== []) {
@@ -803,7 +804,7 @@ class InteractiveDemoCommand extends Command
             }
             $costParts[] = sprintf('%d pop', $this->shipCostConfig->getPopulationCost($st));
             $costParts[] = sprintf('%dmin', (int) round($this->shipCostConfig->getDurationSeconds($st) / 60));
-            $choices[$st->value] = sprintf('%s (%s, cargo %d)', $st->value, implode(', ', $costParts), $this->shipCostConfig->getCargoCapacity($st));
+            $choices[$st->value] = sprintf('%s (%s, cargo %d m³)', $st->value, implode(', ', $costParts), $this->shipCargoVolumeConfig->getCargoVolume($st));
         }
         $label = $io->choice('Ship Type', $choices);
         $enumValue = array_search($label, $choices, true);
@@ -1712,7 +1713,7 @@ class InteractiveDemoCommand extends Command
         }
         $choices = [];
         foreach ($ships as $s) {
-            $choices[$s->getId()->__toString()] = sprintf('%s (%s, cargo %d/%d)', $s->getId(), $s->getType()->value, $s->getCargo()->getTotalUnits(), $s->getCargoCapacity());
+            $choices[$s->getId()->__toString()] = sprintf('%s (%s, cargo %d/%d m³)', $s->getId(), $s->getType()->value, $s->getCargoVolumeUsed(), $s->getCargoVolumeCapacity());
         }
         $idStr = $io->choice('Transport Ship', $choices);
 

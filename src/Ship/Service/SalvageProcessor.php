@@ -87,8 +87,8 @@ readonly class SalvageProcessor
         }
 
         $available = $field->getAmount($resource);
-        $cargoFree = $ship->getCargoFreeUnits();
-        $taken = min($extractable, $available, $cargoFree);
+        $maxByVolume = $ship->maxAddableResource($resource, $extractable);
+        $taken = min($extractable, $available, $maxByVolume);
 
         if ($taken > 0) {
             $field->extract($resource, $taken);
@@ -99,8 +99,7 @@ readonly class SalvageProcessor
 
         // Stop-Conditions
         $newFieldAmount = $field->getAmount($resource);
-        $newCargoFree = $ship->getCargoFreeUnits();
-        if ($newFieldAmount === 0 || $newCargoFree === 0) {
+        if ($newFieldAmount === 0 || $ship->maxAddableResource($resource, 1) === 0) {
             $ship->stopSalvage();
         }
 

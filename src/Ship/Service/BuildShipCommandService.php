@@ -44,6 +44,7 @@ readonly class BuildShipCommandService
         private EntityManagerInterface $em,
         private PlanetRepository $planetRepository,
         private ShipCostConfig $costConfig,
+        private ShipCargoVolumeConfig $cargoVolumeConfig,
         private ClockInterface $clock,
         private PlayerResearchRepository $playerResearchRepository,
         private ShipBlueprintRegistry $blueprintRegistry,
@@ -99,7 +100,7 @@ readonly class BuildShipCommandService
             id: ShipId::generate(),
             type: $type,
             populationAssigned: $popCost,
-            cargoCapacity: $this->costConfig->getCargoCapacity($type),
+            cargoVolumeCapacity: $this->cargoVolumeConfig->getCargoVolume($type),
             propulsion: $propulsion,
         );
         $ship->setPlanet($planet);
@@ -168,7 +169,7 @@ readonly class BuildShipCommandService
             id: ShipId::generate(),
             type: ShipType::GENERIC,
             populationAssigned: $bp->populationCost,
-            cargoCapacity: 0,
+            cargoVolumeCapacity: $this->cargoVolumeConfig->getCargoVolume(ShipType::GENERIC, $shipClass),
             propulsion: $propulsion,
         );
         $ship->setShipClass($shipClass);

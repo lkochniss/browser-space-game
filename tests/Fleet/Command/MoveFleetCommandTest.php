@@ -258,7 +258,7 @@ final class MoveFleetCommandTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: $type,
             populationAssigned: 20,
-            cargoCapacity: 0,
+            cargoVolumeCapacity: 0,
         );
         $ship->setPlanet($planet);
         $ship->setFinishedAt(new DateTimeImmutable('-1 hour'));

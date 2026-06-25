@@ -2,17 +2,17 @@
 
 ## ShipTypes
 
-| Type | Purpose | Pop-Cost | Cargo | Salvage-Rate |
-|------|---------|----------|-------|--------------|
-| `GENERIC` | Foundation-Stub (T-012) | 20 | 0 | — |
-| `COLONY_SHIP` | Kolonisation (T-014) | 100 | 0 | — |
-| `TRANSPORT_SMALL` | Cargo (T-015) | 10 | 100 | — |
-| `TRANSPORT_MEDIUM` | Cargo (T-015) | 25 | 500 | — |
-| `TRANSPORT_LARGE` | Cargo (T-015) | 50 | 2000 | — |
-| `SALVAGE` | Bergung (T-016) | 30 | 500 | 50/min |
+| Type | Purpose | Pop-Cost | Cargo (m³) | Salvage-Rate |
+|------|---------|----------|------------|--------------|
+| `GENERIC` | Foundation-Stub (T-012) | 20 | 50 | — |
+| `COLONY_SHIP` | Kolonisation (T-014) | 50 | 300 | — |
+| `TRANSPORT_SMALL` | Cargo (T-015) | 15 | 100 | — |
+| `TRANSPORT_MEDIUM` | Cargo (T-015) | 30 | 500 | — |
+| `TRANSPORT_LARGE` | Cargo (T-015) | 100 | 2000 | — |
+| `SALVAGE` | Bergung (T-016) | 25 | 500 | 50/min |
 
 `ShipType::isTransport()` / `isSalvage()` für Type-Klassifizierung. Cost +
-Bauzeit +Cargo via `ShipCostConfig`.
+Bauzeit via `ShipCostConfig`; Cargo-Volume (T-178) via `ShipCargoVolumeConfig`.
 
 ## Bauprozess (T-012)
 
@@ -118,16 +118,45 @@ Systeme weit jumpen) folgt mit T-026d.
 - Bei Mangel beider → `killShip()`: Pop-Slots verloren + Schiff entfernt
 - T-021: killShip spawnt **kleines DebrisField** (2 DEBRIS_LOW) im Heim-System
 
-## Cargo (T-015 + T-015b)
+## Cargo (T-178 — Universal Volume-Cargo)
 
-`CargoManifest` als Embeddable auf Ship: `ResourceType → amount` Map + Pop-Slots.
-- `LoadCargoCommand` zieht aus **Planet-Storage** ODER **Station-Storage** in Ship-Cargo
-- `UnloadCargoCommand` umgekehrt
-- Capacity via `ShipType::getCargoCapacity`; Validation in `CargoCapacityExceededException`
+**Seit T-178**: alle Ships haben Cargo, Capacity ist m³-basiert.
+`ShipCargo` Embeddable (Replacement von `CargoManifest` für Ship-Side):
+
+- `Ship.cargo: ShipCargo` Embeddable (json `cargo_resources` + `cargo_pop_count`)
+- `Ship.cargoVolumeCapacity: int` (m³, gesetzt beim Build via `ShipCargoVolumeConfig`)
+- `Ship.getCargoVolumeUsed/Free` — live aus `cargo.usedVolume()` (Sum × `ResourceVolumeConfig`-Multi + Pop × 10 m³)
+- `Ship.canAddResource(type, qty)` / `canAddPop(qty)` / `maxAddableResource(type, qty)`
+- Validation-Exception: `ShipCargoOverflowException`
+
+**Cargo-Volume-Tabelle** (`ShipCargoVolumeConfig`, m³):
+
+| ShipType / Class | Cargo (m³) | Quelle |
+|------------------|------------|--------|
+| GENERIC | 50 | T-178 |
+| COLONY_SHIP | 300 | T-178 |
+| TRANSPORT_SMALL | 100 | T-178 |
+| TRANSPORT_MEDIUM | 500 | T-178 |
+| TRANSPORT_LARGE | 2000 | T-178 |
+| SALVAGE | 500 | T-178 |
+| PROBE | 0 | (Probe-Domain) |
+| Frigate Mk I | 50 | T-178 |
+| Destroyer Mk I | 80 | T-178 |
+| Cruiser Mk I | 120 | T-178 |
+| Battleship Mk I | 200 | T-178 |
+| Carrier Mk I | 150 | T-178 |
+
+Mk II = Base × 1.5, Mk III = Base × 2.25 (analog T-102 Stats-Scaling).
+
+**Load/Unload-API generisch (T-178):**
+- `LoadCargoCommand` / `UnloadCargoCommand` akzeptieren **jede** Ship-ID
+  (kein Transport-Filter mehr — Combat-Schiffe können Salvage/Munition tragen)
+- Volume-Cap-Check via `Ship::canAddResource(type, qty)` bzw. `canAddPop(qty)`
 
 **T-015b Station-Cargo (Foundation):**
 - Ship hat `station: ?SpaceStation`-Field (XOR mit `planet`); via `setStation()` umgeschaltet
 - `LoadCargo` / `UnloadCargo` branchen je nach Dock-Target
+- Station-Storage nutzt weiterhin `CargoManifest` (units-based) — Refactor in T-183
 - Owner-Restriction: nicht enforced auf Foundation; T-093 Allianz-Stationen ergänzt das
 
 **T-015c Station-Pop-Transfer:**
@@ -135,6 +164,10 @@ Systeme weit jumpen) folgt mit T-026d.
 - UnloadCargo: pusht Ship-Cargo-Pop nach `station.populationOnStation`
 - Cap-Check für Station-Pop-Max: defer (T-023b Station-Maintenance liefert das)
 - Insufficient-Pop-Check bei Load (Station-Pop muss reichen)
+
+**Initial-Cargo bei Build (T-178):**
+- `BuildShipCommand` setzt Ship-Cargo immer leer
+- Auto-Refuel (T-066) / Auto-Provisioning (T-105) sind Folge-Tickets
 
 ## Salvage (T-016)
 
@@ -163,7 +196,8 @@ Aktiv-Salvage Polymorph (T-021):
 | `NotATransportShipException` | Cargo-Action mit non-Transport-Ship |
 | `InvalidSalvageTargetException` | POI ist kein SalvageableField oder leer |
 | `SalvageTargetNotInSystemException` | Ship ist nicht im POI-System |
-| `CargoCapacityExceededException` | Load > free units |
+| `CargoCapacityExceededException` | Station-Storage Load > free units (T-015b/Station-Pfad) |
+| `ShipCargoOverflowException` | Ship-Volume-Cap überschritten (T-178) |
 | `ShipNotFoundException` / `ShipNotReadyException` / `ShipNotDockedException` | Ship-State |
 | `PropulsionResearchNotMetException` | Build mit Antriebs-Typ, dessen Required-Research dem Player fehlt (T-026c) |
 | `MissingShipyardLevelException` | Combat-Schiff-Build unter dem nötigen Shipyard-Level (T-102) |
@@ -174,8 +208,9 @@ Aktiv-Salvage Polymorph (T-021):
 ## Files
 
 - `src/Ship/Model/Ship.php` (Entity, finishedAt, supplies, cargo, salvage-state, propulsion, shipClass)
-- `src/Ship/ValueObject/{ShipId,ShipType,CargoManifest,PropulsionType,ShipClass,ShipBlueprint}.php`
-- `src/Ship/Service/ShipCostConfig.php` (Cost/Cargo/Duration je Type — non-combat)
+- `src/Ship/ValueObject/{ShipId,ShipType,ShipCargo,CargoManifest,PropulsionType,ShipClass,ShipBlueprint}.php`
+- `src/Ship/Service/ShipCostConfig.php` (Cost/Duration je Type — non-combat)
+- `src/Ship/Service/ShipCargoVolumeConfig.php` (T-178 m³-Cap per ShipType + ShipClass+Mk)
 - `src/Ship/Service/ShipBlueprintRegistry.php` (T-102 Combat-Class Stats)
 - `src/Ship/Service/{Build,LoadCargo,UnloadCargo,StartSalvage,StopSalvage}CommandService.php`
 - `src/Ship/Service/SalvageProcessor.php` (global, vom Tick-Loop gerufen)

@@ -22,6 +22,11 @@ use App\SolarSystem\ValueObject\SolarSystemId;
 use App\Tests\Integration\IntegrationTestCase;
 use DateTimeImmutable;
 
+/**
+ * Salvage extrahiert IRON_ORE (Volume-Multi 2.0 m³/Unit). Test-Helper
+ * dimensioniert Cargo-Volume so, dass die Ziel-Free-Volume erreicht wird,
+ * inkl. Pre-Load mit WATER (Multi 1.0 m³/Unit) zur Auffüllung.
+ */
 final class SalvageProcessorTest extends IntegrationTestCase
 {
     private SalvageProcessor $processor;
@@ -34,11 +39,11 @@ final class SalvageProcessorTest extends IntegrationTestCase
 
     public function test_extracts_resources_per_minute_rate(): void
     {
-        // Salvage-Rate: 50 Units/min. Wir setzen lastTickAt auf -2min,
-        // also sollte 100 Units extrahiert werden.
+        // Salvage-Rate: 50 Units/min. tickAgo=2min → 100 Units extrahierbar.
+        // Free-Volume=500 m³ / IRON_ORE-Multi 2.0 = 250 Units → 100 passt.
         [$ship, $field] = $this->seedActiveSalvage(
             fieldAmount: 1000,
-            cargoFree: 500,
+            freeVolumeM3: 500,
             tickAgoMinutes: 2,
         );
 
@@ -56,10 +61,11 @@ final class SalvageProcessorTest extends IntegrationTestCase
 
     public function test_stops_when_field_empty_and_removes_field(): void
     {
+        // 5min × 50 = 250 möglich, aber nur 30 da. Free 1000 m³ ≫ 30 × 2 = 60 m³.
         [$ship, $field] = $this->seedActiveSalvage(
             fieldAmount: 30,
-            cargoFree: 1000,
-            tickAgoMinutes: 5, // 5min × 50 = 250, aber nur 30 da
+            freeVolumeM3: 1000,
+            tickAgoMinutes: 5,
         );
 
         $this->processor->runTick();
@@ -76,13 +82,13 @@ final class SalvageProcessorTest extends IntegrationTestCase
 
     public function test_stops_when_cargo_full(): void
     {
-        // cargoCapacity 100 → cargoFree 100 → mit 50/min × 5min wäre 250 möglich,
-        // aber nur 100 gehen ins Cargo.
-        [$ship, $field] = $this->seedActiveSalvage(
+        // Capacity=Free=100 m³, IRON_ORE-Multi 2.0 → max 50 Units.
+        // 5min × 50 = 250 möglich, aber Volume-Cap stoppt bei 50.
+        [$ship] = $this->seedActiveSalvage(
             fieldAmount: 1000,
-            cargoFree: 100,
+            freeVolumeM3: 100,
             tickAgoMinutes: 5,
-            cargoCapacity: 100,
+            cargoVolumeCapacity: 100,
         );
 
         $this->processor->runTick();
@@ -90,8 +96,8 @@ final class SalvageProcessorTest extends IntegrationTestCase
         $this->em->clear();
 
         $reloadedShip = self::getContainer()->get(ShipRepository::class)->find($ship->getId());
-        self::assertSame(100, $reloadedShip->getCargo()->getResource(ResourceType::IRON_ORE));
-        self::assertSame(0, $reloadedShip->getCargoFreeUnits());
+        self::assertSame(50, $reloadedShip->getCargo()->getResource(ResourceType::IRON_ORE));
+        self::assertSame(0, $reloadedShip->maxAddableResource(ResourceType::IRON_ORE, 1));
         self::assertFalse($reloadedShip->isSalvaging(), 'cargo full → stop salvage');
     }
 
@@ -100,7 +106,7 @@ final class SalvageProcessorTest extends IntegrationTestCase
         // 0 Sekunden delta → 0 Units → skip extract, ship bleibt aktiv.
         [$ship] = $this->seedActiveSalvage(
             fieldAmount: 1000,
-            cargoFree: 500,
+            freeVolumeM3: 500,
             tickAgoMinutes: 0,
         );
 
@@ -109,7 +115,6 @@ final class SalvageProcessorTest extends IntegrationTestCase
         $this->em->clear();
 
         $reloadedShip = self::getContainer()->get(ShipRepository::class)->find($ship->getId());
-        // Iron-Ore-Cargo bleibt 0 (pre-loaded COAL bleibt im Cargo unangetastet)
         self::assertSame(0, $reloadedShip->getCargo()->getResource(ResourceType::IRON_ORE));
         self::assertTrue($reloadedShip->isSalvaging());
     }
@@ -119,9 +124,9 @@ final class SalvageProcessorTest extends IntegrationTestCase
      */
     private function seedActiveSalvage(
         int $fieldAmount,
-        int $cargoFree,
+        int $freeVolumeM3,
         float $tickAgoMinutes,
-        int $cargoCapacity = 3000,
+        int $cargoVolumeCapacity = 3000,
     ): array {
         $player = new Player(PlayerId::generate());
         $system = new SolarSystem(SolarSystemId::generate(), 'Sol-Test');
@@ -139,18 +144,17 @@ final class SalvageProcessorTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: ShipType::SALVAGE,
             populationAssigned: 25,
-            cargoCapacity: $cargoCapacity,
+            cargoVolumeCapacity: $cargoVolumeCapacity,
         );
         $ship->setPlanet($planet);
         $ship->setFinishedAt(new DateTimeImmutable('-1 hour'));
 
-        // Pre-Load Cargo um cargoFree zu erreichen
-        $usedCargo = $cargoCapacity - $cargoFree;
-        if ($usedCargo > 0) {
-            $ship->loadResourceCargo(ResourceType::COAL, $usedCargo);
+        // Pre-Load mit WATER (1 m³/Unit) bis $freeVolumeM3 erreicht
+        $usedVolume = $cargoVolumeCapacity - $freeVolumeM3;
+        if ($usedVolume > 0) {
+            $ship->loadResourceCargo(ResourceType::WATER, $usedVolume);
         }
 
-        // Salvage State anlegen mit lastTickAt = now - tickAgoMinutes
         $tickAt = (new DateTimeImmutable())->modify(sprintf('-%d seconds', (int) ($tickAgoMinutes * 60)));
         $ship->startSalvage($field->getId()->__toString(), ResourceType::IRON_ORE, $tickAt);
 

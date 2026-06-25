@@ -9,9 +9,10 @@ use App\Fleet\Model\Fleet;
 use App\POI\Model\SpaceStation;
 use App\Planet\Model\Planet;
 use App\Resource\ValueObject\ResourceType;
+use App\Ship\Exception\ShipCargoOverflowException;
 use App\Ship\Repository\ShipRepository;
-use App\Ship\ValueObject\CargoManifest;
 use App\Ship\ValueObject\PropulsionType;
+use App\Ship\ValueObject\ShipCargo;
 use App\Ship\ValueObject\ShipClass;
 use App\Ship\ValueObject\ShipId;
 use App\Ship\ValueObject\ShipType;
@@ -53,11 +54,11 @@ class Ship
     private ?Fleet $fleet = null;
 
     /**
-     * T-015: Cargo-Manifest. Bei non-Transport-Schiffen leer + cargoCapacity=0 → Hard-Reject
-     * jeglicher Lade-Operation.
+     * T-178: Cargo (volume-based). Jedes Schiff hat Cargo, Capacity über
+     * `cargoVolumeCapacity` (m³). Items belegen Volume via `ResourceVolumeConfig`.
      */
-    #[ORM\Embedded(class: CargoManifest::class, columnPrefix: 'cargo_')]
-    private CargoManifest $cargo;
+    #[ORM\Embedded(class: ShipCargo::class, columnPrefix: 'cargo_')]
+    private ShipCargo $cargo;
 
     /**
      * T-016 Salvage-Action State (nur SALVAGE-Schiffe).
@@ -110,11 +111,12 @@ class Ship
         private int $supplyCapacity = self::DEFAULT_SUPPLY_CAPACITY,
 
         /**
-         * T-015 Cargo-Slots. 0 = nicht-Transport-Schiff, lädt nichts.
-         * Wert wird beim Build via ShipCostConfig::getCargoCapacity gesetzt.
+         * T-178 Cargo-Volume-Cap (m³). Wird beim Build via
+         * `ShipCargoVolumeConfig::getCargoVolume` gesetzt — jedes Schiff hat
+         * jetzt Cargo (auch Non-Transport), nur unterschiedliche Größen.
          */
-        #[ORM\Column(name: 'cargo_capacity', type: 'integer')]
-        private int $cargoCapacity = 0,
+        #[ORM\Column(name: 'cargo_volume_capacity', type: 'integer')]
+        private int $cargoVolumeCapacity = 0,
 
         /**
          * T-026c: Antriebs-Typ pro Schiff. HYDROGEN ist Foundation-Default
@@ -124,7 +126,7 @@ class Ship
         #[ORM\Column(name: 'propulsion', type: 'string', length: 16, enumType: PropulsionType::class)]
         private PropulsionType $propulsion = PropulsionType::HYDROGEN,
     ) {
-        $this->cargo = CargoManifest::empty();
+        $this->cargo = ShipCargo::empty();
     }
 
     public function getPropulsion(): PropulsionType
@@ -239,19 +241,24 @@ class Ship
         return $this->finishedAt <= $now;
     }
 
-    public function getCargo(): CargoManifest
+    public function getCargo(): ShipCargo
     {
         return $this->cargo;
     }
 
-    public function getCargoCapacity(): int
+    public function getCargoVolumeCapacity(): int
     {
-        return $this->cargoCapacity;
+        return $this->cargoVolumeCapacity;
     }
 
-    public function getCargoFreeUnits(): int
+    public function getCargoVolumeUsed(): int
     {
-        return $this->cargoCapacity - $this->cargo->getTotalUnits();
+        return $this->cargo->usedVolume();
+    }
+
+    public function getCargoVolumeFree(): int
+    {
+        return max(0, $this->cargoVolumeCapacity - $this->getCargoVolumeUsed());
     }
 
     public function isTransport(): bool
@@ -259,14 +266,76 @@ class Ship
         return $this->type->isTransport();
     }
 
+    /**
+     * T-178 Max einlegbare Resource-Quantity gegeben aktueller Volume-Belegung.
+     * Analog `Planet::maxAddableQuantity`.
+     */
+    public function maxAddableResource(ResourceType $type, int $quantity): int
+    {
+        if ($quantity <= 0) {
+            return 0;
+        }
+        $multi = \App\Resource\Service\ResourceVolumeConfig::getMultiForResource($type);
+        if ($multi <= 0) {
+            return $quantity;
+        }
+        $maxByVolume = (int) floor($this->getCargoVolumeFree() / $multi);
+
+        return min($quantity, max(0, $maxByVolume));
+    }
+
+    /**
+     * T-178 Max einlegbare Pop-Anzahl.
+     */
+    public function maxAddablePop(int $quantity): int
+    {
+        if ($quantity <= 0) {
+            return 0;
+        }
+        $multi = \App\Resource\Service\ResourceVolumeConfig::getPopMulti();
+        $maxByVolume = (int) floor($this->getCargoVolumeFree() / $multi);
+
+        return min($quantity, max(0, $maxByVolume));
+    }
+
+    /**
+     * T-178 Volume-Cap-Check für Resource-Load: berechnet m³ aus
+     * `amount × ResourceVolumeConfig::getMultiForResource`.
+     */
+    public function canAddResource(ResourceType $type, int $amount): bool
+    {
+        if ($amount <= 0) {
+            return true;
+        }
+        $needed = (int) ceil(
+            $amount * \App\Resource\Service\ResourceVolumeConfig::getMultiForResource($type),
+        );
+
+        return $needed <= $this->getCargoVolumeFree();
+    }
+
+    /**
+     * T-178 Volume-Cap-Check für Pop-Load (Pop-Multi = 10 m³/Person).
+     */
+    public function canAddPop(int $amount): bool
+    {
+        if ($amount <= 0) {
+            return true;
+        }
+        $needed = (int) ceil(
+            $amount * \App\Resource\Service\ResourceVolumeConfig::getPopMulti(),
+        );
+
+        return $needed <= $this->getCargoVolumeFree();
+    }
+
     public function loadResourceCargo(ResourceType $type, int $amount): void
     {
-        if ($amount > $this->getCargoFreeUnits()) {
-            throw new \DomainException(sprintf(
-                'Cargo capacity exceeded: trying to load %d units, only %d free',
-                $amount,
-                $this->getCargoFreeUnits(),
-            ));
+        if (!$this->canAddResource($type, $amount)) {
+            $needed = (int) ceil(
+                $amount * \App\Resource\Service\ResourceVolumeConfig::getMultiForResource($type),
+            );
+            throw new ShipCargoOverflowException($this->id, $needed, $this->getCargoVolumeFree());
         }
         $this->cargo->loadResource($type, $amount);
     }
@@ -278,12 +347,11 @@ class Ship
 
     public function loadPopCargo(int $amount): void
     {
-        if ($amount > $this->getCargoFreeUnits()) {
-            throw new \DomainException(sprintf(
-                'Cargo capacity exceeded: trying to load %d pop, only %d free',
-                $amount,
-                $this->getCargoFreeUnits(),
-            ));
+        if (!$this->canAddPop($amount)) {
+            $needed = (int) ceil(
+                $amount * \App\Resource\Service\ResourceVolumeConfig::getPopMulti(),
+            );
+            throw new ShipCargoOverflowException($this->id, $needed, $this->getCargoVolumeFree());
         }
         $this->cargo->loadPop($amount);
     }

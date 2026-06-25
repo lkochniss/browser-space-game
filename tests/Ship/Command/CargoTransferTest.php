@@ -17,10 +17,9 @@ use App\Resource\ValueObject\ResourceType;
 use App\Ship\Command\BuildShipCommand;
 use App\Ship\Command\LoadCargoCommand;
 use App\Ship\Command\UnloadCargoCommand;
-use App\Ship\Exception\CargoCapacityExceededException;
 use App\Ship\Exception\InsufficientCargoException;
 use App\Ship\Exception\InsufficientResourcesException;
-use App\Ship\Exception\NotATransportShipException;
+use App\Ship\Exception\ShipCargoOverflowException;
 use App\Ship\Exception\ShipNotDockedException;
 use App\Ship\Exception\ShipNotReadyException;
 use App\Ship\Model\Ship;
@@ -47,25 +46,29 @@ final class CargoTransferTest extends IntegrationTestCase
         $ship = $this->bus->dispatch(new BuildShipCommand($planet->getId(), ShipType::TRANSPORT_SMALL));
 
         self::assertSame(ShipType::TRANSPORT_SMALL, $ship->getType());
-        self::assertSame(1000, $ship->getCargoCapacity());
+        self::assertSame(100, $ship->getCargoVolumeCapacity());
         self::assertSame(0, $ship->getCargo()->getTotalUnits());
+        self::assertSame(0, $ship->getCargoVolumeUsed());
     }
 
     public function test_load_resources_into_transport(): void
     {
+        // TRANSPORT_SMALL cargoVolume = 100 m³, IRON_BAR multi = 1.5 m³/Unit
+        // → max 66 IRON_BAR ladbar. Wir laden 50.
         $ship = $this->seedReadyTransport(ironBarOnPlanet: 500);
 
         $loaded = $this->bus->dispatch(new LoadCargoCommand(
             shipId: $ship->getId(),
-            resources: [ResourceType::IRON_BAR->value => 200],
+            resources: [ResourceType::IRON_BAR->value => 50],
         ));
 
-        self::assertSame(200, $loaded->getCargo()->getResource(ResourceType::IRON_BAR));
+        self::assertSame(50, $loaded->getCargo()->getResource(ResourceType::IRON_BAR));
+        self::assertSame(75, $loaded->getCargoVolumeUsed()); // 50 × 1.5
 
         $this->em->clear();
         $reloaded = self::getContainer()->get(ShipRepository::class)->find($ship->getId());
-        self::assertSame(200, $reloaded->getCargo()->getResource(ResourceType::IRON_BAR));
-        self::assertSame(300, $reloaded->getPlanet()->getResource(ResourceType::IRON_BAR)->getAmount());
+        self::assertSame(50, $reloaded->getCargo()->getResource(ResourceType::IRON_BAR));
+        self::assertSame(450, $reloaded->getPlanet()->getResource(ResourceType::IRON_BAR)->getAmount());
     }
 
     public function test_load_pop_assigns_on_planet_and_loads_into_ship(): void
@@ -87,15 +90,15 @@ final class CargoTransferTest extends IntegrationTestCase
         self::assertSame(10 + $reloadedShip->getPopulationAssigned(), $reloadedHome->getPopulation()->getAssigned());
     }
 
-    public function test_load_rejects_when_cargo_capacity_exceeded(): void
+    public function test_load_rejects_when_cargo_volume_exceeded(): void
     {
-        // TRANSPORT_SMALL hat 1000 capacity. Wir laden 1001.
+        // TRANSPORT_SMALL = 100 m³. IRON_BAR multi = 1.5 → 70 Units = 105 m³ → overflow.
         $ship = $this->seedReadyTransport(ironBarOnPlanet: 5000);
 
-        $this->expectException(CargoCapacityExceededException::class);
+        $this->expectException(ShipCargoOverflowException::class);
         $this->bus->dispatch(new LoadCargoCommand(
             shipId: $ship->getId(),
-            resources: [ResourceType::IRON_BAR->value => 1001],
+            resources: [ResourceType::IRON_BAR->value => 70],
         ));
     }
 
@@ -106,23 +109,27 @@ final class CargoTransferTest extends IntegrationTestCase
         $this->expectException(InsufficientResourcesException::class);
         $this->bus->dispatch(new LoadCargoCommand(
             shipId: $ship->getId(),
-            resources: [ResourceType::IRON_BAR->value => 100],
+            resources: [ResourceType::IRON_BAR->value => 60],
         ));
     }
 
-    public function test_load_rejects_for_non_transport(): void
+    public function test_load_works_on_non_transport_ship_t178(): void
     {
-        // Build GENERIC (non-Transport) instead
-        $home = $this->seedPlanet(ironBar: 200, popTotal: 50);
+        // T-178: alle Schiffe können laden, kein Transport-Filter mehr.
+        // GENERIC ShipType → 50 m³ Cargo-Volume.
+        $home = $this->seedPlanet(ironBar: 500, popTotal: 50);
         $ship = $this->bus->dispatch(new BuildShipCommand($home->getId(), ShipType::GENERIC));
         $ship->setFinishedAt(new DateTimeImmutable('-1 hour'));
         $this->em->flush();
 
-        $this->expectException(NotATransportShipException::class);
-        $this->bus->dispatch(new LoadCargoCommand(
+        self::assertSame(50, $ship->getCargoVolumeCapacity());
+
+        $loaded = $this->bus->dispatch(new LoadCargoCommand(
             shipId: $ship->getId(),
-            resources: [ResourceType::IRON_BAR->value => 10],
+            resources: [ResourceType::IRON_BAR->value => 10], // 10 × 1.5 = 15 m³ → fits
         ));
+
+        self::assertSame(10, $loaded->getCargo()->getResource(ResourceType::IRON_BAR));
     }
 
     public function test_load_rejects_when_ship_not_ready(): void
@@ -142,7 +149,7 @@ final class CargoTransferTest extends IntegrationTestCase
 
         $this->bus->dispatch(new LoadCargoCommand(
             shipId: $ship->getId(),
-            resources: [ResourceType::IRON_BAR->value => 300],
+            resources: [ResourceType::IRON_BAR->value => 50],
         ));
 
         // Target-Planet (un-claimed)
@@ -157,12 +164,12 @@ final class CargoTransferTest extends IntegrationTestCase
 
         $this->bus->dispatch(new UnloadCargoCommand(
             shipId: $ship->getId(),
-            resources: [ResourceType::IRON_BAR->value => 300],
+            resources: [ResourceType::IRON_BAR->value => 50],
         ));
 
         $this->em->clear();
         $reloadedTarget = $this->em->find(Planet::class, $target->getId());
-        self::assertSame(300, $reloadedTarget->getResource(ResourceType::IRON_BAR)->getAmount());
+        self::assertSame(50, $reloadedTarget->getResource(ResourceType::IRON_BAR)->getAmount());
 
         $reloadedShip = self::getContainer()->get(ShipRepository::class)->find($ship->getId());
         self::assertSame(0, $reloadedShip->getCargo()->getTotalUnits());
@@ -228,7 +235,7 @@ final class CargoTransferTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: ShipType::TRANSPORT_SMALL,
             populationAssigned: 15,
-            cargoCapacity: 1000,
+            cargoVolumeCapacity: 100,
         );
         $ship->setPlanet($home);
         $ship->setFinishedAt(

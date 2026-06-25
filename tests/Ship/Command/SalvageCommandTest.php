@@ -191,7 +191,7 @@ final class SalvageCommandTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: $shipType,
             populationAssigned: 25,
-            cargoCapacity: 3000,
+            cargoVolumeCapacity: 3000,
         );
         $ship->setPlanet($planet);
         $ship->setFinishedAt(new DateTimeImmutable('-1 hour'));

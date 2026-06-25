@@ -331,7 +331,7 @@ final class TradeRouteTest extends IntegrationTestCase
             id: ShipId::generate(),
             type: ShipType::TRANSPORT_MEDIUM,
             populationAssigned: 25,
-            cargoCapacity: 500,
+            cargoVolumeCapacity: 500,
         );
         $ship->setPlanet($source);
         $ship->setFinishedAt(new DateTimeImmutable('-1 hour'));

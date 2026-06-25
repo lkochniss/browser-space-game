@@ -14,11 +14,11 @@ use LogicException;
  * Werte sind Foundation-Tuning. T-102 Mark-Tier-System wird mit Forschungs-Locks
  * (T-128 Schiffbau-Branch) zusätzliche Cost-Multiplier einbringen.
  *
- * `cargoCapacity`: 0 für non-Transport (T-015), >0 für Transport-Schiffe.
+ * Cargo-Volume seit T-178 in `ShipCargoVolumeConfig`.
  */
 class ShipCostConfig
 {
-    /** @var array<string, array{resources: array<string,int>, populationCost: int, durationSeconds: int, cargoCapacity: int}> */
+    /** @var array<string, array{resources: array<string,int>, populationCost: int, durationSeconds: int}> */
     private array $configs;
 
     public function __construct()
@@ -30,7 +30,6 @@ class ShipCostConfig
                 ],
                 'populationCost' => 20,
                 'durationSeconds' => 1800, // 30min
-                'cargoCapacity' => 0,
             ],
             ShipType::COLONY_SHIP->value => [
                 'resources' => [
@@ -38,7 +37,6 @@ class ShipCostConfig
                 ],
                 'populationCost' => 50,
                 'durationSeconds' => 3600, // 60min — Strategic-Tier
-                'cargoCapacity' => 0,
             ],
 
             // T-015 Transport-Klassen
@@ -48,7 +46,6 @@ class ShipCostConfig
                 ],
                 'populationCost' => 15,
                 'durationSeconds' => 1800, // 30min
-                'cargoCapacity' => 1000,
             ],
             ShipType::TRANSPORT_MEDIUM->value => [
                 'resources' => [
@@ -57,7 +54,6 @@ class ShipCostConfig
                 ],
                 'populationCost' => 30,
                 'durationSeconds' => 3600, // 60min
-                'cargoCapacity' => 5000,
             ],
             ShipType::TRANSPORT_LARGE->value => [
                 'resources' => [
@@ -67,7 +63,6 @@ class ShipCostConfig
                 ],
                 'populationCost' => 100,
                 'durationSeconds' => 7200, // 120min — Heavy-Hauler
-                'cargoCapacity' => 20000,
             ],
 
             // T-016 Bergungsschiff
@@ -78,7 +73,6 @@ class ShipCostConfig
                 ],
                 'populationCost' => 25,
                 'durationSeconds' => 2700, // 45min
-                'cargoCapacity' => 3000,
             ],
         ];
     }
@@ -101,13 +95,8 @@ class ShipCostConfig
         return $this->require($type)['durationSeconds'];
     }
 
-    public function getCargoCapacity(ShipType $type): int
-    {
-        return $this->require($type)['cargoCapacity'];
-    }
-
     /**
-     * @return array{resources: array<string,int>, populationCost: int, durationSeconds: int, cargoCapacity: int}
+     * @return array{resources: array<string,int>, populationCost: int, durationSeconds: int}
      */
     private function require(ShipType $type): array
     {
